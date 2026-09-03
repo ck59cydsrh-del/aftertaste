@@ -3,113 +3,184 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>レーン・オートチェス対決</title>
+<title>LANE CHESS 01</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
 <style>
   :root{
-    --bg:#0d0f14; --panel:#161a24; --panel2:#1f2430; --line:#333a4a;
-    --ink:#fff; --sub:#9aa3b5;
-    --gold:#fbbf24; --life:#f43f5e;
-    --warrior:#3b82f6; --mage:#a855f7; --archer:#22c55e;
-    --p1:#3b82f6; --p2:#f43f5e;
+    --panel:#efece4; --panel-raised:#faf8f3; --line:#d8d3c4;
+    --ink:#1c1b18; --muted:#847f70;
+    --p1:#e8420f; --p2:#0d8f88; --gold:#a97400;
+    --warrior:#2f5fd6; --mage:#8a3fd1; --archer:#1f8f4c;
+    --font-display:'Space Grotesk','Hiragino Sans',sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',monospace;
+    --font-body:'Noto Sans JP','Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;
   }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --panel:#1a1a18; --panel-raised:#232220; --line:#3a3730;
+      --ink:#f3f0e6; --muted:#928c7c;
+      --p1:#ff5a2e; --p2:#1fd8cd; --gold:#ffcc33;
+      --warrior:#5b8bff; --mage:#c185ff; --archer:#4ad185;
+    }
+  }
+  :root[data-theme="dark"]{
+    --panel:#1a1a18; --panel-raised:#232220; --line:#3a3730;
+    --ink:#f3f0e6; --muted:#928c7c;
+    --p1:#ff5a2e; --p2:#1fd8cd; --gold:#ffcc33;
+    --warrior:#5b8bff; --mage:#c185ff; --archer:#4ad185;
+  }
+
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{
-    height:100%; margin:0; overflow:hidden; background:var(--bg); color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;
+    height:100%; margin:0; overflow:hidden; background:var(--panel); color:var(--ink);
+    font-family:var(--font-body);
     touch-action:manipulation; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
     overscroll-behavior:none;
   }
-  #app{ position:fixed; inset:0; }
-  .screen{ position:fixed; inset:0; display:flex; flex-direction:column; overflow-y:auto; }
+  #app{ position:fixed; inset:0; background:
+    radial-gradient(circle, var(--line) 1px, transparent 1px) 0 0/16px 16px,
+    var(--panel);
+  }
+  .screen{ position:fixed; inset:0; display:flex; flex-direction:column; overflow-y:auto; -ms-overflow-style:none; scrollbar-width:none; }
+  .screen::-webkit-scrollbar{ display:none; }
   .hidden{ display:none !important; }
-  button{ font-family:inherit; }
+  button{ font-family:inherit; -webkit-appearance:none; appearance:none; }
+
+  .mono{ font-family:var(--font-mono); }
+  .eyebrow{ font-family:var(--font-mono); font-size:.62rem; letter-spacing:.14em; color:var(--muted); text-transform:uppercase; }
 
   /* ---------- title ---------- */
-  #screen-title{ align-items:center; justify-content:center; gap:18px; padding:24px; text-align:center; }
-  #screen-title h1{ font-size:1.5rem; letter-spacing:.04em; margin:0; }
-  #screen-title p{ opacity:.8; line-height:1.7; max-width:320px; margin:0; font-size:.9rem; }
-  .opt-row{ display:flex; gap:10px; }
-  .opt-btn{ color:#fff; background:var(--panel2); border:2px solid var(--line); padding:10px 16px; border-radius:12px; font-weight:700; }
-  .opt-btn.selected{ border-color:#fff; background:#2b3143; }
-  .primary-btn{ background:linear-gradient(135deg,var(--p1),var(--p2)); color:#fff; border:none; padding:16px 40px; font-size:1.1rem; font-weight:800; border-radius:16px; margin-top:6px; }
+  #screen-title{ align-items:center; justify-content:center; gap:22px; padding:28px 22px; text-align:center; }
+  .logo-block{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .logo-mark{ display:flex; align-items:center; gap:8px; }
+  .logo-dot{ width:10px; height:10px; border-radius:2px; background:var(--p1); }
+  .logo-dot.b{ background:var(--p2); }
+  #screen-title h1{ font-family:var(--font-display); font-weight:700; font-size:1.85rem; letter-spacing:-.01em; margin:0; text-wrap:balance; }
+  .subtitle{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; }
+  #screen-title p{ color:var(--muted); line-height:1.75; max-width:300px; margin:0; font-size:.85rem; }
+
+  .panel-block{ border:1px solid var(--line); background:var(--panel-raised); border-radius:4px; padding:14px; display:flex; flex-direction:column; gap:8px; width:100%; max-width:300px; }
+
+  .switch3{ position:relative; display:grid; grid-template-columns:repeat(3,1fr); border:1.5px solid var(--line); border-radius:3px; overflow:hidden; height:42px; }
+  .switch3-thumb{ position:absolute; top:0; bottom:0; left:0; width:33.333%; background:var(--p1); transition:transform .18s cubic-bezier(.3,.7,.3,1); z-index:0; }
+  .switch3 button{ position:relative; z-index:1; background:transparent; border:none; color:var(--ink); font-family:var(--font-mono); font-weight:700; font-size:.95rem; cursor:pointer; }
+  .switch3 button.active{ color:var(--panel-raised); }
+
+  .primary-btn{ background:var(--p1); color:var(--panel-raised); border:none; padding:15px 30px; font-family:var(--font-mono); font-weight:700; font-size:.9rem; letter-spacing:.08em; border-radius:3px; text-transform:uppercase; }
+  .primary-btn:active{ filter:brightness(.92); }
+  .ghost-btn{ background:transparent; color:var(--ink); border:1.5px solid var(--line); padding:8px 14px; font-family:var(--font-mono); font-weight:500; font-size:.72rem; letter-spacing:.06em; border-radius:3px; text-transform:uppercase; }
+  .ghost-btn:disabled{ opacity:.35; }
 
   /* ---------- handoff ---------- */
-  #screen-handoff{ align-items:center; justify-content:center; gap:16px; padding:24px; text-align:center; }
-  #screen-handoff .icon{ font-size:3rem; }
-  #screen-handoff h2{ margin:0; font-size:1.3rem; }
-  #screen-handoff p{ color:var(--sub); margin:0; }
+  #screen-handoff{ align-items:center; justify-content:center; gap:20px; padding:24px; text-align:center; }
+  .handoff-diagram{ display:flex; align-items:center; gap:14px; }
+  .device-icon{ width:34px; height:56px; border:2px solid var(--line); border-radius:5px; position:relative; }
+  .device-icon::after{ content:''; position:absolute; left:50%; bottom:6px; width:10px; height:2px; background:var(--line); transform:translateX(-50%); }
+  .device-icon.to{ border-color:var(--accent,var(--p1)); }
+  .device-icon.to::after{ background:var(--accent,var(--p1)); }
+  .arrow-mono{ font-family:var(--font-mono); font-size:1.4rem; color:var(--accent,var(--p1)); }
+  #screen-handoff h2{ font-family:var(--font-display); font-weight:700; font-size:1.4rem; margin:0; }
+  #screen-handoff p{ color:var(--muted); margin:0; font-size:.82rem; line-height:1.7; }
 
   /* ---------- draft ---------- */
-  #screen-draft{ padding:10px 12px 16px; gap:8px; }
-  .topbar{ display:flex; flex-direction:column; gap:4px; }
-  .turn-label{ font-weight:800; font-size:1.05rem; }
-  .stats-row{ display:flex; gap:12px; font-size:.85rem; color:var(--sub); align-items:center; flex-wrap:wrap; }
-  .stats-row .gold{ color:var(--gold); font-weight:800; }
-  .stats-row .lives-self{ color:var(--life); font-weight:700; }
+  #screen-draft{ padding:12px 14px 18px; gap:10px; }
+  .topbar{ display:flex; flex-direction:column; gap:6px; padding-bottom:8px; border-bottom:1px solid var(--line); }
+  .turn-label{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; }
+  .stats-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .stat{ display:flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:.78rem; }
+  .stat .k{ color:var(--muted); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
+  .stat .v{ font-weight:700; }
+  .stat.gold .v{ color:var(--gold); }
+  .pips{ display:flex; gap:3px; }
+  .pip{ width:9px; height:9px; border:1.3px solid var(--line); border-radius:1px; }
+  .pip.filled{ background:var(--accent,var(--p1)); border-color:var(--accent,var(--p1)); }
 
-  .section-title{ font-size:.75rem; color:var(--sub); margin:4px 0 2px; }
-  .shop-row{ display:flex; gap:8px; }
-  .offer-card{ flex:1; background:var(--panel); border:2px solid var(--line); border-radius:12px; padding:8px 4px; text-align:center; }
-  .offer-card.selected{ border-color:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.3); }
+  .shop-row{ display:flex; gap:7px; }
+  .offer-card{ flex:1; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; padding:8px 4px 7px; text-align:center; position:relative; }
+  .offer-card.selected{ border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); }
   .offer-card.unaffordable{ opacity:.4; }
-  .offer-card.empty{ opacity:.25; }
-  .offer-name{ font-weight:800; font-size:.85rem; }
-  .offer-cls{ font-size:.7rem; margin-top:2px; }
-  .offer-stats{ font-size:.7rem; color:var(--sub); margin-top:2px; }
-  .offer-cost{ margin-top:4px; font-weight:800; color:var(--gold); font-size:.8rem; }
+  .offer-card.empty{ opacity:.2; }
+  .offer-badge{ width:16px; height:16px; margin:0 auto 4px; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:700; font-size:.68rem; border-radius:2px; color:var(--panel-raised); }
+  .offer-name{ font-weight:700; font-size:.8rem; }
+  .offer-stats{ font-family:var(--font-mono); font-size:.6rem; color:var(--muted); margin-top:3px; }
+  .offer-cost{ margin-top:5px; font-family:var(--font-mono); font-weight:700; color:var(--gold); font-size:.74rem; }
 
-  .reroll-btn{ align-self:flex-start; background:var(--panel2); color:#fff; border:1px solid var(--line); border-radius:10px; padding:6px 12px; font-size:.78rem; font-weight:700; }
-  .reroll-btn:disabled{ opacity:.35; }
+  .row-between{ display:flex; align-items:center; justify-content:space-between; }
 
-  .board-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
-  .board-slot{ aspect-ratio:1/1; background:var(--panel); border:2px dashed var(--line); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:2px; }
+  .board-rows{ display:flex; flex-direction:column; gap:6px; }
+  .board-row{ display:flex; align-items:center; gap:6px; }
+  .lane-label{ font-family:var(--font-mono); font-size:.62rem; color:var(--muted); width:20px; flex-shrink:0; text-align:center; }
+  .board-slots{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; flex:1; }
+  .board-slot{ aspect-ratio:1.15/1; background:var(--panel-raised); border:1.5px dashed var(--line); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:2px; }
   .board-slot.filled{ border-style:solid; }
-  .board-slot .slot-plus{ color:var(--sub); font-size:1.2rem; }
-  .board-slot .u-name{ font-weight:800; font-size:.72rem; }
-  .board-slot .u-stats{ font-size:.62rem; color:rgba(255,255,255,.85); }
-  .lane-caption{ font-size:.6rem; color:var(--sub); text-align:center; }
-  .board-cols{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:2px; }
+  .board-slot .slot-plus{ color:var(--muted); font-family:var(--font-mono); font-size:1rem; }
+  .board-slot .u-name{ font-weight:700; font-size:.66rem; }
+  .board-slot .u-stats{ font-family:var(--font-mono); font-size:.56rem; color:var(--muted); }
+  .col-caption{ display:flex; padding-left:26px; }
+  .col-caption span{ flex:1; text-align:center; }
 
   .synergy-row{ display:flex; gap:6px; flex-wrap:wrap; }
-  .syn-badge{ font-size:.68rem; padding:4px 8px; border-radius:999px; background:var(--panel2); color:var(--sub); border:1px solid var(--line); }
-  .syn-badge.active{ color:#0d0f14; font-weight:800; }
+  .syn-badge{ font-family:var(--font-mono); font-size:.62rem; padding:4px 8px; border-radius:2px; background:var(--panel-raised); color:var(--muted); border:1.3px solid var(--line); }
+  .syn-badge.active{ color:var(--panel-raised); font-weight:700; }
 
   .ready-btn{ margin-top:auto; }
-  .toast{ position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:#fff; color:#111; padding:8px 16px; border-radius:999px; font-weight:700; font-size:.8rem; opacity:0; transition:opacity .2s; pointer-events:none; z-index:50; }
+  .toast{ position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:var(--ink); color:var(--panel); padding:8px 16px; border-radius:3px; font-family:var(--font-mono); font-weight:700; font-size:.72rem; opacity:0; transition:opacity .2s; pointer-events:none; z-index:50; letter-spacing:.04em; }
   .toast.show{ opacity:1; }
 
   /* ---------- battle ---------- */
-  #screen-battle{ padding:10px 8px; gap:6px; align-items:stretch; justify-content:flex-start; }
-  .battle-header{ display:flex; align-items:center; justify-content:space-between; font-size:.85rem; }
-  .battle-header .vs-label{ font-weight:900; letter-spacing:.1em; opacity:.85; }
-  .lanes-wrap{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; flex:1; }
-  .lane-col{ display:flex; flex-direction:column; border-radius:12px; overflow:hidden; background:var(--panel); border:1px solid var(--line); }
-  .lane-p2, .lane-p1{ display:flex; flex-direction:column; gap:4px; padding:6px; flex:1; }
-  .lane-p2{ flex-direction:column-reverse; justify-content:flex-end; background:linear-gradient(rgba(244,63,94,.12), transparent); }
-  .lane-p1{ justify-content:flex-start; background:linear-gradient(transparent, rgba(59,130,246,.12)); }
-  .lane-divider{ height:2px; background:#fff; opacity:.5; }
-  .b-unit{ border-radius:8px; padding:4px 2px; text-align:center; font-size:.62rem; }
-  .b-unit.side-p1{ background:rgba(59,130,246,.25); border:1px solid var(--p1); }
-  .b-unit.side-p2{ background:rgba(244,63,94,.25); border:1px solid var(--p2); }
-  .b-unit .u-name{ font-weight:800; }
-  .b-unit .u-hp{ opacity:.9; }
-  .b-unit.hit{ animation:hitflash .3s ease-out; }
-  @keyframes hitflash{ 0%{ filter:brightness(2.4); } 100%{ filter:brightness(1); } }
+  #screen-battle{ padding:12px 10px; gap:8px; }
+  .battle-header{ display:flex; align-items:center; justify-content:space-between; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  .battle-header .side{ display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:.72rem; font-weight:700; }
+  .rec-dot{ width:7px; height:7px; border-radius:50%; background:var(--p1); animation:pulse 1.1s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
+  .vs-label{ font-family:var(--font-mono); font-weight:700; letter-spacing:.14em; color:var(--muted); font-size:.68rem; }
 
-  /* class colors */
-  .cls-warrior{ color:var(--warrior); }
-  .cls-mage{ color:var(--mage); }
-  .cls-archer{ color:var(--archer); }
-  .board-slot.cls-warrior{ border-color:var(--warrior); }
-  .board-slot.cls-mage{ border-color:var(--mage); }
-  .board-slot.cls-archer{ border-color:var(--archer); }
+  .arena{ display:flex; flex-direction:column; gap:5px; flex:1; min-height:0; }
+  .lane-strip{ background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; overflow:hidden; display:flex; flex-direction:column; flex-grow:1; transition:flex-grow .4s cubic-bezier(.3,.7,.3,1); }
+  .lane-strip.focused{ flex-grow:7; border-color:var(--ink); }
+  .lane-strip.resolved:not(.focused){ opacity:.75; }
+  .lane-head{ display:flex; align-items:center; justify-content:space-between; padding:6px 9px; font-family:var(--font-mono); font-size:.62rem; letter-spacing:.08em; flex-shrink:0; }
+  .lane-tag{ color:var(--muted); }
+  .lane-status{ font-weight:700; }
+  .lane-status.win-p1{ color:var(--p1); }
+  .lane-status.win-p2{ color:var(--p2); }
+  .lane-track{ position:relative; flex:1; min-height:0; display:none; background-image:repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 12.5%); background-position:6px 0; opacity:1; }
+  .lane-strip.focused .lane-track{ display:block; }
+  .lane-meetline{ position:absolute; left:50%; top:8%; bottom:8%; width:1px; background:var(--muted); opacity:.5; }
+
+  .b-chip{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:1px; padding:5px 7px; min-width:46px; border-radius:3px; background:var(--panel); border:1.5px solid var(--line); transition:left .42s cubic-bezier(.3,.7,.3,1); font-family:var(--font-mono); text-align:center; }
+  .b-chip.side-p1{ border-color:var(--p1); }
+  .b-chip.side-p2{ border-color:var(--p2); }
+  .b-chip .c-badge{ width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.56rem; border-radius:2px; color:var(--panel-raised); }
+  .b-chip .c-name{ font-size:.6rem; font-weight:700; white-space:nowrap; }
+  .b-chip .c-hp{ font-size:.66rem; font-weight:700; }
+  .b-chip.hit{ animation:chiphit .34s ease-out; }
+  @keyframes chiphit{ 0%{ filter:brightness(1.9); } 100%{ filter:brightness(1); } }
+  .b-chip.dying{ transition:opacity .24s ease-in, left .24s; opacity:0; }
+
+  .lane-empty-msg, .lane-walkover{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:.68rem; color:var(--muted); letter-spacing:.06em; }
+
+  .cls-warrior .c-badge, .board-slot.cls-warrior, .offer-card.cls-warrior .offer-badge{ background:var(--warrior); }
+  .cls-mage .c-badge, .board-slot.cls-mage, .offer-card.cls-mage .offer-badge{ background:var(--mage); }
+  .cls-archer .c-badge, .board-slot.cls-archer, .offer-card.cls-archer .offer-badge{ background:var(--archer); }
+  .board-slot.cls-warrior{ border-color:var(--warrior); background:var(--panel-raised); }
+  .board-slot.cls-mage{ border-color:var(--mage); background:var(--panel-raised); }
+  .board-slot.cls-archer{ border-color:var(--archer); background:var(--panel-raised); }
+  .offer-card.cls-warrior{ border-top:3px solid var(--warrior); }
+  .offer-card.cls-mage{ border-top:3px solid var(--mage); }
+  .offer-card.cls-archer{ border-top:3px solid var(--archer); }
 
   /* ---------- round result / match end ---------- */
-  #screen-roundresult, #screen-matchend{ align-items:center; justify-content:center; gap:14px; padding:24px; text-align:center; }
-  #screen-roundresult h2, #screen-matchend h2{ font-size:1.6rem; margin:0; }
-  .lane-summary{ display:flex; gap:10px; font-size:.85rem; color:var(--sub); }
-  .lives-display{ display:flex; gap:20px; font-size:1rem; }
-  .lives-display .who{ font-size:.75rem; color:var(--sub); }
+  #screen-roundresult, #screen-matchend{ align-items:center; justify-content:center; gap:16px; padding:28px; text-align:center; }
+  .result-stencil{ font-family:var(--font-display); font-weight:700; font-size:1.55rem; padding:10px 18px; border:2px solid var(--ink); border-radius:3px; text-wrap:balance; }
+  .result-stencil.p1{ border-color:var(--p1); color:var(--p1); }
+  .result-stencil.p2{ border-color:var(--p2); color:var(--p2); }
+  .lane-summary{ display:flex; gap:14px; font-family:var(--font-mono); font-size:.72rem; color:var(--muted); }
+  .lane-summary b{ color:var(--ink); }
+  .lives-display{ display:flex; gap:26px; }
+  .lives-display .who{ font-family:var(--font-mono); font-size:.62rem; letter-spacing:.08em; color:var(--muted); margin-bottom:5px; text-transform:uppercase; }
+  .lives-display .pips{ justify-content:center; }
+  #screen-matchend .result-stencil{ font-size:1.75rem; }
 </style>
 </head>
 <body>
@@ -117,26 +188,34 @@
 
   <!-- TITLE -->
   <div id="screen-title" class="screen">
-    <h1>レーン・オートチェス対決</h1>
-    <p>スマホ1台を交互に渡し合う2人用オートチェス。<br>
-       毎ラウンド、自分の番だけこっそりユニットを購入して3レーンに配置。<br>
-       両者の準備が終わったら自動でバトル開始!</p>
-    <div>
-      <div class="section-title">ライフ数</div>
-      <div class="opt-row" id="livesSelect">
-        <button class="opt-btn" data-l="2">2</button>
-        <button class="opt-btn selected" data-l="3">3</button>
-        <button class="opt-btn" data-l="4">4</button>
+    <div class="logo-block">
+      <div class="logo-mark"><span class="logo-dot"></span><span class="logo-dot b"></span></div>
+      <h1>LANE CHESS 01</h1>
+      <div class="subtitle">2-Player / 1-Device Auto Battler</div>
+    </div>
+    <p>スマホ1台を交互に渡し合う2人用オートチェス。自分の番だけこっそりユニットを購入して3レーンに配置。両者の準備が整うと自動で大会バトルが始まる。</p>
+    <div class="panel-block">
+      <div class="eyebrow">Lives</div>
+      <div class="switch3" id="livesSwitch">
+        <div class="switch3-thumb"></div>
+        <button data-l="2">2</button>
+        <button data-l="3" class="active">3</button>
+        <button data-l="4">4</button>
       </div>
     </div>
-    <button class="primary-btn" id="titleStartBtn">はじめる</button>
+    <button class="primary-btn" id="titleStartBtn">Start Match</button>
   </div>
 
   <!-- HANDOFF -->
   <div id="screen-handoff" class="screen hidden">
-    <div class="icon">📱</div>
+    <div class="eyebrow" id="handoffEyebrow">Turn Change</div>
+    <div class="handoff-diagram">
+      <div class="device-icon"></div>
+      <div class="arrow-mono" id="handoffArrow">→</div>
+      <div class="device-icon to" id="handoffToIcon"></div>
+    </div>
     <h2 id="handoffTitle">プレイヤー1の番です</h2>
-    <p>スマホを渡してください。<br>相手には盤面を見せないように!</p>
+    <p>スマホを渡してください。相手には盤面を見せないように!</p>
     <button class="primary-btn" id="handoffBtn">見る準備ができた</button>
   </div>
 
@@ -145,19 +224,21 @@
     <div class="topbar">
       <div class="turn-label" id="draftTurnLabel">プレイヤー1の番 - ラウンド1</div>
       <div class="stats-row">
-        <span class="gold" id="draftGold">💰0</span>
-        <span class="lives-self" id="draftLivesSelf">❤️❤️❤️</span>
-        <span id="draftLivesOp">相手 ❤️❤️❤️</span>
+        <div class="stat gold"><span class="k">Gold</span><span class="v" id="draftGold">0</span></div>
+        <div class="stat"><span class="k">Self</span><div class="pips" id="draftPipsSelf"></div></div>
+        <div class="stat"><span class="k">Opp</span><div class="pips" id="draftPipsOp"></div></div>
       </div>
     </div>
 
-    <div class="section-title">ショップ(タップして選択 → 空きマスに配置)</div>
+    <div class="eyebrow">Shop — tap, then tap an open slot</div>
     <div class="shop-row" id="shopRow"></div>
-    <button class="reroll-btn" id="rerollBtn">🔄 シャッフル (-1G)</button>
+    <div class="row-between">
+      <button class="ghost-btn" id="rerollBtn">Reroll -1G</button>
+      <div class="eyebrow" id="synHint">Board — tap a unit to sell</div>
+    </div>
 
-    <div class="section-title">自分の盤面(配置済みユニットはタップで売却)</div>
-    <div class="board-cols" id="boardGrid"></div>
-    <div class="lane-caption">↑ 前列(敵に近い) ／ 下段 後列 ↓</div>
+    <div class="col-caption"><span>FRONT</span><span>MID</span><span>BACK</span></div>
+    <div class="board-rows" id="boardRows"></div>
 
     <div class="synergy-row" id="synergyRow"></div>
 
@@ -167,28 +248,30 @@
   <!-- BATTLE -->
   <div id="screen-battle" class="screen hidden">
     <div class="battle-header">
-      <span id="battleLivesP2">P2 ❤️❤️❤️</span>
-      <span class="vs-label">FIGHT!</span>
-      <span id="battleLivesP1">P1 ❤️❤️❤️</span>
+      <div class="side"><span class="rec-dot"></span><span>P2</span><div class="pips" id="battlePipsP2"></div></div>
+      <div class="vs-label">Tournament Cam</div>
+      <div class="side"><div class="pips" id="battlePipsP1"></div><span>P1</span></div>
     </div>
-    <div class="lanes-wrap" id="lanesWrap"></div>
+    <div class="arena" id="arena"></div>
   </div>
 
   <!-- ROUND RESULT -->
   <div id="screen-roundresult" class="screen hidden">
-    <h2 id="roundResultTitle">プレイヤー1の勝ち!</h2>
+    <div class="eyebrow">Round Result</div>
+    <div class="result-stencil" id="roundResultTitle">プレイヤー1の勝ち</div>
     <div class="lane-summary" id="laneSummary"></div>
     <div class="lives-display">
-      <div><div class="who">プレイヤー1</div><div id="rrLivesP1">❤️❤️❤️</div></div>
-      <div><div class="who">プレイヤー2</div><div id="rrLivesP2">❤️❤️❤️</div></div>
+      <div><div class="who">Player 1</div><div class="pips" id="rrPipsP1"></div></div>
+      <div><div class="who">Player 2</div><div class="pips" id="rrPipsP2"></div></div>
     </div>
     <button class="primary-btn" id="roundContinueBtn">次のラウンドへ</button>
   </div>
 
   <!-- MATCH END -->
   <div id="screen-matchend" class="screen hidden">
-    <h2 id="matchEndTitle">プレイヤー1の勝利!</h2>
-    <p id="matchEndSub">全ラウンド終了</p>
+    <div class="eyebrow">Match Complete</div>
+    <div class="result-stencil" id="matchEndTitle">プレイヤー1の勝利</div>
+    <p class="subtitle" id="matchEndSub">全3ラウンドで決着</p>
     <button class="primary-btn" id="matchRestartBtn">タイトルへ戻る</button>
   </div>
 
@@ -210,35 +293,22 @@
     { id:'sogeki',   name:'狙撃手',   cls:'archer',  cost:2, hp:6,  atk:5 }
   ];
   var CLASS_INFO = {
-    warrior:{ name:'戦士', short:'⚔' },
-    mage:{ name:'魔法使い', short:'🔮' },
-    archer:{ name:'弓使い', short:'🏹' }
+    warrior:{ name:'戦士', letter:'W' },
+    mage:{ name:'魔法使い', letter:'M' },
+    archer:{ name:'弓使い', letter:'A' }
   };
   function getDef(id){ for(var i=0;i<UNIT_DEFS.length;i++){ if(UNIT_DEFS[i].id===id) return UNIT_DEFS[i]; } return null; }
 
   var uidCounter = 1;
 
   // ---------- state ----------
-  var G = {
-    lives: 3,
-    round: 1,
-    players: null,          // {1:{gold,lives,board}, 2:{...}}
-    shop: null,             // [defId|null, defId|null, defId|null]
-    selectedOffer: null,    // index or null
-    activeDrafter: 1
-  };
+  var G = { lives:3, round:1, players:null, shop:null, selectedOffer:null, activeDrafter:1 };
 
   function emptyBoard(){ return [ [null,null,null], [null,null,null], [null,null,null] ]; }
   function newPlayerState(){ return { gold:0, lives:G.lives, board: emptyBoard() }; }
 
-  function screens(){
-    return ['title','handoff','draft','battle','roundresult','matchend'];
-  }
-  function show(name){
-    screens().forEach(function(s){
-      $('screen-'+s).classList.toggle('hidden', s !== name);
-    });
-  }
+  var SCREENS = ['title','handoff','draft','battle','roundresult','matchend'];
+  function show(name){ SCREENS.forEach(function(s){ $('screen-'+s).classList.toggle('hidden', s !== name); }); }
 
   function toast(msg){
     var t = $('toast');
@@ -247,21 +317,30 @@
     setTimeout(function(){ t.classList.remove('show'); }, 1100);
   }
 
-  function hearts(n, max){
-    var s = '';
-    for(var i=0;i<max;i++){ s += (i < n ? '❤️' : '🖤'); }
-    return s;
+  function renderPips(el, n, max, accentVar){
+    el.innerHTML = '';
+    el.style.setProperty('--accent', 'var(' + accentVar + ')');
+    for(var i=0;i<max;i++){
+      var p = document.createElement('div');
+      p.className = 'pip' + (i < n ? ' filled' : '');
+      el.appendChild(p);
+    }
   }
 
   // ---------- title ----------
-  var livesButtons = Array.prototype.slice.call(document.querySelectorAll('#livesSelect .opt-btn'));
-  livesButtons.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      livesButtons.forEach(function(b){ b.classList.remove('selected'); });
-      btn.classList.add('selected');
-      G.lives = parseInt(btn.getAttribute('data-l'), 10);
-    });
+  var livesSwitch = $('livesSwitch');
+  var livesButtons = Array.prototype.slice.call(livesSwitch.querySelectorAll('button'));
+  var livesThumb = livesSwitch.querySelector('.switch3-thumb');
+  function setLivesSelection(idx){
+    livesThumb.style.transform = 'translateX(' + (idx * 100) + '%)';
+    livesButtons.forEach(function(b,i){ b.classList.toggle('active', i === idx); });
+    G.lives = parseInt(livesButtons[idx].getAttribute('data-l'), 10);
+  }
+  livesButtons.forEach(function(btn, idx){
+    btn.addEventListener('click', function(){ setLivesSelection(idx); });
   });
+  setLivesSelection(1);
+
   $('titleStartBtn').addEventListener('click', startMatch);
 
   function startMatch(){
@@ -279,7 +358,11 @@
   }
 
   function goToHandoff(playerNum, cb){
+    $('handoffEyebrow').textContent = 'Round ' + G.round + ' — Turn Change';
     $('handoffTitle').textContent = 'プレイヤー' + playerNum + 'の番です';
+    var accent = playerNum === 1 ? '--p1' : '--p2';
+    $('handoffToIcon').style.setProperty('--accent', 'var(' + accent + ')');
+    $('handoffArrow').style.setProperty('--accent', 'var(' + accent + ')');
     var btn = $('handoffBtn');
     btn.onclick = function(){ cb(); };
     show('handoff');
@@ -324,19 +407,19 @@
 
   function renderDraft(){
     var p = activePlayer();
+    var accentVar = G.activeDrafter === 1 ? '--p1' : '--p2';
     $('draftTurnLabel').textContent = 'プレイヤー' + G.activeDrafter + 'の番 - ラウンド' + G.round;
-    $('draftGold').textContent = '💰' + p.gold;
-    $('draftLivesSelf').textContent = hearts(p.lives, G.lives);
-    $('draftLivesOp').textContent = '相手 ' + hearts(G.players[opponentNum()].lives, G.lives);
+    $('draftGold').textContent = p.gold;
+    renderPips($('draftPipsSelf'), p.lives, G.lives, accentVar);
+    renderPips($('draftPipsOp'), G.players[opponentNum()].lives, G.lives, G.activeDrafter === 1 ? '--p2' : '--p1');
 
-    // shop
     var shopRow = $('shopRow');
     shopRow.innerHTML = '';
     G.shop.forEach(function(defId, idx){
       var card = document.createElement('div');
       if(!defId){
         card.className = 'offer-card empty';
-        card.innerHTML = '<div class="offer-name">-</div>';
+        card.innerHTML = '<div class="offer-name">—</div>';
         shopRow.appendChild(card);
         return;
       }
@@ -344,46 +427,45 @@
       var affordable = p.gold >= def.cost;
       card.className = 'offer-card cls-' + def.cls + (idx === G.selectedOffer ? ' selected' : '') + (affordable ? '' : ' unaffordable');
       card.innerHTML =
+        '<div class="offer-badge">' + CLASS_INFO[def.cls].letter + '</div>' +
         '<div class="offer-name">' + def.name + '</div>' +
-        '<div class="offer-cls">' + CLASS_INFO[def.cls].short + CLASS_INFO[def.cls].name + '</div>' +
-        '<div class="offer-stats">HP' + def.hp + ' / ATK' + def.atk + '</div>' +
+        '<div class="offer-stats">HP' + def.hp + ' / AT' + def.atk + '</div>' +
         '<div class="offer-cost">' + def.cost + 'G</div>';
       card.addEventListener('click', function(){ onOfferClick(idx); });
       shopRow.appendChild(card);
     });
 
-    // reroll
-    var rerollBtn = $('rerollBtn');
-    rerollBtn.disabled = p.gold < 1;
+    $('rerollBtn').disabled = p.gold < 1;
 
-    // board
-    var boardGrid = $('boardGrid');
-    boardGrid.innerHTML = '';
+    var boardRows = $('boardRows');
+    boardRows.innerHTML = '';
     for(var lane=0; lane<3; lane++){
-      var col = document.createElement('div');
-      col.style.display = 'flex';
-      col.style.flexDirection = 'column';
-      col.style.gap = '6px';
+      var row = document.createElement('div');
+      row.className = 'board-row';
+      var label = document.createElement('div');
+      label.className = 'lane-label mono';
+      label.textContent = 'L' + (lane+1);
+      row.appendChild(label);
+      var slots = document.createElement('div');
+      slots.className = 'board-slots';
       for(var slot=0; slot<3; slot++){
         var unit = p.board[lane][slot];
         var cell = document.createElement('div');
-        cell.dataset.lane = lane;
-        cell.dataset.slot = slot;
         if(unit){
           var def = getDef(unit.defId);
           cell.className = 'board-slot filled cls-' + def.cls;
-          cell.innerHTML = '<div class="u-name">' + def.name + '</div><div class="u-stats">HP' + def.hp + '/ATK' + def.atk + '</div>';
+          cell.innerHTML = '<div class="u-name">' + def.name + '</div><div class="u-stats">' + def.hp + '/' + def.atk + '</div>';
         } else {
-          cell.className = 'board-slot empty';
+          cell.className = 'board-slot';
           cell.innerHTML = '<div class="slot-plus">+</div>';
         }
         cell.addEventListener('click', (function(l,s){ return function(){ onSlotClick(l,s); }; })(lane, slot));
-        col.appendChild(cell);
+        slots.appendChild(cell);
       }
-      boardGrid.appendChild(col);
+      row.appendChild(slots);
+      boardRows.appendChild(row);
     }
 
-    // synergy
     var counts = boardClassCounts(p.board);
     var synRow = $('synergyRow');
     synRow.innerHTML = '';
@@ -392,7 +474,7 @@
       var badge = document.createElement('div');
       badge.className = 'syn-badge' + (n >= 2 ? ' active' : '');
       if(n >= 2) badge.style.background = 'var(--' + cls + ')';
-      badge.textContent = CLASS_INFO[cls].short + CLASS_INFO[cls].name + ' x' + n + (n >= 2 ? ' (+30%ATK)' : '');
+      badge.textContent = CLASS_INFO[cls].letter + ' ' + CLASS_INFO[cls].name + ' x' + n + (n >= 2 ? ' +30%AT' : '');
       synRow.appendChild(badge);
     });
   }
@@ -402,15 +484,8 @@
     var defId = G.shop[idx];
     if(!defId) return;
     var def = getDef(defId);
-    if(G.selectedOffer === idx){
-      G.selectedOffer = null;
-      renderDraft();
-      return;
-    }
-    if(p.gold < def.cost){
-      toast('ゴールドが足りません');
-      return;
-    }
+    if(G.selectedOffer === idx){ G.selectedOffer = null; renderDraft(); return; }
+    if(p.gold < def.cost){ toast('ゴールドが足りません'); return; }
     G.selectedOffer = idx;
     renderDraft();
   }
@@ -420,13 +495,10 @@
     var occupied = p.board[lane][slot];
 
     if(G.selectedOffer !== null){
-      if(occupied){
-        toast('空いているマスを選んでください');
-        return;
-      }
+      if(occupied){ toast('空いているマスを選んでください'); return; }
       var defId = G.shop[G.selectedOffer];
       var def = getDef(defId);
-      if(p.gold < def.cost) return; // shouldn't happen, safety
+      if(p.gold < def.cost) return;
       p.gold -= def.cost;
       p.board[lane][slot] = { uid: uidCounter++, defId: defId };
       G.shop[G.selectedOffer] = null;
@@ -465,9 +537,7 @@
   function computeSynergyMult(board){
     var counts = boardClassCounts(board);
     var mult = {};
-    Object.keys(CLASS_INFO).forEach(function(cls){
-      mult[cls] = (counts[cls]||0) >= 2 ? 1.3 : 1;
-    });
+    Object.keys(CLASS_INFO).forEach(function(cls){ mult[cls] = (counts[cls]||0) >= 2 ? 1.3 : 1; });
     return mult;
   }
 
@@ -477,122 +547,220 @@
     return { uid: slot.uid, defId: def.id, name: def.name, cls: def.cls, hp: def.hp, maxHp: def.hp, atk: atk };
   }
 
-  function simulateBattle(p1board, p2board){
-    var p1Mult = computeSynergyMult(p1board);
-    var p2Mult = computeSynergyMult(p2board);
-    var lanes = [0,1,2].map(function(li){
-      return {
-        p1: p1board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p1Mult); }),
-        p2: p2board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p2Mult); })
-      };
-    });
-    var tickLog = [];
+  function simulateLane(p1Units, p2Units){
+    var q1 = p1Units.slice(), q2 = p2Units.slice();
+    var duels = [];
     var guard = 0;
-    while(guard < 60){
+    while(q1.length && q2.length && guard < 20){
       guard++;
-      var events = [];
-      lanes.forEach(function(L, li){
-        var a = L.p1[0], b = L.p2[0];
-        if(a && b){
-          var aHp = a.hp - b.atk;
-          var bHp = b.hp - a.atk;
-          a.hp = aHp; b.hp = bHp;
-          var aDied = aHp <= 0, bDied = bHp <= 0;
-          events.push({ lane: li, aHp: Math.max(0,aHp), bHp: Math.max(0,bHp), aDied: aDied, bDied: bDied });
-          if(aDied) L.p1.shift();
-          if(bDied) L.p2.shift();
-        }
-      });
-      if(events.length === 0) break;
-      tickLog.push(events);
+      var a = q1[0], b = q2[0];
+      var duel = { p1: a, p2: b, ticks: [] };
+      var tguard = 0;
+      while(a.hp > 0 && b.hp > 0 && tguard < 30){
+        tguard++;
+        var aHp = a.hp - b.atk, bHp = b.hp - a.atk;
+        a.hp = aHp; b.hp = bHp;
+        duel.ticks.push({ aHp: Math.max(0,aHp), bHp: Math.max(0,bHp) });
+      }
+      duels.push(duel);
+      if(a.hp <= 0) q1.shift();
+      if(b.hp <= 0) q2.shift();
     }
-    var laneResults = lanes.map(function(L){
-      if(L.p1.length && !L.p2.length) return 1;
-      if(L.p2.length && !L.p1.length) return 2;
-      return 0;
+    var laneResult = (q1.length && !q2.length) ? 1 : ((q2.length && !q1.length) ? 2 : 0);
+    return { duels: duels, laneResult: laneResult, p1Count: p1Units.length, p2Count: p2Units.length };
+  }
+
+  function simulateBattle(p1board, p2board){
+    var p1Mult = computeSynergyMult(p1board), p2Mult = computeSynergyMult(p2board);
+    var laneSims = [0,1,2].map(function(li){
+      var p1Units = p1board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p1Mult); });
+      var p2Units = p2board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p2Mult); });
+      return simulateLane(p1Units, p2Units);
     });
+    var laneResults = laneSims.map(function(s){ return s.laneResult; });
     var p1Wins = laneResults.filter(function(r){ return r===1; }).length;
     var p2Wins = laneResults.filter(function(r){ return r===2; }).length;
     var winner = p1Wins === p2Wins ? 0 : (p1Wins > p2Wins ? 1 : 2);
-    return { tickLog: tickLog, laneResults: laneResults, p1Wins: p1Wins, p2Wins: p2Wins, winner: winner, p1Mult: p1Mult, p2Mult: p2Mult };
+    return { laneSims: laneSims, laneResults: laneResults, p1Wins: p1Wins, p2Wins: p2Wins, winner: winner };
   }
 
-  // ---------- battle rendering ----------
-  function renderBattleLanes(renderLanes, hitLanes){
-    var wrap = $('lanesWrap');
-    wrap.innerHTML = '';
-    renderLanes.forEach(function(L, li){
-      var col = document.createElement('div');
-      col.className = 'lane-col';
+  // ---------- battle choreography (tournament camera) ----------
+  var SPAWN_P2 = 8, MEET_P2 = 44, MEET_P1 = 56, SPAWN_P1 = 92;
+  var laneStrips = [];
+  var laneDom = [];
 
-      var topSec = document.createElement('div');
-      topSec.className = 'lane-p2';
-      L.p2.forEach(function(u){ topSec.appendChild(renderBattleUnit(u, 'p2', hitLanes && hitLanes.some(function(e){return e.lane===li;}))); });
+  function buildArena(){
+    var arena = $('arena');
+    arena.innerHTML = '';
+    laneStrips = [];
+    laneDom = [ {}, {}, {} ];
+    for(var i=0;i<3;i++){
+      var strip = document.createElement('div');
+      strip.className = 'lane-strip';
+      strip.innerHTML =
+        '<div class="lane-head"><span class="lane-tag">LANE 0' + (i+1) + '</span><span class="lane-status" data-status>PENDING</span></div>' +
+        '<div class="lane-track"><div class="lane-meetline"></div></div>';
+      arena.appendChild(strip);
+      laneStrips.push(strip);
+    }
+  }
 
-      var divider = document.createElement('div');
-      divider.className = 'lane-divider';
-
-      var botSec = document.createElement('div');
-      botSec.className = 'lane-p1';
-      L.p1.forEach(function(u){ botSec.appendChild(renderBattleUnit(u, 'p1', hitLanes && hitLanes.some(function(e){return e.lane===li;}))); });
-
-      col.appendChild(topSec);
-      col.appendChild(divider);
-      col.appendChild(botSec);
-      wrap.appendChild(col);
+  function focusLane(idx){
+    laneStrips.forEach(function(strip, i){
+      strip.classList.toggle('focused', i === idx);
     });
   }
 
-  function renderBattleUnit(u, side, wasHit){
+  function unfocusAll(){
+    laneStrips.forEach(function(strip){ strip.classList.remove('focused'); });
+  }
+
+  function setLaneStatus(idx, text, cls){
+    var strip = laneStrips[idx];
+    var statusEl = strip.querySelector('[data-status]');
+    statusEl.textContent = text;
+    statusEl.className = 'lane-status' + (cls ? ' ' + cls : '');
+  }
+
+  function createChip(unit, side){
     var el = document.createElement('div');
-    el.className = 'b-unit side-' + side + ' cls-' + u.cls + (wasHit ? ' hit' : '');
-    el.innerHTML = '<div class="u-name">' + u.name + '</div><div class="u-hp">' + Math.max(0,u.hp) + '/' + u.maxHp + '</div>';
+    el.className = 'b-chip side-' + side + ' cls-' + unit.cls;
+    el.innerHTML =
+      '<span class="c-badge">' + CLASS_INFO[unit.cls].letter + '</span>' +
+      '<span class="c-name">' + unit.name + '</span>' +
+      '<span class="c-hp" data-hp>' + unit.hp + '</span>';
     return el;
+  }
+
+  function updateChipHp(el, hp){ if(!el) return; var h = el.querySelector('[data-hp]'); if(h) h.textContent = Math.max(0,hp); }
+  function flashChip(el){ if(!el) return; el.classList.remove('hit'); void el.offsetWidth; el.classList.add('hit'); }
+  function killChip(el){
+    if(!el) return;
+    el.classList.add('dying');
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 260);
+  }
+
+  function playTicks(duel, dom, cb){
+    var ti = 0;
+    function step(){
+      if(ti >= duel.ticks.length){ cb(); return; }
+      var t = duel.ticks[ti];
+      updateChipHp(dom.p1El, t.aHp);
+      updateChipHp(dom.p2El, t.bHp);
+      flashChip(dom.p1El); flashChip(dom.p2El);
+      setTimeout(function(){
+        ti += 1;
+        var isLast = ti >= duel.ticks.length;
+        if(isLast){
+          if(t.aHp <= 0){ killChip(dom.p1El); dom.p1El = null; dom.p1Unit = null; }
+          if(t.bHp <= 0){ killChip(dom.p2El); dom.p2El = null; dom.p2Unit = null; }
+        }
+        setTimeout(step, 210);
+      }, 330);
+    }
+    step();
+  }
+
+  function animateDuel(laneIndex, duel, cb){
+    var strip = laneStrips[laneIndex];
+    var track = strip.querySelector('.lane-track');
+    var dom = laneDom[laneIndex];
+    var needWalkP1 = dom.p1Unit !== duel.p1;
+    var needWalkP2 = dom.p2Unit !== duel.p2;
+
+    if(needWalkP1){
+      if(dom.p1El && dom.p1El.parentNode) dom.p1El.parentNode.removeChild(dom.p1El);
+      var el1 = createChip(duel.p1, 'p1');
+      el1.style.left = SPAWN_P1 + '%';
+      track.appendChild(el1);
+      dom.p1El = el1; dom.p1Unit = duel.p1;
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el1.style.left = MEET_P1 + '%'; }); });
+    }
+    if(needWalkP2){
+      if(dom.p2El && dom.p2El.parentNode) dom.p2El.parentNode.removeChild(dom.p2El);
+      var el2 = createChip(duel.p2, 'p2');
+      el2.style.left = SPAWN_P2 + '%';
+      track.appendChild(el2);
+      dom.p2El = el2; dom.p2Unit = duel.p2;
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el2.style.left = MEET_P2 + '%'; }); });
+    }
+
+    var walkDelay = (needWalkP1 || needWalkP2) ? 440 : 0;
+    setTimeout(function(){ playTicks(duel, dom, cb); }, walkDelay);
+  }
+
+  function playLaneDuels(laneIndex, laneSim, cb){
+    var strip = laneStrips[laneIndex];
+    var track = strip.querySelector('.lane-track');
+
+    if(laneSim.p1Count === 0 && laneSim.p2Count === 0){
+      var msg = document.createElement('div');
+      msg.className = 'lane-empty-msg';
+      msg.textContent = 'NO UNITS';
+      track.appendChild(msg);
+      setTimeout(cb, 500);
+      return;
+    }
+    if(laneSim.duels.length === 0){
+      var wmsg = document.createElement('div');
+      wmsg.className = 'lane-walkover';
+      wmsg.textContent = (laneSim.laneResult === 1 ? 'P1' : 'P2') + ' — WALKOVER';
+      track.appendChild(wmsg);
+      setTimeout(cb, 650);
+      return;
+    }
+    var di = 0;
+    function nextDuel(){
+      if(di >= laneSim.duels.length){ cb(); return; }
+      animateDuel(laneIndex, laneSim.duels[di], function(){
+        di += 1;
+        setTimeout(nextDuel, 180);
+      });
+    }
+    nextDuel();
+  }
+
+  function playBattleChoreo(sim, onDone){
+    buildArena();
+    var li = 0;
+    function nextLane(){
+      if(li >= 3){
+        unfocusAll();
+        setTimeout(function(){ onDone(sim); }, 750);
+        return;
+      }
+      var idx = li;
+      var laneSim = sim.laneSims[idx];
+      if(laneSim.p1Count === 0 && laneSim.p2Count === 0){
+        setLaneStatus(idx, 'EMPTY');
+        li += 1;
+        nextLane();
+        return;
+      }
+      focusLane(idx);
+      setLaneStatus(idx, 'LIVE');
+      setTimeout(function(){
+        playLaneDuels(idx, laneSim, function(){
+          var r = sim.laneResults[idx];
+          setLaneStatus(idx, r === 0 ? 'DRAW' : ('P' + r), r === 1 ? 'win-p1' : (r === 2 ? 'win-p2' : ''));
+          var strip = laneStrips[idx];
+          strip.classList.add('resolved');
+          strip.classList.remove('focused');
+          li += 1;
+          setTimeout(nextLane, 350);
+        });
+      }, 400);
+    }
+    nextLane();
   }
 
   function goToBattle(){
     var p1 = G.players[1], p2 = G.players[2];
-    $('battleLivesP2').textContent = 'P2 ' + hearts(p2.lives, G.lives);
-    $('battleLivesP1').textContent = 'P1 ' + hearts(p1.lives, G.lives);
+    renderPips($('battlePipsP2'), p2.lives, G.lives, '--p2');
+    renderPips($('battlePipsP1'), p1.lives, G.lives, '--p1');
     show('battle');
-    playBattle(p1.board, p2.board, onBattleDone);
-  }
-
-  function playBattle(p1board, p2board, onDone){
-    var sim = simulateBattle(p1board, p2board);
-    var renderLanes = [0,1,2].map(function(li){
-      return {
-        p1: p1board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, sim.p1Mult); }),
-        p2: p2board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, sim.p2Mult); })
-      };
-    });
-    renderBattleLanes(renderLanes);
-
-    var i = 0;
-    function step(){
-      if(i >= sim.tickLog.length){
-        setTimeout(function(){ onDone(sim); }, 700);
-        return;
-      }
-      var events = sim.tickLog[i];
-      events.forEach(function(ev){
-        var L = renderLanes[ev.lane];
-        if(L.p1[0]) L.p1[0].hp = ev.aHp;
-        if(L.p2[0]) L.p2[0].hp = ev.bHp;
-      });
-      renderBattleLanes(renderLanes, events);
-      setTimeout(function(){
-        events.forEach(function(ev){
-          var L = renderLanes[ev.lane];
-          if(ev.aDied) L.p1.shift();
-          if(ev.bDied) L.p2.shift();
-        });
-        i += 1;
-        renderBattleLanes(renderLanes);
-        setTimeout(step, 300);
-      }, 400);
-    }
-    setTimeout(step, 500);
+    var sim = simulateBattle(p1.board, p2.board);
+    playBattleChoreo(sim, onBattleDone);
   }
 
   // ---------- round result / match end ----------
@@ -604,24 +772,24 @@
     showRoundResult(sim);
   }
 
-  function laneMark(r){ return r === 0 ? '△' : (r === 1 ? 'P1' : 'P2'); }
+  function laneMark(r){ return r === 0 ? 'DRAW' : ('P' + r); }
 
   function showRoundResult(sim){
-    var title;
-    if(sim.winner === 0) title = 'この対戦は引き分け';
-    else title = 'プレイヤー' + sim.winner + 'の勝ち! (' + sim.p1Wins + '-' + sim.p2Wins + ')';
-    $('roundResultTitle').textContent = title;
+    var titleEl = $('roundResultTitle');
+    titleEl.className = 'result-stencil' + (sim.winner ? ' p' + sim.winner : '');
+    if(sim.winner === 0) titleEl.textContent = 'この対戦は引き分け';
+    else titleEl.textContent = 'プレイヤー' + sim.winner + 'の勝ち (' + sim.p1Wins + '-' + sim.p2Wins + ')';
 
     var summary = $('laneSummary');
     summary.innerHTML = '';
     sim.laneResults.forEach(function(r, idx){
       var span = document.createElement('span');
-      span.textContent = 'レーン' + (idx+1) + ':' + laneMark(r);
+      span.innerHTML = 'L' + (idx+1) + ':<b>' + laneMark(r) + '</b>';
       summary.appendChild(span);
     });
 
-    $('rrLivesP1').textContent = hearts(G.players[1].lives, G.lives);
-    $('rrLivesP2').textContent = hearts(G.players[2].lives, G.lives);
+    renderPips($('rrPipsP1'), G.players[1].lives, G.lives, '--p1');
+    renderPips($('rrPipsP2'), G.players[2].lives, G.lives, '--p2');
 
     show('roundresult');
   }
@@ -637,14 +805,14 @@
 
   function showMatchEnd(){
     var winnerNum = G.players[1].lives > 0 ? 1 : 2;
-    $('matchEndTitle').textContent = 'プレイヤー' + winnerNum + 'の勝利!';
+    var titleEl = $('matchEndTitle');
+    titleEl.className = 'result-stencil p' + winnerNum;
+    titleEl.textContent = 'プレイヤー' + winnerNum + 'の勝利';
     $('matchEndSub').textContent = '全' + G.round + 'ラウンドで決着';
     show('matchend');
   }
 
-  $('matchRestartBtn').addEventListener('click', function(){
-    show('title');
-  });
+  $('matchRestartBtn').addEventListener('click', function(){ show('title'); });
 
   show('title');
 })();
