@@ -140,21 +140,52 @@
   @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
   .vs-label{ font-family:var(--font-mono); font-weight:700; letter-spacing:.14em; color:var(--muted); font-size:.68rem; }
 
-  .arena{ display:flex; flex-direction:column; gap:5px; flex:1; min-height:0; }
-  .lane-strip{ background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; overflow:hidden; display:flex; flex-direction:column; flex:1 1 0; min-height:0; transition:box-shadow .3s ease; }
+  .arena{ position:relative; flex:1; min-height:0; }
+  .lane-strip{ position:absolute; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; overflow:hidden; display:flex; flex-direction:column;
+    transition:top .38s cubic-bezier(.3,.7,.3,1), left .38s cubic-bezier(.3,.7,.3,1), width .38s cubic-bezier(.3,.7,.3,1), height .38s cubic-bezier(.3,.7,.3,1), box-shadow .3s ease, opacity .3s ease; }
   .lane-strip.spotlight{ box-shadow:0 0 0 2px var(--ink); }
   .lane-strip.resolved{ opacity:.82; }
+  .lane-strip.role-ov0{ top:0; left:0; width:100%; height:calc(33.333% - 4px); }
+  .lane-strip.role-ov1{ top:calc(33.333% + 2px); left:0; width:100%; height:calc(33.333% - 4px); }
+  .lane-strip.role-ov2{ top:calc(66.666% + 4px); left:0; width:100%; height:calc(33.333% - 4px); }
+  .lane-strip.role-main{ top:0; left:0; width:100%; height:100%; z-index:2; }
+  .lane-strip.role-pip{ top:auto; left:auto; right:6px; bottom:6px; width:38%; height:34%; z-index:4; box-shadow:0 3px 14px rgba(0,0,0,.4); }
+  .lane-strip.role-hidden{ top:auto; left:auto; right:6px; bottom:6px; width:38%; height:34%; opacity:0; pointer-events:none; z-index:1; }
   .lane-head{ display:flex; align-items:center; justify-content:space-between; padding:5px 9px; font-family:var(--font-mono); font-size:.6rem; letter-spacing:.06em; flex-shrink:0; }
+  .lane-strip.mini .lane-head{ padding:3px 5px; font-size:.46rem; }
   .lane-tag{ color:var(--muted); display:flex; align-items:center; gap:6px; }
   .terrain-chip{ padding:1px 5px; border-radius:2px; color:var(--panel-raised); font-weight:700; letter-spacing:.04em; }
+  .lane-strip.mini .terrain-chip{ padding:0 3px; }
   .terrain-chip.cls-warrior{ background:var(--warrior); }
   .terrain-chip.cls-mage{ background:var(--mage); }
   .terrain-chip.cls-archer{ background:var(--archer); }
   .lane-status{ font-weight:700; }
   .lane-status.win-p1{ color:var(--p1); }
   .lane-status.win-p2{ color:var(--p2); }
-  .lane-track{ position:relative; flex:1; min-height:64px; background-image:repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 12.5%); background-position:6px 0; }
+  .lane-track{ position:relative; flex:1; min-height:0; background-image:repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 12.5%); background-position:6px 0; }
   .lane-meetline{ position:absolute; left:50%; top:8%; bottom:8%; width:1px; background:var(--muted); opacity:.5; }
+
+  .lane-strip.mini .b-chip{ padding:2px 4px; min-width:26px; gap:0; }
+  .lane-strip.mini .c-badge{ width:9px; height:9px; font-size:.4rem; }
+  .lane-strip.mini .c-name{ font-size:.42rem; }
+  .lane-strip.mini .c-hp{ font-size:.46rem; }
+
+  #pipStatus{ position:absolute; right:6px; bottom:6px; width:38%; height:34%; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; padding:6px 7px; display:flex; flex-direction:column; justify-content:center; gap:4px; z-index:3;
+    transition:opacity .3s ease; }
+  #pipStatus.hidden{ opacity:0; pointer-events:none; }
+  .pip-row{ display:flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:.52rem; }
+  .pip-row .dot{ width:6px; height:6px; border-radius:1px; flex-shrink:0; }
+  .pip-row .pr-status{ margin-left:auto; color:var(--muted); font-weight:700; }
+  .pip-row .pr-status.win-p1{ color:var(--p1); }
+  .pip-row .pr-status.win-p2{ color:var(--p2); }
+  .pip-label{ font-family:var(--font-mono); font-size:.46rem; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; }
+
+  #killFeed{ position:absolute; top:6px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; gap:4px; z-index:5; align-items:center; pointer-events:none; }
+  .kill-row{ background:var(--ink); color:var(--panel); font-family:var(--font-mono); font-size:.62rem; font-weight:700; padding:5px 12px; border-radius:3px; white-space:nowrap; opacity:0; transform:translateY(-10px); animation:killin .3s ease-out forwards, killout .3s ease-in forwards 2.1s; }
+  .kill-row .k-p1{ color:var(--p1); }
+  .kill-row .k-p2{ color:var(--p2); }
+  @keyframes killin{ to{ opacity:1; transform:translateY(0); } }
+  @keyframes killout{ to{ opacity:0; transform:translateY(-10px); } }
 
   .b-chip{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:1px; padding:4px 6px; min-width:40px; border-radius:3px; background:var(--panel); border:1.5px solid var(--line); transition:left .42s cubic-bezier(.3,.7,.3,1); font-family:var(--font-mono); text-align:center; }
   .b-chip.side-p1{ border-color:var(--p1); }
@@ -195,6 +226,21 @@
   .lives-display .who{ font-family:var(--font-mono); font-size:.62rem; letter-spacing:.08em; color:var(--muted); margin-bottom:5px; text-transform:uppercase; }
   .lives-display .pips{ justify-content:center; }
   #screen-matchend .result-stencil{ font-size:1.75rem; }
+
+  /* ---------- landscape ---------- */
+  @media (orientation: landscape) and (max-height: 520px){
+    #screen-title, #screen-handoff, #screen-roundresult, #screen-matchend{ gap:10px; padding:14px 26px; }
+    #screen-title h1{ font-size:1.4rem; }
+    #screen-title p{ font-size:.76rem; line-height:1.5; max-width:420px; }
+    .handoff-diagram{ transform:scale(.82); }
+    #screen-handoff p{ max-width:380px; }
+    #screen-draft{ padding:8px 18px 12px; gap:6px; max-width:640px; margin:0 auto; }
+    .board-rows{ gap:6px; }
+    .board-slot{ aspect-ratio:1.7/1; }
+    .lane-label{ padding-top:2px; }
+    .col-caption{ display:none; }
+    .lives-display{ gap:40px; }
+  }
 </style>
 </head>
 <body>
@@ -266,7 +312,13 @@
       <div class="vs-label">Tournament Cam</div>
       <div class="side"><div class="pips" id="battlePipsP1"></div><span>P1</span></div>
     </div>
-    <div class="arena" id="arena"></div>
+    <div class="arena" id="arena">
+      <div id="pipStatus" class="hidden">
+        <div class="pip-label">Map</div>
+        <div id="pipStatusRows"></div>
+      </div>
+      <div id="killFeed"></div>
+    </div>
   </div>
 
   <!-- ROUND RESULT -->
@@ -635,31 +687,96 @@
     return { laneSims: laneSims, laneResults: laneResults, p1Wins: p1Wins, p2Wins: p2Wins, winner: winner };
   }
 
-  // ---------- battle choreography (all 3 lanes push simultaneously) ----------
+  // ---------- battle choreography: single camera (overview -> main + pip) ----------
   var SPAWN_P2 = 8, SPAWN_P1 = 92;
   var NEXUS_PUSH_P1 = 14, NEXUS_PUSH_P2 = 86;
   var laneStrips = [];
   var laneDom = [];
   var laneMeetPoints = [];
+  var camera = { main: null, pip: null, queue: [] };
+  var pipStatusEl = $('pipStatus');
+  var pipStatusRowsEl = $('pipStatusRows');
+  var killFeedEl = $('killFeed');
 
   function buildArena(){
     var arena = $('arena');
-    arena.innerHTML = '';
+    Array.prototype.slice.call(arena.querySelectorAll('.lane-strip')).forEach(function(el){ el.remove(); });
+    killFeedEl.innerHTML = '';
+    camera = { main: null, pip: null, queue: [] };
     laneStrips = [];
     laneDom = [ {}, {}, {} ];
     laneMeetPoints = [];
     for(var i=0;i<3;i++){
       var terrainCls = G.laneTerrain[i];
       var strip = document.createElement('div');
-      strip.className = 'lane-strip';
+      strip.className = 'lane-strip role-ov' + i;
       strip.innerHTML =
-        '<div class="lane-head"><span class="lane-tag">LANE 0' + (i+1) + ' <span class="terrain-chip cls-' + terrainCls + '">' + TERRAIN_INFO[terrainCls].name + '</span></span><span class="lane-status" data-status>LIVE</span></div>' +
+        '<div class="lane-head"><span class="lane-tag">LANE 0' + (i+1) + ' <span class="terrain-chip cls-' + terrainCls + '">' + TERRAIN_INFO[terrainCls].name + '</span></span><span class="lane-status" data-status>PENDING</span></div>' +
         '<div class="lane-track"><div class="lane-meetline"></div></div>';
       arena.appendChild(strip);
       laneStrips.push(strip);
       var center = 50 + (Math.random()*26 - 13);
       laneMeetPoints.push({ p1: center + 6, p2: center - 6 });
     }
+    applyCameraRoles();
+  }
+
+  function applyCameraRoles(){
+    laneStrips.forEach(function(strip, i){
+      strip.classList.remove('role-ov0','role-ov1','role-ov2','role-main','role-pip','role-hidden','mini');
+      if(i === camera.main){
+        strip.classList.add('role-main');
+      } else if(i === camera.pip){
+        strip.classList.add('role-pip', 'mini');
+      } else if(camera.main === null){
+        strip.classList.add('role-ov' + i);
+      } else {
+        strip.classList.add('role-hidden');
+      }
+    });
+    var showStatus = camera.main !== null && camera.pip === null;
+    pipStatusEl.classList.toggle('hidden', !showStatus);
+    if(showStatus) renderPipStatus();
+  }
+
+  function renderPipStatus(){
+    pipStatusRowsEl.innerHTML = '';
+    laneStrips.forEach(function(strip, i){
+      var st = strip.querySelector('[data-status]');
+      var row = document.createElement('div');
+      row.className = 'pip-row';
+      row.innerHTML =
+        '<span class="dot cls-' + G.laneTerrain[i] + '" style="background:var(--' + G.laneTerrain[i] + ')"></span>' +
+        '<span>L' + (i+1) + '</span>' +
+        '<span class="pr-status ' + st.className.replace('lane-status','').trim() + '">' + st.textContent + '</span>';
+      pipStatusRowsEl.appendChild(row);
+    });
+  }
+
+  function claimSlot(idx){
+    if(camera.main === idx || camera.pip === idx || camera.queue.indexOf(idx) !== -1) return;
+    if(camera.main === null){
+      camera.main = idx;
+    } else if(camera.pip === null){
+      camera.pip = idx;
+    } else {
+      camera.queue.push(idx);
+    }
+    applyCameraRoles();
+  }
+
+  function releaseSlot(idx){
+    if(camera.main === idx){
+      camera.main = null;
+      if(camera.pip !== null){ camera.main = camera.pip; camera.pip = null; }
+    } else if(camera.pip === idx){
+      camera.pip = null;
+    }
+    if(camera.queue.length){
+      if(camera.main === null){ camera.main = camera.queue.shift(); }
+      else if(camera.pip === null){ camera.pip = camera.queue.shift(); }
+    }
+    applyCameraRoles();
   }
 
   function spotlightLane(idx){
@@ -673,6 +790,19 @@
     var statusEl = strip.querySelector('[data-status]');
     statusEl.textContent = text;
     statusEl.className = 'lane-status' + (cls ? ' ' + cls : '');
+    if(camera.main !== null && camera.pip === null) renderPipStatus();
+  }
+
+  function pushKillFeed(killerSide, killerName, victimSide, victimName){
+    var row = document.createElement('div');
+    row.className = 'kill-row';
+    if(killerSide){
+      row.innerHTML = '<span class="k-' + killerSide + '">' + killerName + '</span> が <span class="k-' + victimSide + '">' + victimName + '</span> を撃破';
+    } else {
+      row.innerHTML = '相打ち: <span class="k-p1">' + killerName + '</span> ✕ <span class="k-p2">' + victimName + '</span>';
+    }
+    killFeedEl.appendChild(row);
+    setTimeout(function(){ if(row.parentNode) row.parentNode.removeChild(row); }, 2450);
   }
 
   function createChip(unit, side){
@@ -719,8 +849,13 @@
         ti += 1;
         var isLast = ti >= duel.ticks.length;
         if(isLast){
-          if(t.aHp <= 0){ killChip(dom.p1El); dom.p1El = null; dom.p1Unit = null; spotlightLane(laneIndex); }
-          if(t.bHp <= 0){ killChip(dom.p2El); dom.p2El = null; dom.p2Unit = null; spotlightLane(laneIndex); }
+          var p1Died = t.aHp <= 0, p2Died = t.bHp <= 0;
+          var p1Name = dom.p1Unit ? dom.p1Unit.name : '', p2Name = dom.p2Unit ? dom.p2Unit.name : '';
+          if(p1Died && p2Died) pushKillFeed(null, p1Name, null, p2Name);
+          else if(p1Died) pushKillFeed('p2', p2Name, 'p1', p1Name);
+          else if(p2Died) pushKillFeed('p1', p1Name, 'p2', p2Name);
+          if(p1Died){ killChip(dom.p1El); dom.p1El = null; dom.p1Unit = null; spotlightLane(laneIndex); }
+          if(p2Died){ killChip(dom.p2El); dom.p2El = null; dom.p2Unit = null; spotlightLane(laneIndex); }
         }
         setTimeout(step, 210);
       }, 330);
@@ -770,6 +905,8 @@
       cb();
       return;
     }
+    claimSlot(laneIndex);
+    setLaneStatus(laneIndex, 'LIVE');
     if(laneSim.duels.length === 0){
       var wmsg = document.createElement('div');
       wmsg.className = 'lane-walkover';
@@ -813,12 +950,17 @@
         laneFinished();
         return;
       }
-      playLaneDuels(idx, laneSim, function(){
-        var r = sim.laneResults[idx];
-        setLaneStatus(idx, r === 0 ? 'DRAW' : ('P' + r), r === 1 ? 'win-p1' : (r === 2 ? 'win-p2' : ''));
-        laneStrips[idx].classList.add('resolved');
-        laneFinished();
-      });
+      setTimeout(function(){
+        playLaneDuels(idx, laneSim, function(){
+          var r = sim.laneResults[idx];
+          setLaneStatus(idx, r === 0 ? 'DRAW' : ('P' + r), r === 1 ? 'win-p1' : (r === 2 ? 'win-p2' : ''));
+          laneStrips[idx].classList.add('resolved');
+          setTimeout(function(){
+            releaseSlot(idx);
+            laneFinished();
+          }, 550);
+        });
+      }, Math.random() * 260);
     });
   }
 
