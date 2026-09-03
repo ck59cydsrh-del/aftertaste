@@ -107,10 +107,15 @@
 
   .row-between{ display:flex; align-items:center; justify-content:space-between; }
 
-  .board-rows{ display:flex; flex-direction:column; gap:6px; }
-  .board-row{ display:flex; align-items:center; gap:6px; }
-  .lane-label{ font-family:var(--font-mono); font-size:.62rem; color:var(--muted); width:20px; flex-shrink:0; text-align:center; }
-  .board-slots{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; flex:1; }
+  .board-rows{ display:flex; flex-direction:column; gap:10px; }
+  .board-row{ display:flex; align-items:flex-start; gap:6px; }
+  .lane-label{ font-family:var(--font-mono); font-size:.62rem; color:var(--muted); width:20px; flex-shrink:0; text-align:center; padding-top:8px; }
+  .lane-body{ display:flex; flex-direction:column; gap:5px; flex:1; }
+  .terrain-tag{ align-self:flex-start; font-family:var(--font-mono); font-size:.58rem; letter-spacing:.05em; padding:2px 7px; border-radius:2px; color:var(--panel-raised); font-weight:700; }
+  .terrain-tag.cls-warrior{ background:var(--warrior); }
+  .terrain-tag.cls-mage{ background:var(--mage); }
+  .terrain-tag.cls-archer{ background:var(--archer); }
+  .board-slots{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
   .board-slot{ aspect-ratio:1.15/1; background:var(--panel-raised); border:1.5px dashed var(--line); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:2px; }
   .board-slot.filled{ border-style:solid; }
   .board-slot .slot-plus{ color:var(--muted); font-family:var(--font-mono); font-size:1rem; }
@@ -136,29 +141,38 @@
   .vs-label{ font-family:var(--font-mono); font-weight:700; letter-spacing:.14em; color:var(--muted); font-size:.68rem; }
 
   .arena{ display:flex; flex-direction:column; gap:5px; flex:1; min-height:0; }
-  .lane-strip{ background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; overflow:hidden; display:flex; flex-direction:column; flex-grow:1; transition:flex-grow .4s cubic-bezier(.3,.7,.3,1); }
-  .lane-strip.focused{ flex-grow:7; border-color:var(--ink); }
-  .lane-strip.resolved:not(.focused){ opacity:.75; }
-  .lane-head{ display:flex; align-items:center; justify-content:space-between; padding:6px 9px; font-family:var(--font-mono); font-size:.62rem; letter-spacing:.08em; flex-shrink:0; }
-  .lane-tag{ color:var(--muted); }
+  .lane-strip{ background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; overflow:hidden; display:flex; flex-direction:column; flex:1 1 0; min-height:0; transition:box-shadow .3s ease; }
+  .lane-strip.spotlight{ box-shadow:0 0 0 2px var(--ink); }
+  .lane-strip.resolved{ opacity:.82; }
+  .lane-head{ display:flex; align-items:center; justify-content:space-between; padding:5px 9px; font-family:var(--font-mono); font-size:.6rem; letter-spacing:.06em; flex-shrink:0; }
+  .lane-tag{ color:var(--muted); display:flex; align-items:center; gap:6px; }
+  .terrain-chip{ padding:1px 5px; border-radius:2px; color:var(--panel-raised); font-weight:700; letter-spacing:.04em; }
+  .terrain-chip.cls-warrior{ background:var(--warrior); }
+  .terrain-chip.cls-mage{ background:var(--mage); }
+  .terrain-chip.cls-archer{ background:var(--archer); }
   .lane-status{ font-weight:700; }
   .lane-status.win-p1{ color:var(--p1); }
   .lane-status.win-p2{ color:var(--p2); }
-  .lane-track{ position:relative; flex:1; min-height:0; display:none; background-image:repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 12.5%); background-position:6px 0; opacity:1; }
-  .lane-strip.focused .lane-track{ display:block; }
+  .lane-track{ position:relative; flex:1; min-height:64px; background-image:repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 12.5%); background-position:6px 0; }
   .lane-meetline{ position:absolute; left:50%; top:8%; bottom:8%; width:1px; background:var(--muted); opacity:.5; }
 
-  .b-chip{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:1px; padding:5px 7px; min-width:46px; border-radius:3px; background:var(--panel); border:1.5px solid var(--line); transition:left .42s cubic-bezier(.3,.7,.3,1); font-family:var(--font-mono); text-align:center; }
+  .b-chip{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:1px; padding:4px 6px; min-width:40px; border-radius:3px; background:var(--panel); border:1.5px solid var(--line); transition:left .42s cubic-bezier(.3,.7,.3,1); font-family:var(--font-mono); text-align:center; }
   .b-chip.side-p1{ border-color:var(--p1); }
   .b-chip.side-p2{ border-color:var(--p2); }
-  .b-chip .c-badge{ width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.56rem; border-radius:2px; color:var(--panel-raised); }
-  .b-chip .c-name{ font-size:.6rem; font-weight:700; white-space:nowrap; }
-  .b-chip .c-hp{ font-size:.66rem; font-weight:700; }
+  .b-chip.terrain-boosted{ box-shadow:0 0 0 1.5px var(--gold) inset; }
+  .b-chip .c-badge{ width:12px; height:12px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.52rem; border-radius:2px; color:var(--panel-raised); }
+  .b-chip .c-name{ font-size:.56rem; font-weight:700; white-space:nowrap; }
+  .b-chip .c-hp{ font-size:.62rem; font-weight:700; }
   .b-chip.hit{ animation:chiphit .34s ease-out; }
   @keyframes chiphit{ 0%{ filter:brightness(1.9); } 100%{ filter:brightness(1); } }
+  .b-chip.crit{ animation:critflash .48s ease-out; }
+  @keyframes critflash{ 0%{ filter:brightness(2.6); box-shadow:0 0 0 2px var(--gold); } 100%{ filter:brightness(1); box-shadow:0 0 0 0 transparent; } }
   .b-chip.dying{ transition:opacity .24s ease-in, left .24s; opacity:0; }
 
-  .lane-empty-msg, .lane-walkover{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:.68rem; color:var(--muted); letter-spacing:.06em; }
+  .crit-pop{ position:absolute; top:50%; font-family:var(--font-mono); font-weight:700; font-size:.58rem; color:var(--gold); pointer-events:none; transform:translate(-50%,-8px); animation:critpop .55s ease-out forwards; z-index:3; }
+  @keyframes critpop{ 0%{ opacity:1; transform:translate(-50%,-8px); } 100%{ opacity:0; transform:translate(-50%,-30px); } }
+
+  .lane-empty-msg, .lane-walkover{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:.66rem; color:var(--muted); letter-spacing:.06em; }
 
   .cls-warrior .c-badge, .board-slot.cls-warrior, .offer-card.cls-warrior .offer-badge{ background:var(--warrior); }
   .cls-mage .c-badge, .board-slot.cls-mage, .offer-card.cls-mage .offer-badge{ background:var(--mage); }
@@ -297,12 +311,28 @@
     mage:{ name:'魔法使い', letter:'M' },
     archer:{ name:'弓使い', letter:'A' }
   };
+  var TERRAIN_INFO = {
+    warrior:{ name:'FORTRESS', jp:'要塞' },
+    mage:{ name:'LEYLINE', jp:'魔脈' },
+    archer:{ name:'HIGHGROUND', jp:'高地' }
+  };
+  var TERRAIN_HP_MULT = 1.25;
+  var CRIT_CHANCE = 0.18;
+  var CRIT_MULT = 1.6;
   function getDef(id){ for(var i=0;i<UNIT_DEFS.length;i++){ if(UNIT_DEFS[i].id===id) return UNIT_DEFS[i]; } return null; }
+  function shuffle3(arr){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t=a[i]; a[i]=a[j]; a[j]=t;
+    }
+    return a;
+  }
 
   var uidCounter = 1;
 
   // ---------- state ----------
-  var G = { lives:3, round:1, players:null, shop:null, selectedOffer:null, activeDrafter:1 };
+  var G = { lives:3, round:1, players:null, shop:null, selectedOffer:null, activeDrafter:1, laneTerrain:['warrior','mage','archer'] };
 
   function emptyBoard(){ return [ [null,null,null], [null,null,null], [null,null,null] ]; }
   function newPlayerState(){ return { gold:0, lives:G.lives, board: emptyBoard() }; }
@@ -354,6 +384,7 @@
     var gain = 3 + G.round;
     G.players[1].gold += gain;
     G.players[2].gold += gain;
+    G.laneTerrain = shuffle3(['warrior','mage','archer']);
     goToHandoff(1, function(){ startDraft(1); });
   }
 
@@ -446,6 +477,16 @@
       label.className = 'lane-label mono';
       label.textContent = 'L' + (lane+1);
       row.appendChild(label);
+
+      var body = document.createElement('div');
+      body.className = 'lane-body';
+
+      var terrainCls = G.laneTerrain[lane];
+      var terrain = document.createElement('div');
+      terrain.className = 'terrain-tag cls-' + terrainCls;
+      terrain.textContent = TERRAIN_INFO[terrainCls].name + ' — ' + CLASS_INFO[terrainCls].name + '+25%HP';
+      body.appendChild(terrain);
+
       var slots = document.createElement('div');
       slots.className = 'board-slots';
       for(var slot=0; slot<3; slot++){
@@ -462,7 +503,8 @@
         cell.addEventListener('click', (function(l,s){ return function(){ onSlotClick(l,s); }; })(lane, slot));
         slots.appendChild(cell);
       }
-      row.appendChild(slots);
+      body.appendChild(slots);
+      row.appendChild(body);
       boardRows.appendChild(row);
     }
 
@@ -541,10 +583,17 @@
     return mult;
   }
 
-  function makeBattleUnit(slot, mult){
+  function makeBattleUnit(slot, mult, terrainCls){
     var def = getDef(slot.defId);
     var atk = Math.max(1, Math.round(def.atk * mult[def.cls]));
-    return { uid: slot.uid, defId: def.id, name: def.name, cls: def.cls, hp: def.hp, maxHp: def.hp, atk: atk };
+    var boosted = def.cls === terrainCls;
+    var hp = boosted ? Math.max(1, Math.round(def.hp * TERRAIN_HP_MULT)) : def.hp;
+    return { uid: slot.uid, defId: def.id, name: def.name, cls: def.cls, hp: hp, maxHp: hp, atk: atk, terrainBoosted: boosted };
+  }
+
+  function rollDamage(atk){
+    var isCrit = Math.random() < CRIT_CHANCE;
+    return { dmg: isCrit ? Math.round(atk * CRIT_MULT) : atk, crit: isCrit };
   }
 
   function simulateLane(p1Units, p2Units){
@@ -558,9 +607,10 @@
       var tguard = 0;
       while(a.hp > 0 && b.hp > 0 && tguard < 30){
         tguard++;
-        var aHp = a.hp - b.atk, bHp = b.hp - a.atk;
+        var dmgToA = rollDamage(b.atk), dmgToB = rollDamage(a.atk);
+        var aHp = a.hp - dmgToA.dmg, bHp = b.hp - dmgToB.dmg;
         a.hp = aHp; b.hp = bHp;
-        duel.ticks.push({ aHp: Math.max(0,aHp), bHp: Math.max(0,bHp) });
+        duel.ticks.push({ aHp: Math.max(0,aHp), bHp: Math.max(0,bHp), aCrit: dmgToA.crit, bCrit: dmgToB.crit });
       }
       duels.push(duel);
       if(a.hp <= 0) q1.shift();
@@ -573,8 +623,9 @@
   function simulateBattle(p1board, p2board){
     var p1Mult = computeSynergyMult(p1board), p2Mult = computeSynergyMult(p2board);
     var laneSims = [0,1,2].map(function(li){
-      var p1Units = p1board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p1Mult); });
-      var p2Units = p2board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p2Mult); });
+      var terrainCls = G.laneTerrain[li];
+      var p1Units = p1board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p1Mult, terrainCls); });
+      var p2Units = p2board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p2Mult, terrainCls); });
       return simulateLane(p1Units, p2Units);
     });
     var laneResults = laneSims.map(function(s){ return s.laneResult; });
@@ -584,35 +635,37 @@
     return { laneSims: laneSims, laneResults: laneResults, p1Wins: p1Wins, p2Wins: p2Wins, winner: winner };
   }
 
-  // ---------- battle choreography (tournament camera) ----------
-  var SPAWN_P2 = 8, MEET_P2 = 44, MEET_P1 = 56, SPAWN_P1 = 92;
+  // ---------- battle choreography (all 3 lanes push simultaneously) ----------
+  var SPAWN_P2 = 8, SPAWN_P1 = 92;
+  var NEXUS_PUSH_P1 = 14, NEXUS_PUSH_P2 = 86;
   var laneStrips = [];
   var laneDom = [];
+  var laneMeetPoints = [];
 
   function buildArena(){
     var arena = $('arena');
     arena.innerHTML = '';
     laneStrips = [];
     laneDom = [ {}, {}, {} ];
+    laneMeetPoints = [];
     for(var i=0;i<3;i++){
+      var terrainCls = G.laneTerrain[i];
       var strip = document.createElement('div');
       strip.className = 'lane-strip';
       strip.innerHTML =
-        '<div class="lane-head"><span class="lane-tag">LANE 0' + (i+1) + '</span><span class="lane-status" data-status>PENDING</span></div>' +
+        '<div class="lane-head"><span class="lane-tag">LANE 0' + (i+1) + ' <span class="terrain-chip cls-' + terrainCls + '">' + TERRAIN_INFO[terrainCls].name + '</span></span><span class="lane-status" data-status>LIVE</span></div>' +
         '<div class="lane-track"><div class="lane-meetline"></div></div>';
       arena.appendChild(strip);
       laneStrips.push(strip);
+      var center = 50 + (Math.random()*26 - 13);
+      laneMeetPoints.push({ p1: center + 6, p2: center - 6 });
     }
   }
 
-  function focusLane(idx){
-    laneStrips.forEach(function(strip, i){
-      strip.classList.toggle('focused', i === idx);
-    });
-  }
-
-  function unfocusAll(){
-    laneStrips.forEach(function(strip){ strip.classList.remove('focused'); });
+  function spotlightLane(idx){
+    var strip = laneStrips[idx];
+    strip.classList.add('spotlight');
+    setTimeout(function(){ strip.classList.remove('spotlight'); }, 480);
   }
 
   function setLaneStatus(idx, text, cls){
@@ -624,7 +677,7 @@
 
   function createChip(unit, side){
     var el = document.createElement('div');
-    el.className = 'b-chip side-' + side + ' cls-' + unit.cls;
+    el.className = 'b-chip side-' + side + ' cls-' + unit.cls + (unit.terrainBoosted ? ' terrain-boosted' : '');
     el.innerHTML =
       '<span class="c-badge">' + CLASS_INFO[unit.cls].letter + '</span>' +
       '<span class="c-name">' + unit.name + '</span>' +
@@ -633,27 +686,41 @@
   }
 
   function updateChipHp(el, hp){ if(!el) return; var h = el.querySelector('[data-hp]'); if(h) h.textContent = Math.max(0,hp); }
-  function flashChip(el){ if(!el) return; el.classList.remove('hit'); void el.offsetWidth; el.classList.add('hit'); }
+  function flashChip(el, crit){
+    if(!el) return;
+    el.classList.remove('hit'); el.classList.remove('crit');
+    void el.offsetWidth;
+    el.classList.add(crit ? 'crit' : 'hit');
+    if(crit){
+      var pop = document.createElement('div');
+      pop.className = 'crit-pop';
+      pop.textContent = 'CRIT';
+      pop.style.left = el.style.left;
+      if(el.parentNode) el.parentNode.appendChild(pop);
+      setTimeout(function(){ if(pop.parentNode) pop.parentNode.removeChild(pop); }, 560);
+    }
+  }
   function killChip(el){
     if(!el) return;
     el.classList.add('dying');
     setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 260);
   }
 
-  function playTicks(duel, dom, cb){
+  function playTicks(duel, dom, laneIndex, cb){
     var ti = 0;
     function step(){
       if(ti >= duel.ticks.length){ cb(); return; }
       var t = duel.ticks[ti];
       updateChipHp(dom.p1El, t.aHp);
       updateChipHp(dom.p2El, t.bHp);
-      flashChip(dom.p1El); flashChip(dom.p2El);
+      flashChip(dom.p1El, t.aCrit); flashChip(dom.p2El, t.bCrit);
+      if(t.aCrit || t.bCrit) spotlightLane(laneIndex);
       setTimeout(function(){
         ti += 1;
         var isLast = ti >= duel.ticks.length;
         if(isLast){
-          if(t.aHp <= 0){ killChip(dom.p1El); dom.p1El = null; dom.p1Unit = null; }
-          if(t.bHp <= 0){ killChip(dom.p2El); dom.p2El = null; dom.p2Unit = null; }
+          if(t.aHp <= 0){ killChip(dom.p1El); dom.p1El = null; dom.p1Unit = null; spotlightLane(laneIndex); }
+          if(t.bHp <= 0){ killChip(dom.p2El); dom.p2El = null; dom.p2Unit = null; spotlightLane(laneIndex); }
         }
         setTimeout(step, 210);
       }, 330);
@@ -665,6 +732,7 @@
     var strip = laneStrips[laneIndex];
     var track = strip.querySelector('.lane-track');
     var dom = laneDom[laneIndex];
+    var meet = laneMeetPoints[laneIndex];
     var needWalkP1 = dom.p1Unit !== duel.p1;
     var needWalkP2 = dom.p2Unit !== duel.p2;
 
@@ -674,7 +742,7 @@
       el1.style.left = SPAWN_P1 + '%';
       track.appendChild(el1);
       dom.p1El = el1; dom.p1Unit = duel.p1;
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el1.style.left = MEET_P1 + '%'; }); });
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el1.style.left = meet.p1 + '%'; }); });
     }
     if(needWalkP2){
       if(dom.p2El && dom.p2El.parentNode) dom.p2El.parentNode.removeChild(dom.p2El);
@@ -682,23 +750,24 @@
       el2.style.left = SPAWN_P2 + '%';
       track.appendChild(el2);
       dom.p2El = el2; dom.p2Unit = duel.p2;
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el2.style.left = MEET_P2 + '%'; }); });
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el2.style.left = meet.p2 + '%'; }); });
     }
 
     var walkDelay = (needWalkP1 || needWalkP2) ? 440 : 0;
-    setTimeout(function(){ playTicks(duel, dom, cb); }, walkDelay);
+    setTimeout(function(){ playTicks(duel, dom, laneIndex, cb); }, walkDelay);
   }
 
   function playLaneDuels(laneIndex, laneSim, cb){
     var strip = laneStrips[laneIndex];
     var track = strip.querySelector('.lane-track');
+    var dom = laneDom[laneIndex];
 
     if(laneSim.p1Count === 0 && laneSim.p2Count === 0){
       var msg = document.createElement('div');
       msg.className = 'lane-empty-msg';
       msg.textContent = 'NO UNITS';
       track.appendChild(msg);
-      setTimeout(cb, 500);
+      cb();
       return;
     }
     if(laneSim.duels.length === 0){
@@ -711,47 +780,46 @@
     }
     var di = 0;
     function nextDuel(){
-      if(di >= laneSim.duels.length){ cb(); return; }
+      if(di >= laneSim.duels.length){ pushToNexus(); return; }
       animateDuel(laneIndex, laneSim.duels[di], function(){
         di += 1;
         setTimeout(nextDuel, 180);
       });
+    }
+    function pushToNexus(){
+      var winnerEl = dom.p1El || dom.p2El;
+      if(winnerEl && laneSim.laneResult !== 0){
+        var target = laneSim.laneResult === 1 ? NEXUS_PUSH_P1 : NEXUS_PUSH_P2;
+        requestAnimationFrame(function(){ winnerEl.style.left = target + '%'; });
+        setTimeout(cb, 520);
+      } else {
+        cb();
+      }
     }
     nextDuel();
   }
 
   function playBattleChoreo(sim, onDone){
     buildArena();
-    var li = 0;
-    function nextLane(){
-      if(li >= 3){
-        unfocusAll();
-        setTimeout(function(){ onDone(sim); }, 750);
-        return;
-      }
-      var idx = li;
+    var remaining = 3;
+    function laneFinished(){
+      remaining -= 1;
+      if(remaining === 0){ setTimeout(function(){ onDone(sim); }, 700); }
+    }
+    [0,1,2].forEach(function(idx){
       var laneSim = sim.laneSims[idx];
       if(laneSim.p1Count === 0 && laneSim.p2Count === 0){
         setLaneStatus(idx, 'EMPTY');
-        li += 1;
-        nextLane();
+        laneFinished();
         return;
       }
-      focusLane(idx);
-      setLaneStatus(idx, 'LIVE');
-      setTimeout(function(){
-        playLaneDuels(idx, laneSim, function(){
-          var r = sim.laneResults[idx];
-          setLaneStatus(idx, r === 0 ? 'DRAW' : ('P' + r), r === 1 ? 'win-p1' : (r === 2 ? 'win-p2' : ''));
-          var strip = laneStrips[idx];
-          strip.classList.add('resolved');
-          strip.classList.remove('focused');
-          li += 1;
-          setTimeout(nextLane, 350);
-        });
-      }, 400);
-    }
-    nextLane();
+      playLaneDuels(idx, laneSim, function(){
+        var r = sim.laneResults[idx];
+        setLaneStatus(idx, r === 0 ? 'DRAW' : ('P' + r), r === 1 ? 'win-p1' : (r === 2 ? 'win-p2' : ''));
+        laneStrips[idx].classList.add('resolved');
+        laneFinished();
+      });
+    });
   }
 
   function goToBattle(){
