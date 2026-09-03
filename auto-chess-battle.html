@@ -89,8 +89,11 @@
   .stats-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
   .stat{ display:flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:.78rem; }
   .stat .k{ color:var(--muted); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
-  .stat .v{ font-weight:700; }
+  .stat .v{ font-weight:700; font-variant-numeric:tabular-nums; }
   .stat.gold .v{ color:var(--gold); }
+  .stat.timer-stat{ margin-left:auto; }
+  .stat.timer-stat .v{ transition:color .2s; }
+  .stat.timer-stat .v.urgent{ color:var(--p1); }
   .pips{ display:flex; gap:3px; }
   .pip{ width:9px; height:9px; border:1.3px solid var(--line); border-radius:1px; }
   .pip.filled{ background:var(--accent,var(--p1)); border-color:var(--accent,var(--p1)); }
@@ -109,7 +112,7 @@
 
   .board-rows{ display:flex; flex-direction:column; gap:10px; }
   .board-row{ display:flex; align-items:flex-start; gap:6px; }
-  .lane-label{ font-family:var(--font-mono); font-size:.62rem; color:var(--muted); width:20px; flex-shrink:0; text-align:center; padding-top:8px; }
+  .lane-label{ font-family:var(--font-mono); font-size:.6rem; color:var(--muted); width:26px; flex-shrink:0; text-align:center; padding-top:8px; font-weight:700; }
   .lane-body{ display:flex; flex-direction:column; gap:5px; flex:1; }
   .terrain-tag{ align-self:flex-start; font-family:var(--font-mono); font-size:.58rem; letter-spacing:.05em; padding:2px 7px; border-radius:2px; color:var(--panel-raised); font-weight:700; }
   .terrain-tag.cls-warrior{ background:var(--warrior); }
@@ -121,7 +124,7 @@
   .board-slot .slot-plus{ color:var(--muted); font-family:var(--font-mono); font-size:1rem; }
   .board-slot .u-name{ font-weight:700; font-size:.66rem; }
   .board-slot .u-stats{ font-family:var(--font-mono); font-size:.56rem; color:var(--muted); }
-  .col-caption{ display:flex; padding-left:26px; }
+  .col-caption{ display:flex; padding-left:32px; }
   .col-caption span{ flex:1; text-align:center; }
 
   .synergy-row{ display:flex; gap:6px; flex-wrap:wrap; }
@@ -140,45 +143,29 @@
   @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
   .vs-label{ font-family:var(--font-mono); font-weight:700; letter-spacing:.14em; color:var(--muted); font-size:.68rem; }
 
-  .arena{ position:relative; flex:1; min-height:0; }
-  .lane-strip{ position:absolute; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; overflow:hidden; display:flex; flex-direction:column;
-    transition:top .38s cubic-bezier(.3,.7,.3,1), left .38s cubic-bezier(.3,.7,.3,1), width .38s cubic-bezier(.3,.7,.3,1), height .38s cubic-bezier(.3,.7,.3,1), box-shadow .3s ease, opacity .3s ease; }
-  .lane-strip.spotlight{ box-shadow:0 0 0 2px var(--ink); }
-  .lane-strip.resolved{ opacity:.82; }
-  .lane-strip.role-ov0{ top:0; left:0; width:100%; height:calc(33.333% - 4px); }
-  .lane-strip.role-ov1{ top:calc(33.333% + 2px); left:0; width:100%; height:calc(33.333% - 4px); }
-  .lane-strip.role-ov2{ top:calc(66.666% + 4px); left:0; width:100%; height:calc(33.333% - 4px); }
-  .lane-strip.role-main{ top:0; left:0; width:100%; height:100%; z-index:2; }
-  .lane-strip.role-pip{ top:auto; left:auto; right:6px; bottom:6px; width:38%; height:34%; z-index:4; box-shadow:0 3px 14px rgba(0,0,0,.4); }
-  .lane-strip.role-hidden{ top:auto; left:auto; right:6px; bottom:6px; width:38%; height:34%; opacity:0; pointer-events:none; z-index:1; }
-  .lane-head{ display:flex; align-items:center; justify-content:space-between; padding:5px 9px; font-family:var(--font-mono); font-size:.6rem; letter-spacing:.06em; flex-shrink:0; }
-  .lane-strip.mini .lane-head{ padding:3px 5px; font-size:.46rem; }
-  .lane-tag{ color:var(--muted); display:flex; align-items:center; gap:6px; }
-  .terrain-chip{ padding:1px 5px; border-radius:2px; color:var(--panel-raised); font-weight:700; letter-spacing:.04em; }
-  .lane-strip.mini .terrain-chip{ padding:0 3px; }
-  .terrain-chip.cls-warrior{ background:var(--warrior); }
-  .terrain-chip.cls-mage{ background:var(--mage); }
-  .terrain-chip.cls-archer{ background:var(--archer); }
-  .lane-status{ font-weight:700; }
-  .lane-status.win-p1{ color:var(--p1); }
-  .lane-status.win-p2{ color:var(--p2); }
-  .lane-track{ position:relative; flex:1; min-height:0; background-image:repeating-linear-gradient(to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 12.5%); background-position:6px 0; }
-  .lane-meetline{ position:absolute; left:50%; top:8%; bottom:8%; width:1px; background:var(--muted); opacity:.5; }
+  .lane-ticker{ display:flex; gap:6px; flex-shrink:0; }
+  .lt-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; padding:5px 4px; transition:border-color .2s; }
+  .lt-item.active{ border-color:var(--ink); }
+  .lt-name{ font-family:var(--font-mono); font-size:.62rem; font-weight:700; letter-spacing:.06em; }
+  .lt-status{ font-family:var(--font-mono); font-size:.58rem; color:var(--muted); font-weight:700; }
+  .lt-status.win-p1{ color:var(--p1); }
+  .lt-status.win-p2{ color:var(--p2); }
 
-  .lane-strip.mini .b-chip{ padding:2px 4px; min-width:26px; gap:0; }
-  .lane-strip.mini .c-badge{ width:9px; height:9px; font-size:.4rem; }
-  .lane-strip.mini .c-name{ font-size:.42rem; }
-  .lane-strip.mini .c-hp{ font-size:.46rem; }
-
-  #pipStatus{ position:absolute; right:6px; bottom:6px; width:38%; height:34%; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; padding:6px 7px; display:flex; flex-direction:column; justify-content:center; gap:4px; z-index:3;
-    transition:opacity .3s ease; }
-  #pipStatus.hidden{ opacity:0; pointer-events:none; }
-  .pip-row{ display:flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:.52rem; }
-  .pip-row .dot{ width:6px; height:6px; border-radius:1px; flex-shrink:0; }
-  .pip-row .pr-status{ margin-left:auto; color:var(--muted); font-weight:700; }
-  .pip-row .pr-status.win-p1{ color:var(--p1); }
-  .pip-row .pr-status.win-p2{ color:var(--p2); }
-  .pip-label{ font-family:var(--font-mono); font-size:.46rem; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; }
+  .map-wrap{ position:relative; flex:1; min-height:0; display:flex; }
+  .map-viewport{ position:relative; flex:1; min-height:0; overflow:hidden; border-radius:4px; border:1.5px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:center; transition:box-shadow .2s; }
+  .map-viewport.pulse{ box-shadow:0 0 0 3px var(--ink) inset; }
+  .map-stage{ position:relative; width:100%; height:100%; aspect-ratio:1/1; max-width:100%; max-height:100%; transition:transform .5s cubic-bezier(.25,.7,.3,1); transform-origin:50% 50%; }
+  .map-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; overflow:visible; }
+  .map-bg{ fill:var(--panel-raised); stroke:var(--line); stroke-width:1.2; }
+  .map-river{ fill:var(--p2); opacity:.16; }
+  .jungle-blob{ fill:var(--archer); opacity:.09; }
+  .lane-path{ stroke:var(--line); stroke-width:7; stroke-linecap:round; fill:none; opacity:.6; }
+  .lane-path.cls-warrior{ stroke:var(--warrior); }
+  .lane-path.cls-mage{ stroke:var(--mage); }
+  .lane-path.cls-archer{ stroke:var(--archer); }
+  .nexus{ stroke-width:1.5; }
+  .nexus-p1{ fill:var(--p1); stroke:var(--p1); }
+  .nexus-p2{ fill:var(--p2); stroke:var(--p2); }
 
   #killFeed{ position:absolute; top:6px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; gap:4px; z-index:5; align-items:center; pointer-events:none; }
   .kill-row{ background:var(--ink); color:var(--panel); font-family:var(--font-mono); font-size:.62rem; font-weight:700; padding:5px 12px; border-radius:3px; white-space:nowrap; opacity:0; transform:translateY(-10px); animation:killin .3s ease-out forwards, killout .3s ease-in forwards 2.1s; }
@@ -187,7 +174,7 @@
   @keyframes killin{ to{ opacity:1; transform:translateY(0); } }
   @keyframes killout{ to{ opacity:0; transform:translateY(-10px); } }
 
-  .b-chip{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:1px; padding:4px 6px; min-width:40px; border-radius:3px; background:var(--panel); border:1.5px solid var(--line); transition:left .42s cubic-bezier(.3,.7,.3,1); font-family:var(--font-mono); text-align:center; }
+  .b-chip{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:1px; padding:4px 6px; min-width:40px; border-radius:3px; background:var(--panel); border:1.5px solid var(--line); transition:left .45s cubic-bezier(.3,.7,.3,1), top .45s cubic-bezier(.3,.7,.3,1); font-family:var(--font-mono); text-align:center; z-index:2; }
   .b-chip.side-p1{ border-color:var(--p1); }
   .b-chip.side-p2{ border-color:var(--p2); }
   .b-chip.terrain-boosted{ box-shadow:0 0 0 1.5px var(--gold) inset; }
@@ -198,12 +185,10 @@
   @keyframes chiphit{ 0%{ filter:brightness(1.9); } 100%{ filter:brightness(1); } }
   .b-chip.crit{ animation:critflash .48s ease-out; }
   @keyframes critflash{ 0%{ filter:brightness(2.6); box-shadow:0 0 0 2px var(--gold); } 100%{ filter:brightness(1); box-shadow:0 0 0 0 transparent; } }
-  .b-chip.dying{ transition:opacity .24s ease-in, left .24s; opacity:0; }
+  .b-chip.dying{ transition:opacity .24s ease-in, left .24s, top .24s; opacity:0; }
 
   .crit-pop{ position:absolute; top:50%; font-family:var(--font-mono); font-weight:700; font-size:.58rem; color:var(--gold); pointer-events:none; transform:translate(-50%,-8px); animation:critpop .55s ease-out forwards; z-index:3; }
   @keyframes critpop{ 0%{ opacity:1; transform:translate(-50%,-8px); } 100%{ opacity:0; transform:translate(-50%,-30px); } }
-
-  .lane-empty-msg, .lane-walkover{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:.66rem; color:var(--muted); letter-spacing:.06em; }
 
   .cls-warrior .c-badge, .board-slot.cls-warrior, .offer-card.cls-warrior .offer-badge{ background:var(--warrior); }
   .cls-mage .c-badge, .board-slot.cls-mage, .offer-card.cls-mage .offer-badge{ background:var(--mage); }
@@ -253,7 +238,7 @@
       <h1>LANE CHESS 01</h1>
       <div class="subtitle">2-Player / 1-Device Auto Battler</div>
     </div>
-    <p>スマホ1台を交互に渡し合う2人用オートチェス。自分の番だけこっそりユニットを購入して3レーンに配置。両者の準備が整うと自動で大会バトルが始まる。</p>
+    <p>スマホ1台を交互に渡し合う2人用オートチェス。自分の番だけこっそりユニットを購入してTOP/MID/BOTの3レーンに配置。両者の準備が整うと自動でバトルが始まる。</p>
     <div class="panel-block">
       <div class="eyebrow">Lives</div>
       <div class="switch3" id="livesSwitch">
@@ -287,6 +272,7 @@
         <div class="stat gold"><span class="k">Gold</span><span class="v" id="draftGold">0</span></div>
         <div class="stat"><span class="k">Self</span><div class="pips" id="draftPipsSelf"></div></div>
         <div class="stat"><span class="k">Opp</span><div class="pips" id="draftPipsOp"></div></div>
+        <div class="stat timer-stat"><span class="k">Time</span><span class="v mono" id="draftTimer">75</span></div>
       </div>
     </div>
 
@@ -309,13 +295,32 @@
   <div id="screen-battle" class="screen hidden">
     <div class="battle-header">
       <div class="side"><span class="rec-dot"></span><span>P2</span><div class="pips" id="battlePipsP2"></div></div>
-      <div class="vs-label">Tournament Cam</div>
+      <div class="vs-label">Summoner's Rift Cam</div>
       <div class="side"><div class="pips" id="battlePipsP1"></div><span>P1</span></div>
     </div>
-    <div class="arena" id="arena">
-      <div id="pipStatus" class="hidden">
-        <div class="pip-label">Map</div>
-        <div id="pipStatusRows"></div>
+    <div class="lane-ticker" id="laneTicker">
+      <div class="lt-item" data-lane="0"><span class="lt-name">TOP</span><span class="terrain-chip" data-terrain></span><span class="lt-status" data-status>PENDING</span></div>
+      <div class="lt-item" data-lane="1"><span class="lt-name">MID</span><span class="terrain-chip" data-terrain></span><span class="lt-status" data-status>PENDING</span></div>
+      <div class="lt-item" data-lane="2"><span class="lt-name">BOT</span><span class="terrain-chip" data-terrain></span><span class="lt-status" data-status>PENDING</span></div>
+    </div>
+    <div class="map-wrap">
+      <div class="map-viewport" id="mapViewport">
+        <div class="map-stage" id="mapStage">
+          <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <clipPath id="mapClip"><polygon points="50,0 100,50 50,100 0,50"/></clipPath>
+            </defs>
+            <polygon points="50,0 100,50 50,100 0,50" class="map-bg"></polygon>
+            <circle cx="34" cy="47" r="11" class="jungle-blob"></circle>
+            <circle cx="64" cy="53" r="11" class="jungle-blob"></circle>
+            <rect x="-58" y="-9" width="116" height="18" transform="translate(50,50) rotate(45)" class="map-river" clip-path="url(#mapClip)"></rect>
+            <line x1="14" y1="64" x2="64" y2="14" class="lane-path lane-path-top"></line>
+            <line x1="25" y1="75" x2="75" y2="25" class="lane-path lane-path-mid"></line>
+            <line x1="36" y1="86" x2="86" y2="36" class="lane-path lane-path-bot"></line>
+            <rect x="21" y="71" width="8" height="8" transform="rotate(45 25 75)" class="nexus nexus-p1"></rect>
+            <rect x="71" y="21" width="8" height="8" transform="rotate(45 75 25)" class="nexus nexus-p2"></rect>
+          </svg>
+        </div>
       </div>
       <div id="killFeed"></div>
     </div>
@@ -371,6 +376,15 @@
   var TERRAIN_HP_MULT = 1.25;
   var CRIT_CHANCE = 0.18;
   var CRIT_MULT = 1.6;
+  var LANE_NAMES = ['TOP','MID','BOT'];
+  var LANE_META = [
+    { key:'top', p1:{x:14,y:64}, p2:{x:64,y:14} },
+    { key:'mid', p1:{x:25,y:75}, p2:{x:75,y:25} },
+    { key:'bot', p1:{x:36,y:86}, p2:{x:86,y:36} }
+  ];
+  var LANE_FOCUS = [ {x:39,y:39}, {x:50,y:50}, {x:61,y:61} ];
+  var DRAFT_SECONDS = 75;
+
   function getDef(id){ for(var i=0;i<UNIT_DEFS.length;i++){ if(UNIT_DEFS[i].id===id) return UNIT_DEFS[i]; } return null; }
   function shuffle3(arr){
     var a = arr.slice();
@@ -380,6 +394,7 @@
     }
     return a;
   }
+  function lerpPoint(a,b,t){ return { x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t }; }
 
   var uidCounter = 1;
 
@@ -465,12 +480,32 @@
     return offers;
   }
 
+  var draftTimerHandle = null, draftEndAt = 0;
+  function clearDraftTimer(){ if(draftTimerHandle){ clearInterval(draftTimerHandle); draftTimerHandle = null; } }
+  function startDraftTimer(){
+    clearDraftTimer();
+    draftEndAt = Date.now() + DRAFT_SECONDS * 1000;
+    tickDraftTimer();
+    draftTimerHandle = setInterval(tickDraftTimer, 250);
+  }
+  function tickDraftTimer(){
+    var remain = Math.max(0, Math.ceil((draftEndAt - Date.now()) / 1000));
+    var el = $('draftTimer');
+    el.textContent = remain;
+    el.classList.toggle('urgent', remain <= 10);
+    if(remain <= 0){
+      clearDraftTimer();
+      advanceDraft();
+    }
+  }
+
   function startDraft(playerNum){
     G.activeDrafter = playerNum;
     G.shop = rollShop(G.round);
     G.selectedOffer = null;
     renderDraft();
     show('draft');
+    startDraftTimer();
   }
 
   function activePlayer(){ return G.players[G.activeDrafter]; }
@@ -527,7 +562,7 @@
       row.className = 'board-row';
       var label = document.createElement('div');
       label.className = 'lane-label mono';
-      label.textContent = 'L' + (lane+1);
+      label.textContent = LANE_NAMES[lane];
       row.appendChild(label);
 
       var body = document.createElement('div');
@@ -619,13 +654,15 @@
     renderDraft();
   });
 
-  $('readyBtn').addEventListener('click', function(){
+  function advanceDraft(){
+    clearDraftTimer();
     if(G.activeDrafter === 1){
       goToHandoff(2, function(){ startDraft(2); });
     } else {
       goToBattle();
     }
-  });
+  }
+  $('readyBtn').addEventListener('click', advanceDraft);
 
   // ---------- battle simulation ----------
   function computeSynergyMult(board){
@@ -687,110 +724,60 @@
     return { laneSims: laneSims, laneResults: laneResults, p1Wins: p1Wins, p2Wins: p2Wins, winner: winner };
   }
 
-  // ---------- battle choreography: single camera (overview -> main + pip) ----------
-  var SPAWN_P2 = 8, SPAWN_P1 = 92;
-  var NEXUS_PUSH_P1 = 14, NEXUS_PUSH_P2 = 86;
-  var laneStrips = [];
-  var laneDom = [];
-  var laneMeetPoints = [];
-  var camera = { main: null, pip: null, queue: [] };
-  var pipStatusEl = $('pipStatus');
-  var pipStatusRowsEl = $('pipStatusRows');
+  // ---------- battle rendering: one map, real camera zoom ----------
+  var laneDom = [ {}, {}, {} ];
+  var laneMeetT = [0.5, 0.5, 0.5];
+  var activeLanes = [];
+  var laneTickerItems = Array.prototype.slice.call(document.querySelectorAll('.lt-item'));
+  var mapStageEl = $('mapStage');
+  var mapViewportEl = $('mapViewport');
   var killFeedEl = $('killFeed');
 
-  function buildArena(){
-    var arena = $('arena');
-    Array.prototype.slice.call(arena.querySelectorAll('.lane-strip')).forEach(function(el){ el.remove(); });
+  function setLaneStatus(idx, text, cls){
+    var item = laneTickerItems[idx];
+    var st = item.querySelector('[data-status]');
+    st.textContent = text;
+    st.className = 'lt-status' + (cls ? ' ' + cls : '');
+    item.classList.toggle('active', text === 'LIVE');
+  }
+
+  function buildMap(){
+    Array.prototype.slice.call(mapStageEl.querySelectorAll('.b-chip')).forEach(function(el){ el.remove(); });
     killFeedEl.innerHTML = '';
-    camera = { main: null, pip: null, queue: [] };
-    laneStrips = [];
+    activeLanes = [];
     laneDom = [ {}, {}, {} ];
-    laneMeetPoints = [];
+    laneMeetT = [];
     for(var i=0;i<3;i++){
       var terrainCls = G.laneTerrain[i];
-      var strip = document.createElement('div');
-      strip.className = 'lane-strip role-ov' + i;
-      strip.innerHTML =
-        '<div class="lane-head"><span class="lane-tag">LANE 0' + (i+1) + ' <span class="terrain-chip cls-' + terrainCls + '">' + TERRAIN_INFO[terrainCls].name + '</span></span><span class="lane-status" data-status>PENDING</span></div>' +
-        '<div class="lane-track"><div class="lane-meetline"></div></div>';
-      arena.appendChild(strip);
-      laneStrips.push(strip);
-      var center = 50 + (Math.random()*26 - 13);
-      laneMeetPoints.push({ p1: center + 6, p2: center - 6 });
+      var item = laneTickerItems[i];
+      var terrainEl = item.querySelector('[data-terrain]');
+      terrainEl.textContent = TERRAIN_INFO[terrainCls].name;
+      terrainEl.className = 'terrain-chip cls-' + terrainCls;
+      setLaneStatus(i, 'PENDING');
+      var pathEl = mapStageEl.querySelector('.lane-path-' + LANE_META[i].key);
+      pathEl.setAttribute('class', 'lane-path lane-path-' + LANE_META[i].key + ' cls-' + terrainCls);
+      laneMeetT.push(0.5 + (Math.random() * 0.3 - 0.15));
     }
-    applyCameraRoles();
+    updateCamera();
   }
 
-  function applyCameraRoles(){
-    laneStrips.forEach(function(strip, i){
-      strip.classList.remove('role-ov0','role-ov1','role-ov2','role-main','role-pip','role-hidden','mini');
-      if(i === camera.main){
-        strip.classList.add('role-main');
-      } else if(i === camera.pip){
-        strip.classList.add('role-pip', 'mini');
-      } else if(camera.main === null){
-        strip.classList.add('role-ov' + i);
-      } else {
-        strip.classList.add('role-hidden');
-      }
-    });
-    var showStatus = camera.main !== null && camera.pip === null;
-    pipStatusEl.classList.toggle('hidden', !showStatus);
-    if(showStatus) renderPipStatus();
-  }
-
-  function renderPipStatus(){
-    pipStatusRowsEl.innerHTML = '';
-    laneStrips.forEach(function(strip, i){
-      var st = strip.querySelector('[data-status]');
-      var row = document.createElement('div');
-      row.className = 'pip-row';
-      row.innerHTML =
-        '<span class="dot cls-' + G.laneTerrain[i] + '" style="background:var(--' + G.laneTerrain[i] + ')"></span>' +
-        '<span>L' + (i+1) + '</span>' +
-        '<span class="pr-status ' + st.className.replace('lane-status','').trim() + '">' + st.textContent + '</span>';
-      pipStatusRowsEl.appendChild(row);
-    });
-  }
-
-  function claimSlot(idx){
-    if(camera.main === idx || camera.pip === idx || camera.queue.indexOf(idx) !== -1) return;
-    if(camera.main === null){
-      camera.main = idx;
-    } else if(camera.pip === null){
-      camera.pip = idx;
-    } else {
-      camera.queue.push(idx);
+  function updateCamera(){
+    if(activeLanes.length === 0){
+      mapStageEl.style.transformOrigin = '50% 50%';
+      mapStageEl.style.transform = 'scale(1)';
+      return;
     }
-    applyCameraRoles();
+    var pts = activeLanes.map(function(i){ return LANE_FOCUS[i]; });
+    var cx = pts.reduce(function(s,pt){ return s+pt.x; }, 0) / pts.length;
+    var cy = pts.reduce(function(s,pt){ return s+pt.y; }, 0) / pts.length;
+    var scale = activeLanes.length === 1 ? 1.7 : (activeLanes.length === 2 ? 1.3 : 1.0);
+    mapStageEl.style.transformOrigin = cx + '% ' + cy + '%';
+    mapStageEl.style.transform = 'scale(' + scale + ')';
   }
 
-  function releaseSlot(idx){
-    if(camera.main === idx){
-      camera.main = null;
-      if(camera.pip !== null){ camera.main = camera.pip; camera.pip = null; }
-    } else if(camera.pip === idx){
-      camera.pip = null;
-    }
-    if(camera.queue.length){
-      if(camera.main === null){ camera.main = camera.queue.shift(); }
-      else if(camera.pip === null){ camera.pip = camera.queue.shift(); }
-    }
-    applyCameraRoles();
-  }
-
-  function spotlightLane(idx){
-    var strip = laneStrips[idx];
-    strip.classList.add('spotlight');
-    setTimeout(function(){ strip.classList.remove('spotlight'); }, 480);
-  }
-
-  function setLaneStatus(idx, text, cls){
-    var strip = laneStrips[idx];
-    var statusEl = strip.querySelector('[data-status]');
-    statusEl.textContent = text;
-    statusEl.className = 'lane-status' + (cls ? ' ' + cls : '');
-    if(camera.main !== null && camera.pip === null) renderPipStatus();
+  function pulseMap(){
+    mapViewportEl.classList.add('pulse');
+    setTimeout(function(){ mapViewportEl.classList.remove('pulse'); }, 260);
   }
 
   function pushKillFeed(killerSide, killerName, victimSide, victimName){
@@ -814,6 +801,7 @@
       '<span class="c-hp" data-hp>' + unit.hp + '</span>';
     return el;
   }
+  function placeChip(el, pt){ el.style.left = pt.x + '%'; el.style.top = pt.y + '%'; }
 
   function updateChipHp(el, hp){ if(!el) return; var h = el.querySelector('[data-hp]'); if(h) h.textContent = Math.max(0,hp); }
   function flashChip(el, crit){
@@ -826,6 +814,7 @@
       pop.className = 'crit-pop';
       pop.textContent = 'CRIT';
       pop.style.left = el.style.left;
+      pop.style.top = el.style.top;
       if(el.parentNode) el.parentNode.appendChild(pop);
       setTimeout(function(){ if(pop.parentNode) pop.parentNode.removeChild(pop); }, 560);
     }
@@ -844,7 +833,7 @@
       updateChipHp(dom.p1El, t.aHp);
       updateChipHp(dom.p2El, t.bHp);
       flashChip(dom.p1El, t.aCrit); flashChip(dom.p2El, t.bCrit);
-      if(t.aCrit || t.bCrit) spotlightLane(laneIndex);
+      if(t.aCrit || t.bCrit) pulseMap();
       setTimeout(function(){
         ti += 1;
         var isLast = ti >= duel.ticks.length;
@@ -854,8 +843,8 @@
           if(p1Died && p2Died) pushKillFeed(null, p1Name, null, p2Name);
           else if(p1Died) pushKillFeed('p2', p2Name, 'p1', p1Name);
           else if(p2Died) pushKillFeed('p1', p1Name, 'p2', p2Name);
-          if(p1Died){ killChip(dom.p1El); dom.p1El = null; dom.p1Unit = null; spotlightLane(laneIndex); }
-          if(p2Died){ killChip(dom.p2El); dom.p2El = null; dom.p2Unit = null; spotlightLane(laneIndex); }
+          if(p1Died){ killChip(dom.p1El); dom.p1El = null; dom.p1Unit = null; pulseMap(); }
+          if(p2Died){ killChip(dom.p2El); dom.p2El = null; dom.p2Unit = null; pulseMap(); }
         }
         setTimeout(step, 210);
       }, 330);
@@ -864,28 +853,29 @@
   }
 
   function animateDuel(laneIndex, duel, cb){
-    var strip = laneStrips[laneIndex];
-    var track = strip.querySelector('.lane-track');
     var dom = laneDom[laneIndex];
-    var meet = laneMeetPoints[laneIndex];
+    var meta = LANE_META[laneIndex];
+    var t = laneMeetT[laneIndex];
+    var meetP1 = lerpPoint(meta.p1, meta.p2, Math.max(0.06, t - 0.07));
+    var meetP2 = lerpPoint(meta.p1, meta.p2, Math.min(0.94, t + 0.07));
     var needWalkP1 = dom.p1Unit !== duel.p1;
     var needWalkP2 = dom.p2Unit !== duel.p2;
 
     if(needWalkP1){
       if(dom.p1El && dom.p1El.parentNode) dom.p1El.parentNode.removeChild(dom.p1El);
       var el1 = createChip(duel.p1, 'p1');
-      el1.style.left = SPAWN_P1 + '%';
-      track.appendChild(el1);
+      placeChip(el1, meta.p1);
+      mapStageEl.appendChild(el1);
       dom.p1El = el1; dom.p1Unit = duel.p1;
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el1.style.left = meet.p1 + '%'; }); });
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ placeChip(el1, meetP1); }); });
     }
     if(needWalkP2){
       if(dom.p2El && dom.p2El.parentNode) dom.p2El.parentNode.removeChild(dom.p2El);
       var el2 = createChip(duel.p2, 'p2');
-      el2.style.left = SPAWN_P2 + '%';
-      track.appendChild(el2);
+      placeChip(el2, meta.p2);
+      mapStageEl.appendChild(el2);
       dom.p2El = el2; dom.p2Unit = duel.p2;
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ el2.style.left = meet.p2 + '%'; }); });
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ placeChip(el2, meetP2); }); });
     }
 
     var walkDelay = (needWalkP1 || needWalkP2) ? 440 : 0;
@@ -893,26 +883,14 @@
   }
 
   function playLaneDuels(laneIndex, laneSim, cb){
-    var strip = laneStrips[laneIndex];
-    var track = strip.querySelector('.lane-track');
+    if(laneSim.p1Count === 0 && laneSim.p2Count === 0){ cb(); return; }
     var dom = laneDom[laneIndex];
-
-    if(laneSim.p1Count === 0 && laneSim.p2Count === 0){
-      var msg = document.createElement('div');
-      msg.className = 'lane-empty-msg';
-      msg.textContent = 'NO UNITS';
-      track.appendChild(msg);
-      cb();
-      return;
-    }
-    claimSlot(laneIndex);
+    activeLanes.push(laneIndex);
     setLaneStatus(laneIndex, 'LIVE');
+    updateCamera();
+
     if(laneSim.duels.length === 0){
-      var wmsg = document.createElement('div');
-      wmsg.className = 'lane-walkover';
-      wmsg.textContent = (laneSim.laneResult === 1 ? 'P1' : 'P2') + ' — WALKOVER';
-      track.appendChild(wmsg);
-      setTimeout(cb, 650);
+      setTimeout(cb, 550);
       return;
     }
     var di = 0;
@@ -925,9 +903,10 @@
     }
     function pushToNexus(){
       var winnerEl = dom.p1El || dom.p2El;
+      var meta = LANE_META[laneIndex];
       if(winnerEl && laneSim.laneResult !== 0){
-        var target = laneSim.laneResult === 1 ? NEXUS_PUSH_P1 : NEXUS_PUSH_P2;
-        requestAnimationFrame(function(){ winnerEl.style.left = target + '%'; });
+        var target = laneSim.laneResult === 1 ? lerpPoint(meta.p1, meta.p2, 0.92) : lerpPoint(meta.p1, meta.p2, 0.08);
+        requestAnimationFrame(function(){ placeChip(winnerEl, target); });
         setTimeout(cb, 520);
       } else {
         cb();
@@ -937,11 +916,11 @@
   }
 
   function playBattleChoreo(sim, onDone){
-    buildArena();
+    buildMap();
     var remaining = 3;
     function laneFinished(){
       remaining -= 1;
-      if(remaining === 0){ setTimeout(function(){ onDone(sim); }, 700); }
+      if(remaining === 0){ setTimeout(function(){ onDone(sim); }, 650); }
     }
     [0,1,2].forEach(function(idx){
       var laneSim = sim.laneSims[idx];
@@ -954,11 +933,11 @@
         playLaneDuels(idx, laneSim, function(){
           var r = sim.laneResults[idx];
           setLaneStatus(idx, r === 0 ? 'DRAW' : ('P' + r), r === 1 ? 'win-p1' : (r === 2 ? 'win-p2' : ''));
-          laneStrips[idx].classList.add('resolved');
           setTimeout(function(){
-            releaseSlot(idx);
+            activeLanes = activeLanes.filter(function(i){ return i !== idx; });
+            updateCamera();
             laneFinished();
-          }, 550);
+          }, 500);
         });
       }, Math.random() * 260);
     });
@@ -994,7 +973,7 @@
     summary.innerHTML = '';
     sim.laneResults.forEach(function(r, idx){
       var span = document.createElement('span');
-      span.innerHTML = 'L' + (idx+1) + ':<b>' + laneMark(r) + '</b>';
+      span.innerHTML = LANE_NAMES[idx] + ':<b>' + laneMark(r) + '</b>';
       summary.appendChild(span);
     });
 
@@ -1022,7 +1001,7 @@
     show('matchend');
   }
 
-  $('matchRestartBtn').addEventListener('click', function(){ show('title'); });
+  $('matchRestartBtn').addEventListener('click', function(){ clearDraftTimer(); show('title'); });
 
   show('title');
 })();
