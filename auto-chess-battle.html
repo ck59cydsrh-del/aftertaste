@@ -3,31 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>LANE CHESS 01</title>
+<title>ALTITUDE 01</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
 <style>
   :root{
-    --panel:#efece4; --panel-raised:#faf8f3; --line:#d8d3c4;
-    --ink:#1c1b18; --muted:#847f70;
-    --p1:#e8420f; --p2:#0d8f88; --gold:#a97400;
-    --warrior:#2f5fd6; --mage:#8a3fd1; --archer:#1f8f4c;
+    --panel:#ffffff; --panel-raised:#f4f3ee; --line:#d6d2c7;
+    --ink:#141414; --muted:#77726a;
+    --p1:#0d0d0d; --p2:#8f8a7d;
+    --warrior:#181818; --mage:#6b675e; --archer:#a49f92;
+    --tile-top:#efeee8; --tile-side-l:#c9c5ba; --tile-side-r:#b3afa4; --tile-elev-top:#dedad0;
     --font-display:'Space Grotesk','Hiragino Sans',sans-serif;
     --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',monospace;
     --font-body:'Noto Sans JP','Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --panel:#1a1a18; --panel-raised:#232220; --line:#3a3730;
-      --ink:#f3f0e6; --muted:#928c7c;
-      --p1:#ff5a2e; --p2:#1fd8cd; --gold:#ffcc33;
-      --warrior:#5b8bff; --mage:#c185ff; --archer:#4ad185;
+      --panel:#141414; --panel-raised:#1f1f1e; --line:#3c3a35;
+      --ink:#f2f0ea; --muted:#a19c8f;
+      --p1:#f5f3ee; --p2:#8f8a7d;
+      --warrior:#f0eee7; --mage:#a8a294; --archer:#68645a;
+      --tile-top:#2a2a27; --tile-side-l:#1a1a18; --tile-side-r:#111110; --tile-elev-top:#333330;
     }
   }
   :root[data-theme="dark"]{
-    --panel:#1a1a18; --panel-raised:#232220; --line:#3a3730;
-    --ink:#f3f0e6; --muted:#928c7c;
-    --p1:#ff5a2e; --p2:#1fd8cd; --gold:#ffcc33;
-    --warrior:#5b8bff; --mage:#c185ff; --archer:#4ad185;
+    --panel:#141414; --panel-raised:#1f1f1e; --line:#3c3a35;
+    --ink:#f2f0ea; --muted:#a19c8f;
+    --p1:#f5f3ee; --p2:#8f8a7d;
+    --warrior:#f0eee7; --mage:#a8a294; --archer:#68645a;
+    --tile-top:#2a2a27; --tile-side-l:#1a1a18; --tile-side-r:#111110; --tile-elev-top:#333330;
   }
 
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -54,7 +57,7 @@
   .logo-block{ display:flex; flex-direction:column; align-items:center; gap:6px; }
   .logo-mark{ display:flex; align-items:center; gap:8px; }
   .logo-dot{ width:10px; height:10px; border-radius:2px; background:var(--p1); }
-  .logo-dot.b{ background:var(--p2); }
+  .logo-dot.b{ background:var(--panel); border:1.5px solid var(--ink); }
   #screen-title h1{ font-family:var(--font-display); font-weight:700; font-size:1.85rem; letter-spacing:-.01em; margin:0; text-wrap:balance; }
   .subtitle{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; }
   #screen-title p{ color:var(--muted); line-height:1.75; max-width:300px; margin:0; font-size:.85rem; }
@@ -62,76 +65,55 @@
   .panel-block{ border:1px solid var(--line); background:var(--panel-raised); border-radius:4px; padding:14px; display:flex; flex-direction:column; gap:8px; width:100%; max-width:300px; }
 
   .switch3{ position:relative; display:grid; grid-template-columns:repeat(3,1fr); border:1.5px solid var(--line); border-radius:3px; overflow:hidden; height:42px; }
-  .switch3-thumb{ position:absolute; top:0; bottom:0; left:0; width:33.333%; background:var(--p1); transition:transform .18s cubic-bezier(.3,.7,.3,1); z-index:0; }
+  .switch3-thumb{ position:absolute; top:0; bottom:0; left:0; width:33.333%; background:var(--ink); transition:transform .18s cubic-bezier(.3,.7,.3,1); z-index:0; }
   .switch3 button{ position:relative; z-index:1; background:transparent; border:none; color:var(--ink); font-family:var(--font-mono); font-weight:700; font-size:.95rem; cursor:pointer; }
-  .switch3 button.active{ color:var(--panel-raised); }
+  .switch3 button.active{ color:var(--panel); }
 
-  .primary-btn{ background:var(--p1); color:var(--panel-raised); border:none; padding:15px 30px; font-family:var(--font-mono); font-weight:700; font-size:.9rem; letter-spacing:.08em; border-radius:3px; text-transform:uppercase; }
-  .primary-btn:active{ filter:brightness(.92); }
-  .ghost-btn{ background:transparent; color:var(--ink); border:1.5px solid var(--line); padding:8px 14px; font-family:var(--font-mono); font-weight:500; font-size:.72rem; letter-spacing:.06em; border-radius:3px; text-transform:uppercase; }
-  .ghost-btn:disabled{ opacity:.35; }
+  .primary-btn{ background:var(--ink); color:var(--panel); border:none; padding:15px 30px; font-family:var(--font-mono); font-weight:700; font-size:.9rem; letter-spacing:.08em; border-radius:3px; text-transform:uppercase; }
+  .primary-btn:active{ filter:brightness(1.3); }
 
   /* ---------- handoff ---------- */
   #screen-handoff{ align-items:center; justify-content:center; gap:20px; padding:24px; text-align:center; }
   .handoff-diagram{ display:flex; align-items:center; gap:14px; }
   .device-icon{ width:34px; height:56px; border:2px solid var(--line); border-radius:5px; position:relative; }
   .device-icon::after{ content:''; position:absolute; left:50%; bottom:6px; width:10px; height:2px; background:var(--line); transform:translateX(-50%); }
-  .device-icon.to{ border-color:var(--accent,var(--p1)); }
-  .device-icon.to::after{ background:var(--accent,var(--p1)); }
-  .arrow-mono{ font-family:var(--font-mono); font-size:1.4rem; color:var(--accent,var(--p1)); }
+  .device-icon.to{ border-color:var(--ink); border-width:2.5px; }
+  .device-icon.to::after{ background:var(--ink); }
+  .arrow-mono{ font-family:var(--font-mono); font-size:1.4rem; color:var(--ink); }
   #screen-handoff h2{ font-family:var(--font-display); font-weight:700; font-size:1.4rem; margin:0; }
   #screen-handoff p{ color:var(--muted); margin:0; font-size:.82rem; line-height:1.7; }
 
-  /* ---------- draft ---------- */
-  #screen-draft{ padding:12px 14px 18px; gap:10px; }
+  /* ---------- upgrade pick ---------- */
+  #screen-upgrade{ padding:12px 14px 18px; gap:12px; }
   .topbar{ display:flex; flex-direction:column; gap:6px; padding-bottom:8px; border-bottom:1px solid var(--line); }
   .turn-label{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; }
   .stats-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
   .stat{ display:flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:.78rem; }
   .stat .k{ color:var(--muted); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; }
   .stat .v{ font-weight:700; font-variant-numeric:tabular-nums; }
-  .stat.gold .v{ color:var(--gold); }
   .stat.timer-stat{ margin-left:auto; }
-  .stat.timer-stat .v{ transition:color .2s; }
-  .stat.timer-stat .v.urgent{ color:var(--p1); }
+  .stat.timer-stat .v.urgent{ text-decoration:underline wavy; }
   .pips{ display:flex; gap:3px; }
   .pip{ width:9px; height:9px; border:1.3px solid var(--line); border-radius:1px; }
   .pip.filled{ background:var(--accent,var(--p1)); border-color:var(--accent,var(--p1)); }
 
-  .shop-row{ display:flex; gap:7px; }
-  .offer-card{ flex:1; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; padding:8px 4px 7px; text-align:center; position:relative; }
-  .offer-card.selected{ border-color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); }
-  .offer-card.unaffordable{ opacity:.4; }
-  .offer-card.empty{ opacity:.2; }
-  .offer-badge{ width:16px; height:16px; margin:0 auto 4px; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:700; font-size:.68rem; border-radius:2px; color:var(--panel-raised); }
-  .offer-name{ font-weight:700; font-size:.8rem; }
-  .offer-stats{ font-family:var(--font-mono); font-size:.6rem; color:var(--muted); margin-top:3px; }
-  .offer-cost{ margin-top:5px; font-family:var(--font-mono); font-weight:700; color:var(--gold); font-size:.74rem; }
+  .roster-row{ display:flex; gap:7px; flex-wrap:wrap; }
+  .roster-card{ flex:1; min-width:78px; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; padding:7px 4px; text-align:center; }
+  .roster-card .u-badge{ width:16px; height:16px; margin:0 auto 4px; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:700; font-size:.68rem; }
+  .roster-card .u-name{ font-weight:700; font-size:.72rem; }
+  .roster-card .u-stats{ font-family:var(--font-mono); font-size:.58rem; color:var(--muted); margin-top:2px; }
 
-  .row-between{ display:flex; align-items:center; justify-content:space-between; }
+  .buff-row{ display:flex; gap:6px; flex-wrap:wrap; }
+  .buff-badge{ font-family:var(--font-mono); font-size:.6rem; padding:3px 8px; border-radius:2px; background:var(--panel-raised); color:var(--muted); border:1.3px solid var(--line); }
+  .buff-badge.active{ color:var(--ink); border-color:var(--ink); font-weight:700; }
 
-  .board-rows{ display:flex; flex-direction:column; gap:10px; }
-  .board-row{ display:flex; align-items:flex-start; gap:6px; }
-  .lane-label{ font-family:var(--font-mono); font-size:.6rem; color:var(--muted); width:26px; flex-shrink:0; text-align:center; padding-top:8px; font-weight:700; }
-  .lane-body{ display:flex; flex-direction:column; gap:5px; flex:1; }
-  .terrain-tag{ align-self:flex-start; font-family:var(--font-mono); font-size:.58rem; letter-spacing:.05em; padding:2px 7px; border-radius:2px; color:var(--panel-raised); font-weight:700; }
-  .terrain-tag.cls-warrior{ background:var(--warrior); }
-  .terrain-tag.cls-mage{ background:var(--mage); }
-  .terrain-tag.cls-archer{ background:var(--archer); }
-  .board-slots{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
-  .board-slot{ aspect-ratio:1.15/1; background:var(--panel-raised); border:1.5px dashed var(--line); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:2px; }
-  .board-slot.filled{ border-style:solid; }
-  .board-slot .slot-plus{ color:var(--muted); font-family:var(--font-mono); font-size:1rem; }
-  .board-slot .u-name{ font-weight:700; font-size:.66rem; }
-  .board-slot .u-stats{ font-family:var(--font-mono); font-size:.56rem; color:var(--muted); }
-  .col-caption{ display:flex; padding-left:32px; }
-  .col-caption span{ flex:1; text-align:center; }
+  .upgrade-list{ display:flex; flex-direction:column; gap:8px; }
+  .upgrade-card{ background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; padding:12px; display:flex; flex-direction:column; gap:3px; text-align:left; }
+  .upgrade-card .u-title{ font-weight:700; font-size:.92rem; }
+  .upgrade-card .u-desc{ font-family:var(--font-mono); font-size:.68rem; color:var(--muted); }
+  .upgrade-card:active{ background:var(--ink); }
+  .upgrade-card:active .u-title, .upgrade-card:active .u-desc{ color:var(--panel); }
 
-  .synergy-row{ display:flex; gap:6px; flex-wrap:wrap; }
-  .syn-badge{ font-family:var(--font-mono); font-size:.62rem; padding:4px 8px; border-radius:2px; background:var(--panel-raised); color:var(--muted); border:1.3px solid var(--line); }
-  .syn-badge.active{ color:var(--panel-raised); font-weight:700; }
-
-  .ready-btn{ margin-top:auto; }
   .toast{ position:fixed; left:50%; bottom:18px; transform:translateX(-50%); background:var(--ink); color:var(--panel); padding:8px 16px; border-radius:3px; font-family:var(--font-mono); font-weight:700; font-size:.72rem; opacity:0; transition:opacity .2s; pointer-events:none; z-index:50; letter-spacing:.04em; }
   .toast.show{ opacity:1; }
 
@@ -139,74 +121,52 @@
   #screen-battle{ padding:12px 10px; gap:8px; }
   .battle-header{ display:flex; align-items:center; justify-content:space-between; padding-bottom:6px; border-bottom:1px solid var(--line); }
   .battle-header .side{ display:flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:.72rem; font-weight:700; }
-  .rec-dot{ width:7px; height:7px; border-radius:50%; background:var(--p1); animation:pulse 1.1s ease-in-out infinite; }
+  .rec-dot{ width:7px; height:7px; border-radius:50%; background:var(--ink); animation:pulse 1.1s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
   .vs-label{ font-family:var(--font-mono); font-weight:700; letter-spacing:.14em; color:var(--muted); font-size:.68rem; }
 
-  .lane-ticker{ display:flex; gap:6px; flex-shrink:0; }
-  .lt-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:var(--panel-raised); border:1.5px solid var(--line); border-radius:4px; padding:5px 4px; transition:border-color .2s; }
-  .lt-item.active{ border-color:var(--ink); }
-  .lt-name{ font-family:var(--font-mono); font-size:.62rem; font-weight:700; letter-spacing:.06em; }
-  .lt-status{ font-family:var(--font-mono); font-size:.58rem; color:var(--muted); font-weight:700; }
-  .lt-status.win-p1{ color:var(--p1); }
-  .lt-status.win-p2{ color:var(--p2); }
-
-  .map-wrap{ position:relative; flex:1; min-height:0; display:flex; }
-  .map-viewport{ position:relative; flex:1; min-height:0; overflow:hidden; border-radius:4px; border:1.5px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:center; transition:box-shadow .2s; }
-  .map-viewport.pulse{ box-shadow:0 0 0 3px var(--ink) inset; }
-  .map-stage{ position:relative; width:100%; height:100%; aspect-ratio:1/1; max-width:100%; max-height:100%; transition:transform .5s cubic-bezier(.25,.7,.3,1); transform-origin:50% 50%; }
-  .map-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; overflow:visible; }
-  .map-bg{ fill:var(--panel-raised); stroke:var(--line); stroke-width:1.2; }
-  .map-river{ fill:var(--p2); opacity:.16; }
-  .jungle-blob{ fill:var(--archer); opacity:.09; }
-  .lane-path{ stroke:var(--line); stroke-width:7; stroke-linecap:round; fill:none; opacity:.6; }
-  .lane-path.cls-warrior{ stroke:var(--warrior); }
-  .lane-path.cls-mage{ stroke:var(--mage); }
-  .lane-path.cls-archer{ stroke:var(--archer); }
-  .nexus{ stroke-width:1.5; }
-  .nexus-p1{ fill:var(--p1); stroke:var(--p1); }
-  .nexus-p2{ fill:var(--p2); stroke:var(--p2); }
+  .grid-wrap{ position:relative; flex:1; min-height:0; display:flex; }
+  .grid-viewport{ position:relative; flex:1; min-height:0; overflow:hidden; border-radius:4px; border:1.5px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:center; transition:box-shadow .2s; }
+  .grid-viewport.pulse{ box-shadow:0 0 0 3px var(--ink) inset; }
+  .grid-stage{ position:relative; width:100%; max-width:100%; max-height:100%; aspect-ratio:110/66; }
+  .grid-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; overflow:visible; }
+  .tile-top{ fill:var(--tile-top); stroke:var(--line); stroke-width:.5; }
+  .tile-top.tile-elevated{ fill:var(--tile-elev-top); }
+  .tile-side-l{ fill:var(--tile-side-l); stroke:var(--line); stroke-width:.4; }
+  .tile-side-r{ fill:var(--tile-side-r); stroke:var(--line); stroke-width:.4; }
 
   #killFeed{ position:absolute; top:6px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; gap:4px; z-index:5; align-items:center; pointer-events:none; }
-  .kill-row{ background:var(--ink); color:var(--panel); font-family:var(--font-mono); font-size:.62rem; font-weight:700; padding:5px 12px; border-radius:3px; white-space:nowrap; opacity:0; transform:translateY(-10px); animation:killin .3s ease-out forwards, killout .3s ease-in forwards 2.1s; }
-  .kill-row .k-p1{ color:var(--p1); }
-  .kill-row .k-p2{ color:var(--p2); }
+  .kill-row{ background:var(--ink); color:var(--panel); font-family:var(--font-mono); font-size:.6rem; font-weight:700; padding:5px 11px; border-radius:3px; white-space:nowrap; opacity:0; transform:translateY(-10px); animation:killin .3s ease-out forwards, killout .3s ease-in forwards 2.1s; }
+  .kill-row .k-p1{ font-weight:800; }
+  .kill-row .k-p2{ font-weight:500; opacity:.8; }
   @keyframes killin{ to{ opacity:1; transform:translateY(0); } }
   @keyframes killout{ to{ opacity:0; transform:translateY(-10px); } }
 
-  .b-chip{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:1px; padding:4px 6px; min-width:40px; border-radius:3px; background:var(--panel); border:1.5px solid var(--line); transition:left .45s cubic-bezier(.3,.7,.3,1), top .45s cubic-bezier(.3,.7,.3,1); font-family:var(--font-mono); text-align:center; z-index:2; }
-  .b-chip.side-p1{ border-color:var(--p1); }
-  .b-chip.side-p2{ border-color:var(--p2); }
-  .b-chip.terrain-boosted{ box-shadow:0 0 0 1.5px var(--gold) inset; }
-  .b-chip .c-badge{ width:12px; height:12px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.52rem; border-radius:2px; color:var(--panel-raised); }
-  .b-chip .c-name{ font-size:.56rem; font-weight:700; white-space:nowrap; }
-  .b-chip .c-hp{ font-size:.62rem; font-weight:700; }
-  .b-chip.hit{ animation:chiphit .34s ease-out; }
-  @keyframes chiphit{ 0%{ filter:brightness(1.9); } 100%{ filter:brightness(1); } }
-  .b-chip.crit{ animation:critflash .48s ease-out; }
-  @keyframes critflash{ 0%{ filter:brightness(2.6); box-shadow:0 0 0 2px var(--gold); } 100%{ filter:brightness(1); box-shadow:0 0 0 0 transparent; } }
-  .b-chip.dying{ transition:opacity .24s ease-in, left .24s, top .24s; opacity:0; }
+  .u-chip{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:1px; padding:3px 5px; min-width:32px; border-radius:3px; background:var(--panel); border:1.5px solid var(--line); transition:left .42s cubic-bezier(.3,.7,.3,1), top .42s cubic-bezier(.3,.7,.3,1); font-family:var(--font-mono); text-align:center; z-index:2; }
+  .u-chip.side-p1{ border-color:var(--p1); border-width:2px; }
+  .u-chip.side-p2{ border-color:var(--p2); border-style:dashed; }
+  .u-chip .c-badge{ width:11px; height:11px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.48rem; color:var(--panel); }
+  .u-chip .c-hp{ font-size:.56rem; font-weight:700; }
+  .u-chip.hit{ animation:chiphit .32s ease-out; }
+  @keyframes chiphit{ 0%{ filter:invert(1); } 100%{ filter:invert(0); } }
+  .u-chip.crit{ animation:critflash .46s ease-out; }
+  @keyframes critflash{ 0%{ filter:invert(1); box-shadow:0 0 0 2px var(--ink); } 100%{ filter:invert(0); box-shadow:0 0 0 0 transparent; } }
+  .u-chip.dying{ transition:opacity .22s ease-in; opacity:0; }
+  .u-chip.elevated-unit{ box-shadow:0 2px 0 0 var(--ink); }
 
-  .crit-pop{ position:absolute; top:50%; font-family:var(--font-mono); font-weight:700; font-size:.58rem; color:var(--gold); pointer-events:none; transform:translate(-50%,-8px); animation:critpop .55s ease-out forwards; z-index:3; }
-  @keyframes critpop{ 0%{ opacity:1; transform:translate(-50%,-8px); } 100%{ opacity:0; transform:translate(-50%,-30px); } }
+  .crit-pop{ position:absolute; top:50%; font-family:var(--font-mono); font-weight:700; font-size:.56rem; color:var(--ink); pointer-events:none; transform:translate(-50%,-8px); animation:critpop .5s ease-out forwards; z-index:3; }
+  @keyframes critpop{ 0%{ opacity:1; transform:translate(-50%,-8px); } 100%{ opacity:0; transform:translate(-50%,-26px); } }
 
-  .cls-warrior .c-badge, .board-slot.cls-warrior, .offer-card.cls-warrior .offer-badge{ background:var(--warrior); }
-  .cls-mage .c-badge, .board-slot.cls-mage, .offer-card.cls-mage .offer-badge{ background:var(--mage); }
-  .cls-archer .c-badge, .board-slot.cls-archer, .offer-card.cls-archer .offer-badge{ background:var(--archer); }
-  .board-slot.cls-warrior{ border-color:var(--warrior); background:var(--panel-raised); }
-  .board-slot.cls-mage{ border-color:var(--mage); background:var(--panel-raised); }
-  .board-slot.cls-archer{ border-color:var(--archer); background:var(--panel-raised); }
-  .offer-card.cls-warrior{ border-top:3px solid var(--warrior); }
-  .offer-card.cls-mage{ border-top:3px solid var(--mage); }
-  .offer-card.cls-archer{ border-top:3px solid var(--archer); }
+  .cls-warrior .c-badge, .cls-warrior .u-badge{ background:var(--warrior); border-radius:2px; }
+  .cls-mage .c-badge, .cls-mage .u-badge{ background:var(--mage); clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
+  .cls-archer .c-badge, .cls-archer .u-badge{ background:var(--archer); border-radius:50%; color:var(--ink); }
 
   /* ---------- round result / match end ---------- */
   #screen-roundresult, #screen-matchend{ align-items:center; justify-content:center; gap:16px; padding:28px; text-align:center; }
   .result-stencil{ font-family:var(--font-display); font-weight:700; font-size:1.55rem; padding:10px 18px; border:2px solid var(--ink); border-radius:3px; text-wrap:balance; }
-  .result-stencil.p1{ border-color:var(--p1); color:var(--p1); }
-  .result-stencil.p2{ border-color:var(--p2); color:var(--p2); }
-  .lane-summary{ display:flex; gap:14px; font-family:var(--font-mono); font-size:.72rem; color:var(--muted); }
-  .lane-summary b{ color:var(--ink); }
+  .result-stencil.p1{ border-width:3px; }
+  .result-stencil.p2{ border-style:dashed; }
+  .survivor-line{ font-family:var(--font-mono); font-size:.74rem; color:var(--muted); }
   .lives-display{ display:flex; gap:26px; }
   .lives-display .who{ font-family:var(--font-mono); font-size:.62rem; letter-spacing:.08em; color:var(--muted); margin-bottom:5px; text-transform:uppercase; }
   .lives-display .pips{ justify-content:center; }
@@ -219,11 +179,7 @@
     #screen-title p{ font-size:.76rem; line-height:1.5; max-width:420px; }
     .handoff-diagram{ transform:scale(.82); }
     #screen-handoff p{ max-width:380px; }
-    #screen-draft{ padding:8px 18px 12px; gap:6px; max-width:640px; margin:0 auto; }
-    .board-rows{ gap:6px; }
-    .board-slot{ aspect-ratio:1.7/1; }
-    .lane-label{ padding-top:2px; }
-    .col-caption{ display:none; }
+    #screen-upgrade{ padding:8px 18px 12px; gap:8px; max-width:640px; margin:0 auto; }
     .lives-display{ gap:40px; }
   }
 </style>
@@ -235,10 +191,10 @@
   <div id="screen-title" class="screen">
     <div class="logo-block">
       <div class="logo-mark"><span class="logo-dot"></span><span class="logo-dot b"></span></div>
-      <h1>LANE CHESS 01</h1>
-      <div class="subtitle">2-Player / 1-Device Auto Battler</div>
+      <h1>ALTITUDE 01</h1>
+      <div class="subtitle">2-Player / 1-Device Tactics Battler</div>
     </div>
-    <p>スマホ1台を交互に渡し合う2人用オートチェス。自分の番だけこっそりユニットを購入してTOP/MID/BOTの3レーンに配置。両者の準備が整うと自動でバトルが始まる。</p>
+    <p>スマホ1台を交互に渡し合う2人用タクティクス。自分の番だけ3択の強化を1つ選んでキャラを育てる。両者の準備が整うと、高低差のあるマス目の上で自動バトルが始まる。</p>
     <div class="panel-block">
       <div class="eyebrow">Lives</div>
       <div class="switch3" id="livesSwitch">
@@ -256,69 +212,45 @@
     <div class="eyebrow" id="handoffEyebrow">Turn Change</div>
     <div class="handoff-diagram">
       <div class="device-icon"></div>
-      <div class="arrow-mono" id="handoffArrow">→</div>
-      <div class="device-icon to" id="handoffToIcon"></div>
+      <div class="arrow-mono">→</div>
+      <div class="device-icon to"></div>
     </div>
     <h2 id="handoffTitle">プレイヤー1の番です</h2>
-    <p>スマホを渡してください。相手には盤面を見せないように!</p>
+    <p>スマホを渡してください。相手には選択肢を見せないように!</p>
     <button class="primary-btn" id="handoffBtn">見る準備ができた</button>
   </div>
 
-  <!-- DRAFT -->
-  <div id="screen-draft" class="screen hidden">
+  <!-- UPGRADE PICK -->
+  <div id="screen-upgrade" class="screen hidden">
     <div class="topbar">
-      <div class="turn-label" id="draftTurnLabel">プレイヤー1の番 - ラウンド1</div>
+      <div class="turn-label" id="upgradeTurnLabel">プレイヤー1の番 - ラウンド1</div>
       <div class="stats-row">
-        <div class="stat gold"><span class="k">Gold</span><span class="v" id="draftGold">0</span></div>
-        <div class="stat"><span class="k">Self</span><div class="pips" id="draftPipsSelf"></div></div>
-        <div class="stat"><span class="k">Opp</span><div class="pips" id="draftPipsOp"></div></div>
-        <div class="stat timer-stat"><span class="k">Time</span><span class="v mono" id="draftTimer">75</span></div>
+        <div class="stat"><span class="k">Self</span><div class="pips" id="upgradePipsSelf"></div></div>
+        <div class="stat"><span class="k">Opp</span><div class="pips" id="upgradePipsOp"></div></div>
+        <div class="stat timer-stat"><span class="k">Time</span><span class="v mono" id="upgradeTimer">20</span></div>
       </div>
     </div>
 
-    <div class="eyebrow">Shop — tap, then tap an open slot</div>
-    <div class="shop-row" id="shopRow"></div>
-    <div class="row-between">
-      <button class="ghost-btn" id="rerollBtn">Reroll -1G</button>
-      <div class="eyebrow" id="synHint">Board — tap a unit to sell</div>
-    </div>
+    <div class="eyebrow">Your Roster</div>
+    <div class="roster-row" id="rosterRow"></div>
+    <div class="buff-row" id="buffRow"></div>
 
-    <div class="col-caption"><span>FRONT</span><span>MID</span><span>BACK</span></div>
-    <div class="board-rows" id="boardRows"></div>
-
-    <div class="synergy-row" id="synergyRow"></div>
-
-    <button class="primary-btn ready-btn" id="readyBtn">じゅんび完了</button>
+    <div class="eyebrow">強化を1つ選択</div>
+    <div class="upgrade-list" id="upgradeList"></div>
   </div>
 
   <!-- BATTLE -->
   <div id="screen-battle" class="screen hidden">
     <div class="battle-header">
       <div class="side"><span class="rec-dot"></span><span>P2</span><div class="pips" id="battlePipsP2"></div></div>
-      <div class="vs-label">Summoner's Rift Cam</div>
+      <div class="vs-label">Auto Tactics</div>
       <div class="side"><div class="pips" id="battlePipsP1"></div><span>P1</span></div>
     </div>
-    <div class="lane-ticker" id="laneTicker">
-      <div class="lt-item" data-lane="0"><span class="lt-name">TOP</span><span class="terrain-chip" data-terrain></span><span class="lt-status" data-status>PENDING</span></div>
-      <div class="lt-item" data-lane="1"><span class="lt-name">MID</span><span class="terrain-chip" data-terrain></span><span class="lt-status" data-status>PENDING</span></div>
-      <div class="lt-item" data-lane="2"><span class="lt-name">BOT</span><span class="terrain-chip" data-terrain></span><span class="lt-status" data-status>PENDING</span></div>
-    </div>
-    <div class="map-wrap">
-      <div class="map-viewport" id="mapViewport">
-        <div class="map-stage" id="mapStage">
-          <svg class="map-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <clipPath id="mapClip"><polygon points="50,0 100,50 50,100 0,50"/></clipPath>
-            </defs>
-            <polygon points="50,0 100,50 50,100 0,50" class="map-bg"></polygon>
-            <circle cx="34" cy="47" r="11" class="jungle-blob"></circle>
-            <circle cx="64" cy="53" r="11" class="jungle-blob"></circle>
-            <rect x="-58" y="-9" width="116" height="18" transform="translate(50,50) rotate(45)" class="map-river" clip-path="url(#mapClip)"></rect>
-            <line x1="14" y1="64" x2="64" y2="14" class="lane-path lane-path-top"></line>
-            <line x1="25" y1="75" x2="75" y2="25" class="lane-path lane-path-mid"></line>
-            <line x1="36" y1="86" x2="86" y2="36" class="lane-path lane-path-bot"></line>
-            <rect x="21" y="71" width="8" height="8" transform="rotate(45 25 75)" class="nexus nexus-p1"></rect>
-            <rect x="71" y="21" width="8" height="8" transform="rotate(45 75 25)" class="nexus nexus-p2"></rect>
+    <div class="grid-wrap">
+      <div class="grid-viewport" id="gridViewport">
+        <div class="grid-stage" id="gridStage">
+          <svg class="grid-svg" id="gridSvg" viewBox="-55 -14 110 66" preserveAspectRatio="xMidYMid meet">
+            <g class="tile-layer" id="tileLayer"></g>
           </svg>
         </div>
       </div>
@@ -330,7 +262,7 @@
   <div id="screen-roundresult" class="screen hidden">
     <div class="eyebrow">Round Result</div>
     <div class="result-stencil" id="roundResultTitle">プレイヤー1の勝ち</div>
-    <div class="lane-summary" id="laneSummary"></div>
+    <div class="survivor-line" id="survivorLine"></div>
     <div class="lives-display">
       <div><div class="who">Player 1</div><div class="pips" id="rrPipsP1"></div></div>
       <div><div class="who">Player 2</div><div class="pips" id="rrPipsP2"></div></div>
@@ -353,58 +285,46 @@
 (function(){
   'use strict';
   var $ = function(id){ return document.getElementById(id); };
+  var SVG_NS = 'http://www.w3.org/2000/svg';
 
   // ---------- data ----------
-  var UNIT_DEFS = [
-    { id:'kenshi',   name:'剣士',     cls:'warrior', cost:1, hp:10, atk:2 },
-    { id:'juso',     name:'重装兵',   cls:'warrior', cost:2, hp:16, atk:2 },
-    { id:'mado',     name:'魔道士',   cls:'mage',    cost:1, hp:6,  atk:3 },
-    { id:'daimado',  name:'大魔道士', cls:'mage',    cost:2, hp:7,  atk:5 },
-    { id:'kyu',      name:'弓兵',     cls:'archer',  cost:1, hp:7,  atk:3 },
-    { id:'sogeki',   name:'狙撃手',   cls:'archer',  cost:2, hp:6,  atk:5 }
-  ];
-  var CLASS_INFO = {
-    warrior:{ name:'戦士', letter:'W' },
-    mage:{ name:'魔法使い', letter:'M' },
-    archer:{ name:'弓使い', letter:'A' }
+  var CLASS_DEFS = {
+    warrior:{ name:'戦士', letter:'W', hp:13, atk:3, range:1 },
+    mage:{ name:'魔法使い', letter:'M', hp:7, atk:5, range:2 },
+    archer:{ name:'弓使い', letter:'A', hp:8, atk:4, range:3 }
   };
-  var TERRAIN_INFO = {
-    warrior:{ name:'FORTRESS', jp:'要塞' },
-    mage:{ name:'LEYLINE', jp:'魔脈' },
-    archer:{ name:'HIGHGROUND', jp:'高地' }
-  };
-  var TERRAIN_HP_MULT = 1.25;
-  var CRIT_CHANCE = 0.18;
+  var CLASS_KEYS = ['warrior','mage','archer'];
+  var MAX_ROSTER = 5;
+  var BASE_CRIT = 0.10;
   var CRIT_MULT = 1.6;
-  var LANE_NAMES = ['TOP','MID','BOT'];
-  var LANE_META = [
-    { key:'top', p1:{x:14,y:64}, p2:{x:64,y:14} },
-    { key:'mid', p1:{x:25,y:75}, p2:{x:75,y:25} },
-    { key:'bot', p1:{x:36,y:86}, p2:{x:86,y:36} }
-  ];
-  var LANE_FOCUS = [ {x:39,y:39}, {x:50,y:50}, {x:61,y:61} ];
-  var DRAFT_SECONDS = 75;
+  var BASE_HIGHGROUND_BONUS = 0.25;
+  var UPGRADE_SECONDS = 20;
 
-  function getDef(id){ for(var i=0;i<UNIT_DEFS.length;i++){ if(UNIT_DEFS[i].id===id) return UNIT_DEFS[i]; } return null; }
-  function shuffle3(arr){
-    var a = arr.slice();
-    for(var i=a.length-1;i>0;i--){
-      var j = Math.floor(Math.random()*(i+1));
-      var t=a[i]; a[i]=a[j]; a[j]=t;
-    }
-    return a;
-  }
-  function lerpPoint(a,b,t){ return { x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t }; }
+  var UPGRADE_DEFS = [
+    { id:'hp', title:'鍛錬: 体力', desc:'自軍全員 HP+4', apply:function(p){ p.bonusHp += 4; } },
+    { id:'atk', title:'鍛錬: 攻撃', desc:'自軍全員 ATK+1', apply:function(p){ p.bonusAtk += 1; } },
+    { id:'crit', title:'会心の心得', desc:'会心率 +8%', apply:function(p){ p.critChance += 0.08; } },
+    { id:'highground', title:'高所の心得', desc:'高所からの攻撃ダメージ +20%', apply:function(p){ p.highGroundBonus += 0.20; } },
+    { id:'revive', title:'不屈の心得', desc:'致命打を受けてもHP1で耐える確率 +15%', apply:function(p){ p.reviveChance += 0.15; } },
+    { id:'recruit', title:'新規加入', desc:'新しい仲間(ランダムなクラス)が加入する', condition:function(p){ return p.roster.length < MAX_ROSTER; },
+      apply:function(p){
+        var cls = CLASS_KEYS[Math.floor(Math.random()*CLASS_KEYS.length)];
+        var n = p.roster.filter(function(u){ return u.cls===cls; }).length + 1;
+        p.roster.push({ uid: uidCounter++, cls: cls, name: CLASS_DEFS[cls].name + (n>1?n:'') });
+      } }
+  ];
 
   var uidCounter = 1;
 
   // ---------- state ----------
-  var G = { lives:3, round:1, players:null, shop:null, selectedOffer:null, activeDrafter:1, laneTerrain:['warrior','mage','archer'] };
+  var G = { lives:3, round:1, players:null, activePicker:1 };
 
-  function emptyBoard(){ return [ [null,null,null], [null,null,null], [null,null,null] ]; }
-  function newPlayerState(){ return { gold:0, lives:G.lives, board: emptyBoard() }; }
+  function newPlayerState(){
+    var roster = CLASS_KEYS.map(function(cls){ return { uid: uidCounter++, cls:cls, name: CLASS_DEFS[cls].name }; });
+    return { lives:G.lives, roster:roster, bonusHp:0, bonusAtk:0, critChance:0, highGroundBonus:0, reviveChance:0 };
+  }
 
-  var SCREENS = ['title','handoff','draft','battle','roundresult','matchend'];
+  var SCREENS = ['title','handoff','upgrade','battle','roundresult','matchend'];
   function show(name){ SCREENS.forEach(function(s){ $('screen-'+s).classList.toggle('hidden', s !== name); }); }
 
   function toast(msg){
@@ -448,336 +368,194 @@
 
   // ---------- round / handoff ----------
   function startRound(){
-    var gain = 3 + G.round;
-    G.players[1].gold += gain;
-    G.players[2].gold += gain;
-    G.laneTerrain = shuffle3(['warrior','mage','archer']);
-    goToHandoff(1, function(){ startDraft(1); });
+    goToHandoff(1, function(){ startUpgradePick(1); });
   }
 
   function goToHandoff(playerNum, cb){
     $('handoffEyebrow').textContent = 'Round ' + G.round + ' — Turn Change';
     $('handoffTitle').textContent = 'プレイヤー' + playerNum + 'の番です';
-    var accent = playerNum === 1 ? '--p1' : '--p2';
-    $('handoffToIcon').style.setProperty('--accent', 'var(' + accent + ')');
-    $('handoffArrow').style.setProperty('--accent', 'var(' + accent + ')');
     var btn = $('handoffBtn');
     btn.onclick = function(){ cb(); };
     show('handoff');
   }
 
-  // ---------- draft ----------
-  function rollShop(round){
-    var offers = [];
-    for(var i=0;i<3;i++){
-      var candidates = UNIT_DEFS.filter(function(u){
-        if(round <= 2) return u.cost === 1 || Math.random() < 0.25;
-        return true;
-      });
-      if(candidates.length === 0) candidates = UNIT_DEFS;
-      offers.push(candidates[Math.floor(Math.random()*candidates.length)].id);
-    }
-    return offers;
+  // ---------- upgrade pick ----------
+  var upgradeTimerHandle = null, upgradeEndAt = 0;
+  function clearUpgradeTimer(){ if(upgradeTimerHandle){ clearInterval(upgradeTimerHandle); upgradeTimerHandle = null; } }
+  function startUpgradeTimer(){
+    clearUpgradeTimer();
+    upgradeEndAt = Date.now() + UPGRADE_SECONDS * 1000;
+    tickUpgradeTimer();
+    upgradeTimerHandle = setInterval(tickUpgradeTimer, 250);
   }
-
-  var draftTimerHandle = null, draftEndAt = 0;
-  function clearDraftTimer(){ if(draftTimerHandle){ clearInterval(draftTimerHandle); draftTimerHandle = null; } }
-  function startDraftTimer(){
-    clearDraftTimer();
-    draftEndAt = Date.now() + DRAFT_SECONDS * 1000;
-    tickDraftTimer();
-    draftTimerHandle = setInterval(tickDraftTimer, 250);
-  }
-  function tickDraftTimer(){
-    var remain = Math.max(0, Math.ceil((draftEndAt - Date.now()) / 1000));
-    var el = $('draftTimer');
+  function tickUpgradeTimer(){
+    var remain = Math.max(0, Math.ceil((upgradeEndAt - Date.now()) / 1000));
+    var el = $('upgradeTimer');
     el.textContent = remain;
-    el.classList.toggle('urgent', remain <= 10);
+    el.classList.toggle('urgent', remain <= 6);
     if(remain <= 0){
-      clearDraftTimer();
-      advanceDraft();
+      clearUpgradeTimer();
+      var choices = currentChoices();
+      pickUpgrade(choices[Math.floor(Math.random()*choices.length)]);
     }
   }
 
-  function startDraft(playerNum){
-    G.activeDrafter = playerNum;
-    G.shop = rollShop(G.round);
-    G.selectedOffer = null;
-    renderDraft();
-    show('draft');
-    startDraftTimer();
+  function opponentNum(){ return G.activePicker === 1 ? 2 : 1; }
+  function activePlayer(){ return G.players[G.activePicker]; }
+
+  var lastChoices = [];
+  function currentChoices(){ return lastChoices; }
+
+  function rollUpgradeChoices(p){
+    var pool = UPGRADE_DEFS.filter(function(u){ return !u.condition || u.condition(p); });
+    var shuffled = pool.slice();
+    for(var i=shuffled.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t=shuffled[i]; shuffled[i]=shuffled[j]; shuffled[j]=t;
+    }
+    return shuffled.slice(0, Math.min(3, shuffled.length));
   }
 
-  function activePlayer(){ return G.players[G.activeDrafter]; }
-  function opponentNum(){ return G.activeDrafter === 1 ? 2 : 1; }
-
-  function boardClassCounts(board){
-    var counts = {};
-    board.forEach(function(lane){
-      lane.forEach(function(slot){
-        if(!slot) return;
-        var def = getDef(slot.defId);
-        counts[def.cls] = (counts[def.cls]||0) + 1;
-      });
-    });
-    return counts;
-  }
-
-  function renderDraft(){
+  function startUpgradePick(playerNum){
+    G.activePicker = playerNum;
     var p = activePlayer();
-    var accentVar = G.activeDrafter === 1 ? '--p1' : '--p2';
-    $('draftTurnLabel').textContent = 'プレイヤー' + G.activeDrafter + 'の番 - ラウンド' + G.round;
-    $('draftGold').textContent = p.gold;
-    renderPips($('draftPipsSelf'), p.lives, G.lives, accentVar);
-    renderPips($('draftPipsOp'), G.players[opponentNum()].lives, G.lives, G.activeDrafter === 1 ? '--p2' : '--p1');
+    lastChoices = rollUpgradeChoices(p);
+    renderUpgradeScreen();
+    show('upgrade');
+    startUpgradeTimer();
+  }
 
-    var shopRow = $('shopRow');
-    shopRow.innerHTML = '';
-    G.shop.forEach(function(defId, idx){
+  function effectiveStats(p, unit){
+    var def = CLASS_DEFS[unit.cls];
+    return { hp: def.hp + p.bonusHp, atk: def.atk + p.bonusAtk, range: def.range };
+  }
+
+  function renderUpgradeScreen(){
+    var p = activePlayer();
+    var accentVar = G.activePicker === 1 ? '--p1' : '--p2';
+    $('upgradeTurnLabel').textContent = 'プレイヤー' + G.activePicker + 'の番 - ラウンド' + G.round;
+    renderPips($('upgradePipsSelf'), p.lives, G.lives, accentVar);
+    renderPips($('upgradePipsOp'), G.players[opponentNum()].lives, G.lives, G.activePicker === 1 ? '--p2' : '--p1');
+
+    var rosterRow = $('rosterRow');
+    rosterRow.innerHTML = '';
+    p.roster.forEach(function(unit){
+      var st = effectiveStats(p, unit);
       var card = document.createElement('div');
-      if(!defId){
-        card.className = 'offer-card empty';
-        card.innerHTML = '<div class="offer-name">—</div>';
-        shopRow.appendChild(card);
-        return;
-      }
-      var def = getDef(defId);
-      var affordable = p.gold >= def.cost;
-      card.className = 'offer-card cls-' + def.cls + (idx === G.selectedOffer ? ' selected' : '') + (affordable ? '' : ' unaffordable');
+      card.className = 'roster-card cls-' + unit.cls;
       card.innerHTML =
-        '<div class="offer-badge">' + CLASS_INFO[def.cls].letter + '</div>' +
-        '<div class="offer-name">' + def.name + '</div>' +
-        '<div class="offer-stats">HP' + def.hp + ' / AT' + def.atk + '</div>' +
-        '<div class="offer-cost">' + def.cost + 'G</div>';
-      card.addEventListener('click', function(){ onOfferClick(idx); });
-      shopRow.appendChild(card);
+        '<div class="u-badge">' + CLASS_DEFS[unit.cls].letter + '</div>' +
+        '<div class="u-name">' + unit.name + '</div>' +
+        '<div class="u-stats">HP' + st.hp + ' / AT' + st.atk + '</div>';
+      rosterRow.appendChild(card);
     });
 
-    $('rerollBtn').disabled = p.gold < 1;
-
-    var boardRows = $('boardRows');
-    boardRows.innerHTML = '';
-    for(var lane=0; lane<3; lane++){
-      var row = document.createElement('div');
-      row.className = 'board-row';
-      var label = document.createElement('div');
-      label.className = 'lane-label mono';
-      label.textContent = LANE_NAMES[lane];
-      row.appendChild(label);
-
-      var body = document.createElement('div');
-      body.className = 'lane-body';
-
-      var terrainCls = G.laneTerrain[lane];
-      var terrain = document.createElement('div');
-      terrain.className = 'terrain-tag cls-' + terrainCls;
-      terrain.textContent = TERRAIN_INFO[terrainCls].name + ' — ' + CLASS_INFO[terrainCls].name + '+25%HP';
-      body.appendChild(terrain);
-
-      var slots = document.createElement('div');
-      slots.className = 'board-slots';
-      for(var slot=0; slot<3; slot++){
-        var unit = p.board[lane][slot];
-        var cell = document.createElement('div');
-        if(unit){
-          var def = getDef(unit.defId);
-          cell.className = 'board-slot filled cls-' + def.cls;
-          cell.innerHTML = '<div class="u-name">' + def.name + '</div><div class="u-stats">' + def.hp + '/' + def.atk + '</div>';
-        } else {
-          cell.className = 'board-slot';
-          cell.innerHTML = '<div class="slot-plus">+</div>';
-        }
-        cell.addEventListener('click', (function(l,s){ return function(){ onSlotClick(l,s); }; })(lane, slot));
-        slots.appendChild(cell);
-      }
-      body.appendChild(slots);
-      row.appendChild(body);
-      boardRows.appendChild(row);
-    }
-
-    var counts = boardClassCounts(p.board);
-    var synRow = $('synergyRow');
-    synRow.innerHTML = '';
-    Object.keys(CLASS_INFO).forEach(function(cls){
-      var n = counts[cls] || 0;
+    var buffRow = $('buffRow');
+    buffRow.innerHTML = '';
+    var buffs = [
+      { on: p.critChance>0, text:'会心+' + Math.round(p.critChance*100) + '%' },
+      { on: p.highGroundBonus>0, text:'高所+' + Math.round(p.highGroundBonus*100) + '%' },
+      { on: p.reviveChance>0, text:'不屈+' + Math.round(p.reviveChance*100) + '%' }
+    ];
+    buffs.forEach(function(b){
       var badge = document.createElement('div');
-      badge.className = 'syn-badge' + (n >= 2 ? ' active' : '');
-      if(n >= 2) badge.style.background = 'var(--' + cls + ')';
-      badge.textContent = CLASS_INFO[cls].letter + ' ' + CLASS_INFO[cls].name + ' x' + n + (n >= 2 ? ' +30%AT' : '');
-      synRow.appendChild(badge);
+      badge.className = 'buff-badge' + (b.on ? ' active' : '');
+      badge.textContent = b.text;
+      buffRow.appendChild(badge);
+    });
+
+    var list = $('upgradeList');
+    list.innerHTML = '';
+    lastChoices.forEach(function(def){
+      var card = document.createElement('div');
+      card.className = 'upgrade-card';
+      card.innerHTML = '<div class="u-title">' + def.title + '</div><div class="u-desc">' + def.desc + '</div>';
+      card.addEventListener('click', function(){ pickUpgrade(def); });
+      list.appendChild(card);
     });
   }
 
-  function onOfferClick(idx){
-    var p = activePlayer();
-    var defId = G.shop[idx];
-    if(!defId) return;
-    var def = getDef(defId);
-    if(G.selectedOffer === idx){ G.selectedOffer = null; renderDraft(); return; }
-    if(p.gold < def.cost){ toast('ゴールドが足りません'); return; }
-    G.selectedOffer = idx;
-    renderDraft();
+  function pickUpgrade(def){
+    clearUpgradeTimer();
+    def.apply(activePlayer());
+    advanceUpgrade();
   }
 
-  function onSlotClick(lane, slot){
-    var p = activePlayer();
-    var occupied = p.board[lane][slot];
-
-    if(G.selectedOffer !== null){
-      if(occupied){ toast('空いているマスを選んでください'); return; }
-      var defId = G.shop[G.selectedOffer];
-      var def = getDef(defId);
-      if(p.gold < def.cost) return;
-      p.gold -= def.cost;
-      p.board[lane][slot] = { uid: uidCounter++, defId: defId };
-      G.shop[G.selectedOffer] = null;
-      G.selectedOffer = null;
-      renderDraft();
-      return;
-    }
-
-    if(occupied){
-      var soldDef = getDef(occupied.defId);
-      p.gold += soldDef.cost;
-      p.board[lane][slot] = null;
-      toast('売却: +' + soldDef.cost + 'G');
-      renderDraft();
-    }
-  }
-
-  $('rerollBtn').addEventListener('click', function(){
-    var p = activePlayer();
-    if(p.gold < 1) return;
-    p.gold -= 1;
-    G.shop = rollShop(G.round);
-    G.selectedOffer = null;
-    renderDraft();
-  });
-
-  function advanceDraft(){
-    clearDraftTimer();
-    if(G.activeDrafter === 1){
-      goToHandoff(2, function(){ startDraft(2); });
+  function advanceUpgrade(){
+    if(G.activePicker === 1){
+      goToHandoff(2, function(){ startUpgradePick(2); });
     } else {
       goToBattle();
     }
   }
-  $('readyBtn').addEventListener('click', advanceDraft);
 
-  // ---------- battle simulation ----------
-  function computeSynergyMult(board){
-    var counts = boardClassCounts(board);
-    var mult = {};
-    Object.keys(CLASS_INFO).forEach(function(cls){ mult[cls] = (counts[cls]||0) >= 2 ? 1.3 : 1; });
-    return mult;
+  // ---------- grid ----------
+  var GRID_COLS = 6, GRID_ROWS = 6, TILE_W = 18, TILE_H = 9, ELEV_H = 7;
+  var P1_START = [ {x:0,y:4}, {x:0,y:5}, {x:1,y:5}, {x:1,y:4}, {x:0,y:3} ];
+  var P2_START = [ {x:5,y:1}, {x:5,y:0}, {x:4,y:0}, {x:4,y:1}, {x:5,y:2} ];
+
+  function isoCenter(x,y,elevation){
+    return { cx:(x-y)*(TILE_W/2), cy:(x+y)*(TILE_H/2) - elevation*ELEV_H };
+  }
+  function tileTopPoints(cx,cy){
+    return [ cx+','+(cy-TILE_H/2), (cx+TILE_W/2)+','+cy, cx+','+(cy+TILE_H/2), (cx-TILE_W/2)+','+cy ].join(' ');
   }
 
-  function makeBattleUnit(slot, mult, terrainCls){
-    var def = getDef(slot.defId);
-    var atk = Math.max(1, Math.round(def.atk * mult[def.cls]));
-    var boosted = def.cls === terrainCls;
-    var hp = boosted ? Math.max(1, Math.round(def.hp * TERRAIN_HP_MULT)) : def.hp;
-    return { uid: slot.uid, defId: def.id, name: def.name, cls: def.cls, hp: hp, maxHp: hp, atk: atk, terrainBoosted: boosted };
-  }
+  var gridTiles = [];
+  function tileAt(x,y){ return gridTiles[y*GRID_COLS+x]; }
 
-  function rollDamage(atk){
-    var isCrit = Math.random() < CRIT_CHANCE;
-    return { dmg: isCrit ? Math.round(atk * CRIT_MULT) : atk, crit: isCrit };
-  }
-
-  function simulateLane(p1Units, p2Units){
-    var q1 = p1Units.slice(), q2 = p2Units.slice();
-    var duels = [];
-    var guard = 0;
-    while(q1.length && q2.length && guard < 20){
-      guard++;
-      var a = q1[0], b = q2[0];
-      var duel = { p1: a, p2: b, ticks: [] };
-      var tguard = 0;
-      while(a.hp > 0 && b.hp > 0 && tguard < 30){
-        tguard++;
-        var dmgToA = rollDamage(b.atk), dmgToB = rollDamage(a.atk);
-        var aHp = a.hp - dmgToA.dmg, bHp = b.hp - dmgToB.dmg;
-        a.hp = aHp; b.hp = bHp;
-        duel.ticks.push({ aHp: Math.max(0,aHp), bHp: Math.max(0,bHp), aCrit: dmgToA.crit, bCrit: dmgToB.crit });
+  var tileLayerEl = $('tileLayer');
+  function buildGrid(){
+    gridTiles = [];
+    for(var y=0;y<GRID_ROWS;y++){
+      for(var x=0;x<GRID_COLS;x++){
+        gridTiles.push({ x:x, y:y, elevation: Math.random()<0.22 ? 1 : 0 });
       }
-      duels.push(duel);
-      if(a.hp <= 0) q1.shift();
-      if(b.hp <= 0) q2.shift();
     }
-    var laneResult = (q1.length && !q2.length) ? 1 : ((q2.length && !q1.length) ? 2 : 0);
-    return { duels: duels, laneResult: laneResult, p1Count: p1Units.length, p2Count: p2Units.length };
-  }
-
-  function simulateBattle(p1board, p2board){
-    var p1Mult = computeSynergyMult(p1board), p2Mult = computeSynergyMult(p2board);
-    var laneSims = [0,1,2].map(function(li){
-      var terrainCls = G.laneTerrain[li];
-      var p1Units = p1board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p1Mult, terrainCls); });
-      var p2Units = p2board[li].filter(Boolean).map(function(s){ return makeBattleUnit(s, p2Mult, terrainCls); });
-      return simulateLane(p1Units, p2Units);
+    var ordered = gridTiles.slice().sort(function(a,b){ return (a.x+a.y)-(b.x+b.y); });
+    tileLayerEl.innerHTML = '';
+    ordered.forEach(function(t){
+      var top = isoCenter(t.x,t.y,t.elevation);
+      if(t.elevation > 0){
+        var base = isoCenter(t.x,t.y,0);
+        var Lx=top.cx-TILE_W/2, Ly=top.cy, Bx=top.cx, By=top.cy+TILE_H/2;
+        var LxB=base.cx-TILE_W/2, LyB=base.cy, BxB=base.cx, ByB=base.cy+TILE_H/2;
+        var leftFace = document.createElementNS(SVG_NS,'polygon');
+        leftFace.setAttribute('points', [Lx+','+Ly, Bx+','+By, BxB+','+ByB, LxB+','+LyB].join(' '));
+        leftFace.setAttribute('class','tile-side-l');
+        tileLayerEl.appendChild(leftFace);
+        var Rx=top.cx+TILE_W/2, Ry=top.cy, RxB=base.cx+TILE_W/2, RyB=base.cy;
+        var rightFace = document.createElementNS(SVG_NS,'polygon');
+        rightFace.setAttribute('points', [Bx+','+By, Rx+','+Ry, RxB+','+RyB, BxB+','+ByB].join(' '));
+        rightFace.setAttribute('class','tile-side-r');
+        tileLayerEl.appendChild(rightFace);
+      }
+      var topPoly = document.createElementNS(SVG_NS,'polygon');
+      topPoly.setAttribute('points', tileTopPoints(top.cx, top.cy));
+      topPoly.setAttribute('class', 'tile-top' + (t.elevation>0 ? ' tile-elevated' : ''));
+      tileLayerEl.appendChild(topPoly);
     });
-    var laneResults = laneSims.map(function(s){ return s.laneResult; });
-    var p1Wins = laneResults.filter(function(r){ return r===1; }).length;
-    var p2Wins = laneResults.filter(function(r){ return r===2; }).length;
-    var winner = p1Wins === p2Wins ? 0 : (p1Wins > p2Wins ? 1 : 2);
-    return { laneSims: laneSims, laneResults: laneResults, p1Wins: p1Wins, p2Wins: p2Wins, winner: winner };
   }
 
-  // ---------- battle rendering: one map, real camera zoom ----------
-  var laneDom = [ {}, {}, {} ];
-  var laneMeetT = [0.5, 0.5, 0.5];
-  var activeLanes = [];
-  var laneTickerItems = Array.prototype.slice.call(document.querySelectorAll('.lt-item'));
-  var mapStageEl = $('mapStage');
-  var mapViewportEl = $('mapViewport');
+  var VB = { minX:-55, minY:-14, w:110, h:66 };
+  function isoToPct(cx,cy){ return { left:(cx-VB.minX)/VB.w*100, top:(cy-VB.minY)/VB.h*100 }; }
+
+  // ---------- battle units & simulation ----------
+  function rollDamage(atk, critChance){
+    var isCrit = Math.random() < (BASE_CRIT + critChance);
+    return { dmg: isCrit ? Math.round(atk*CRIT_MULT) : atk, crit: isCrit };
+  }
+
+  function chebyshev(a,b){ return Math.max(Math.abs(a.x-b.x), Math.abs(a.y-b.y)); }
+
+  var battleUnits = [];
+  var unitDom = {};
   var killFeedEl = $('killFeed');
+  var gridViewportEl = $('gridViewport');
 
-  function setLaneStatus(idx, text, cls){
-    var item = laneTickerItems[idx];
-    var st = item.querySelector('[data-status]');
-    st.textContent = text;
-    st.className = 'lt-status' + (cls ? ' ' + cls : '');
-    item.classList.toggle('active', text === 'LIVE');
-  }
-
-  function buildMap(){
-    Array.prototype.slice.call(mapStageEl.querySelectorAll('.b-chip')).forEach(function(el){ el.remove(); });
-    killFeedEl.innerHTML = '';
-    activeLanes = [];
-    laneDom = [ {}, {}, {} ];
-    laneMeetT = [];
-    for(var i=0;i<3;i++){
-      var terrainCls = G.laneTerrain[i];
-      var item = laneTickerItems[i];
-      var terrainEl = item.querySelector('[data-terrain]');
-      terrainEl.textContent = TERRAIN_INFO[terrainCls].name;
-      terrainEl.className = 'terrain-chip cls-' + terrainCls;
-      setLaneStatus(i, 'PENDING');
-      var pathEl = mapStageEl.querySelector('.lane-path-' + LANE_META[i].key);
-      pathEl.setAttribute('class', 'lane-path lane-path-' + LANE_META[i].key + ' cls-' + terrainCls);
-      laneMeetT.push(0.5 + (Math.random() * 0.3 - 0.15));
-    }
-    updateCamera();
-  }
-
-  function updateCamera(){
-    if(activeLanes.length === 0){
-      mapStageEl.style.transformOrigin = '50% 50%';
-      mapStageEl.style.transform = 'scale(1)';
-      return;
-    }
-    var pts = activeLanes.map(function(i){ return LANE_FOCUS[i]; });
-    var cx = pts.reduce(function(s,pt){ return s+pt.x; }, 0) / pts.length;
-    var cy = pts.reduce(function(s,pt){ return s+pt.y; }, 0) / pts.length;
-    var scale = activeLanes.length === 1 ? 1.7 : (activeLanes.length === 2 ? 1.3 : 1.0);
-    mapStageEl.style.transformOrigin = cx + '% ' + cy + '%';
-    mapStageEl.style.transform = 'scale(' + scale + ')';
-  }
-
-  function pulseMap(){
-    mapViewportEl.classList.add('pulse');
-    setTimeout(function(){ mapViewportEl.classList.remove('pulse'); }, 260);
+  function pulseGrid(){
+    gridViewportEl.classList.add('pulse');
+    setTimeout(function(){ gridViewportEl.classList.remove('pulse'); }, 250);
   }
 
   function pushKillFeed(killerSide, killerName, victimSide, victimName){
@@ -792,155 +570,156 @@
     setTimeout(function(){ if(row.parentNode) row.parentNode.removeChild(row); }, 2450);
   }
 
-  function createChip(unit, side){
+  function makeBattleUnits(playerNum, startPositions){
+    var p = G.players[playerNum];
+    var side = 'p' + playerNum;
+    return p.roster.map(function(u, i){
+      var def = CLASS_DEFS[u.cls];
+      var pos = startPositions[i % startPositions.length];
+      var hp = def.hp + p.bonusHp;
+      return {
+        uid: u.uid, side: side, cls: u.cls, name: u.name,
+        hp: hp, maxHp: hp, atk: def.atk + p.bonusAtk, range: def.range,
+        x: pos.x, y: pos.y, alive: true
+      };
+    });
+  }
+
+  function createChip(unit){
     var el = document.createElement('div');
-    el.className = 'b-chip side-' + side + ' cls-' + unit.cls + (unit.terrainBoosted ? ' terrain-boosted' : '');
-    el.innerHTML =
-      '<span class="c-badge">' + CLASS_INFO[unit.cls].letter + '</span>' +
-      '<span class="c-name">' + unit.name + '</span>' +
-      '<span class="c-hp" data-hp>' + unit.hp + '</span>';
+    el.className = 'u-chip side-' + unit.side + ' cls-' + unit.cls;
+    el.innerHTML = '<span class="c-badge">' + CLASS_DEFS[unit.cls].letter + '</span><span class="c-hp" data-hp>' + unit.hp + '</span>';
     return el;
   }
-  function placeChip(el, pt){ el.style.left = pt.x + '%'; el.style.top = pt.y + '%'; }
+  function placeChipAt(el, x, y, elevation){
+    var iso = isoCenter(x,y,elevation);
+    var pct = isoToPct(iso.cx, iso.cy);
+    el.style.left = pct.left + '%';
+    el.style.top = pct.top + '%';
+    el.classList.toggle('elevated-unit', elevation > 0);
+  }
 
-  function updateChipHp(el, hp){ if(!el) return; var h = el.querySelector('[data-hp]'); if(h) h.textContent = Math.max(0,hp); }
-  function flashChip(el, crit){
+  function buildBattleUnitsDom(){
+    var stage = $('gridStage');
+    Object.keys(unitDom).forEach(function(k){ if(unitDom[k].parentNode) unitDom[k].parentNode.removeChild(unitDom[k]); });
+    unitDom = {};
+    battleUnits.forEach(function(u){
+      var el = createChip(u);
+      var tile = tileAt(u.x,u.y);
+      placeChipAt(el, u.x, u.y, tile ? tile.elevation : 0);
+      stage.appendChild(el);
+      unitDom[u.uid] = el;
+    });
+  }
+
+  function flashUnit(u, crit){
+    var el = unitDom[u.uid];
     if(!el) return;
     el.classList.remove('hit'); el.classList.remove('crit');
     void el.offsetWidth;
     el.classList.add(crit ? 'crit' : 'hit');
+    var h = el.querySelector('[data-hp]');
+    if(h) h.textContent = Math.max(0, u.hp);
     if(crit){
       var pop = document.createElement('div');
       pop.className = 'crit-pop';
       pop.textContent = 'CRIT';
-      pop.style.left = el.style.left;
-      pop.style.top = el.style.top;
+      pop.style.left = el.style.left; pop.style.top = el.style.top;
       if(el.parentNode) el.parentNode.appendChild(pop);
-      setTimeout(function(){ if(pop.parentNode) pop.parentNode.removeChild(pop); }, 560);
+      setTimeout(function(){ if(pop.parentNode) pop.parentNode.removeChild(pop); }, 520);
+      pulseGrid();
     }
   }
-  function killChip(el){
+  function removeUnitChip(u){
+    var el = unitDom[u.uid];
     if(!el) return;
     el.classList.add('dying');
-    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 260);
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 240);
+    delete unitDom[u.uid];
   }
 
-  function playTicks(duel, dom, laneIndex, cb){
-    var ti = 0;
-    function step(){
-      if(ti >= duel.ticks.length){ cb(); return; }
-      var t = duel.ticks[ti];
-      updateChipHp(dom.p1El, t.aHp);
-      updateChipHp(dom.p2El, t.bHp);
-      flashChip(dom.p1El, t.aCrit); flashChip(dom.p2El, t.bCrit);
-      if(t.aCrit || t.bCrit) pulseMap();
-      setTimeout(function(){
-        ti += 1;
-        var isLast = ti >= duel.ticks.length;
-        if(isLast){
-          var p1Died = t.aHp <= 0, p2Died = t.bHp <= 0;
-          var p1Name = dom.p1Unit ? dom.p1Unit.name : '', p2Name = dom.p2Unit ? dom.p2Unit.name : '';
-          if(p1Died && p2Died) pushKillFeed(null, p1Name, null, p2Name);
-          else if(p1Died) pushKillFeed('p2', p2Name, 'p1', p1Name);
-          else if(p2Died) pushKillFeed('p1', p1Name, 'p2', p2Name);
-          if(p1Died){ killChip(dom.p1El); dom.p1El = null; dom.p1Unit = null; pulseMap(); }
-          if(p2Died){ killChip(dom.p2El); dom.p2El = null; dom.p2Unit = null; pulseMap(); }
-        }
-        setTimeout(step, 210);
-      }, 330);
-    }
-    step();
+  function decideAction(unit, living){
+    var enemies = living.filter(function(o){ return o.side !== unit.side; });
+    if(!enemies.length) return null;
+    var target = enemies[0];
+    var bestD = chebyshev(unit, target);
+    enemies.forEach(function(e){
+      var d = chebyshev(unit, e);
+      if(d < bestD){ bestD = d; target = e; }
+    });
+    if(bestD <= unit.range) return { type:'attack', target: target };
+    var dx = Math.sign(target.x - unit.x), dy = Math.sign(target.y - unit.y);
+    var nx = Math.max(0, Math.min(GRID_COLS-1, unit.x + dx));
+    var ny = Math.max(0, Math.min(GRID_ROWS-1, unit.y + dy));
+    return { type:'move', x:nx, y:ny };
   }
 
-  function animateDuel(laneIndex, duel, cb){
-    var dom = laneDom[laneIndex];
-    var meta = LANE_META[laneIndex];
-    var t = laneMeetT[laneIndex];
-    var meetP1 = lerpPoint(meta.p1, meta.p2, Math.max(0.06, t - 0.07));
-    var meetP2 = lerpPoint(meta.p1, meta.p2, Math.min(0.94, t + 0.07));
-    var needWalkP1 = dom.p1Unit !== duel.p1;
-    var needWalkP2 = dom.p2Unit !== duel.p2;
-
-    if(needWalkP1){
-      if(dom.p1El && dom.p1El.parentNode) dom.p1El.parentNode.removeChild(dom.p1El);
-      var el1 = createChip(duel.p1, 'p1');
-      placeChip(el1, meta.p1);
-      mapStageEl.appendChild(el1);
-      dom.p1El = el1; dom.p1Unit = duel.p1;
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ placeChip(el1, meetP1); }); });
-    }
-    if(needWalkP2){
-      if(dom.p2El && dom.p2El.parentNode) dom.p2El.parentNode.removeChild(dom.p2El);
-      var el2 = createChip(duel.p2, 'p2');
-      placeChip(el2, meta.p2);
-      mapStageEl.appendChild(el2);
-      dom.p2El = el2; dom.p2Unit = duel.p2;
-      requestAnimationFrame(function(){ requestAnimationFrame(function(){ placeChip(el2, meetP2); }); });
-    }
-
-    var walkDelay = (needWalkP1 || needWalkP2) ? 440 : 0;
-    setTimeout(function(){ playTicks(duel, dom, laneIndex, cb); }, walkDelay);
-  }
-
-  function playLaneDuels(laneIndex, laneSim, cb){
-    if(laneSim.p1Count === 0 && laneSim.p2Count === 0){ cb(); return; }
-    var dom = laneDom[laneIndex];
-    activeLanes.push(laneIndex);
-    setLaneStatus(laneIndex, 'LIVE');
-    updateCamera();
-
-    if(laneSim.duels.length === 0){
-      setTimeout(cb, 550);
+  var MAX_STEPS = 45;
+  function runBattleStep(stepCount, onDone){
+    var living = battleUnits.filter(function(u){ return u.hp > 0; });
+    var p1Alive = living.some(function(u){ return u.side==='p1'; });
+    var p2Alive = living.some(function(u){ return u.side==='p2'; });
+    if(!p1Alive || !p2Alive || stepCount >= MAX_STEPS){
+      onDone({ p1Alive:p1Alive, p2Alive:p2Alive });
       return;
     }
-    var di = 0;
-    function nextDuel(){
-      if(di >= laneSim.duels.length){ pushToNexus(); return; }
-      animateDuel(laneIndex, laneSim.duels[di], function(){
-        di += 1;
-        setTimeout(nextDuel, 180);
-      });
-    }
-    function pushToNexus(){
-      var winnerEl = dom.p1El || dom.p2El;
-      var meta = LANE_META[laneIndex];
-      if(winnerEl && laneSim.laneResult !== 0){
-        var target = laneSim.laneResult === 1 ? lerpPoint(meta.p1, meta.p2, 0.92) : lerpPoint(meta.p1, meta.p2, 0.08);
-        requestAnimationFrame(function(){ placeChip(winnerEl, target); });
-        setTimeout(cb, 520);
-      } else {
-        cb();
-      }
-    }
-    nextDuel();
-  }
 
-  function playBattleChoreo(sim, onDone){
-    buildMap();
-    var remaining = 3;
-    function laneFinished(){
-      remaining -= 1;
-      if(remaining === 0){ setTimeout(function(){ onDone(sim); }, 650); }
-    }
-    [0,1,2].forEach(function(idx){
-      var laneSim = sim.laneSims[idx];
-      if(laneSim.p1Count === 0 && laneSim.p2Count === 0){
-        setLaneStatus(idx, 'EMPTY');
-        laneFinished();
-        return;
-      }
-      setTimeout(function(){
-        playLaneDuels(idx, laneSim, function(){
-          var r = sim.laneResults[idx];
-          setLaneStatus(idx, r === 0 ? 'DRAW' : ('P' + r), r === 1 ? 'win-p1' : (r === 2 ? 'win-p2' : ''));
-          setTimeout(function(){
-            activeLanes = activeLanes.filter(function(i){ return i !== idx; });
-            updateCamera();
-            laneFinished();
-          }, 500);
-        });
-      }, Math.random() * 260);
+    var actions = living.map(function(u){ return { unit:u, action: decideAction(u, living) }; });
+    var movers = actions.filter(function(a){ return a.action && a.action.type==='move'; });
+    var attackers = actions.filter(function(a){ return a.action && a.action.type==='attack'; });
+
+    movers.forEach(function(a){
+      a.unit.x = a.action.x; a.unit.y = a.action.y;
     });
+
+    var pending = [];
+    attackers.forEach(function(a){
+      var atkTile = tileAt(a.unit.x, a.unit.y);
+      var defTile = tileAt(a.action.target.x, a.action.target.y);
+      var p = G.players[a.unit.side === 'p1' ? 1 : 2];
+      var bonusMult = (atkTile && defTile && atkTile.elevation > defTile.elevation) ? (1 + BASE_HIGHGROUND_BONUS + p.highGroundBonus) : 1;
+      var dmgInfo = rollDamage(a.unit.atk * bonusMult, p.critChance);
+      pending.push({ attacker:a.unit, defender:a.action.target, dmg:Math.round(dmgInfo.dmg), crit:dmgInfo.crit });
+    });
+    pending.forEach(function(hit){ hit.defender.hp -= hit.dmg; });
+
+    var defendersHit = pending.map(function(h){ return h.defender; });
+    var uniqueDefenders = defendersHit.filter(function(d,i){ return defendersHit.indexOf(d) === i; });
+    var deaths = [];
+    uniqueDefenders.forEach(function(def){
+      if(def.hp <= 0){
+        var dp = G.players[def.side === 'p1' ? 1 : 2];
+        if(Math.random() < dp.reviveChance){ def.hp = 1; }
+        else { deaths.push(def); }
+      }
+    });
+
+    // animate: move first, then flash attackers/defenders, then apply deaths
+    movers.forEach(function(a){
+      var tile = tileAt(a.unit.x, a.unit.y);
+      placeChipAt(unitDom[a.unit.uid], a.unit.x, a.unit.y, tile ? tile.elevation : 0);
+    });
+    setTimeout(function(){
+      pending.forEach(function(hit){
+        flashUnit(hit.attacker, false);
+        flashUnit(hit.defender, hit.crit);
+      });
+      setTimeout(function(){
+        deaths.forEach(function(def){
+          def.hp = 0;
+          var killerHit = pending.filter(function(h){ return h.defender === def; })[0];
+          var attacker = killerHit ? killerHit.attacker : null;
+          if(attacker){
+            var attackerAlsoDied = deaths.indexOf(attacker) !== -1;
+            pushKillFeed(attackerAlsoDied ? null : attacker.side, attacker.name, def.side, def.name);
+          }
+        });
+        deaths.forEach(function(d){ removeUnitChip(d); });
+        if(deaths.length) pulseGrid();
+        var gap = attackers.length ? 560 : 300;
+        setTimeout(function(){ runBattleStep(stepCount+1, onDone); }, gap);
+      }, attackers.length ? 360 : 0);
+    }, movers.length ? 460 : 0);
   }
 
   function goToBattle(){
@@ -948,34 +727,40 @@
     renderPips($('battlePipsP2'), p2.lives, G.lives, '--p2');
     renderPips($('battlePipsP1'), p1.lives, G.lives, '--p1');
     show('battle');
-    var sim = simulateBattle(p1.board, p2.board);
-    playBattleChoreo(sim, onBattleDone);
+
+    buildGrid();
+    battleUnits = makeBattleUnits(1, P1_START).concat(makeBattleUnits(2, P2_START));
+    killFeedEl.innerHTML = '';
+    buildBattleUnitsDom();
+
+    setTimeout(function(){
+      runBattleStep(0, function(outcome){
+        var winner = 0;
+        if(outcome.p1Alive && !outcome.p2Alive) winner = 1;
+        else if(outcome.p2Alive && !outcome.p1Alive) winner = 2;
+        var p1Survivors = battleUnits.filter(function(u){ return u.side==='p1' && u.hp>0; }).length;
+        var p2Survivors = battleUnits.filter(function(u){ return u.side==='p2' && u.hp>0; }).length;
+        setTimeout(function(){ onBattleDone({ winner:winner, p1Survivors:p1Survivors, p2Survivors:p2Survivors }); }, 700);
+      });
+    }, 500);
   }
 
   // ---------- round result / match end ----------
-  function onBattleDone(sim){
+  function onBattleDone(result){
     var loserNum = null;
-    if(sim.winner === 1) loserNum = 2;
-    else if(sim.winner === 2) loserNum = 1;
+    if(result.winner === 1) loserNum = 2;
+    else if(result.winner === 2) loserNum = 1;
     if(loserNum) G.players[loserNum].lives -= 1;
-    showRoundResult(sim);
+    showRoundResult(result);
   }
 
-  function laneMark(r){ return r === 0 ? 'DRAW' : ('P' + r); }
-
-  function showRoundResult(sim){
+  function showRoundResult(result){
     var titleEl = $('roundResultTitle');
-    titleEl.className = 'result-stencil' + (sim.winner ? ' p' + sim.winner : '');
-    if(sim.winner === 0) titleEl.textContent = 'この対戦は引き分け';
-    else titleEl.textContent = 'プレイヤー' + sim.winner + 'の勝ち (' + sim.p1Wins + '-' + sim.p2Wins + ')';
+    titleEl.className = 'result-stencil' + (result.winner ? ' p' + result.winner : '');
+    if(result.winner === 0) titleEl.textContent = 'この対戦は引き分け';
+    else titleEl.textContent = 'プレイヤー' + result.winner + 'の勝ち';
 
-    var summary = $('laneSummary');
-    summary.innerHTML = '';
-    sim.laneResults.forEach(function(r, idx){
-      var span = document.createElement('span');
-      span.innerHTML = LANE_NAMES[idx] + ':<b>' + laneMark(r) + '</b>';
-      summary.appendChild(span);
-    });
+    $('survivorLine').textContent = '生存: P1 x' + result.p1Survivors + ' / P2 x' + result.p2Survivors;
 
     renderPips($('rrPipsP1'), G.players[1].lives, G.lives, '--p1');
     renderPips($('rrPipsP2'), G.players[2].lives, G.lives, '--p2');
@@ -1001,7 +786,7 @@
     show('matchend');
   }
 
-  $('matchRestartBtn').addEventListener('click', function(){ clearDraftTimer(); show('title'); });
+  $('matchRestartBtn').addEventListener('click', function(){ clearUpgradeTimer(); show('title'); });
 
   show('title');
 })();
