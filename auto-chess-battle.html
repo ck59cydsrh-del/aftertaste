@@ -4,228 +4,274 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>ALTITUDE 01</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
 <style>
+  /* One committed look: a dark theatre around a lit battlefield, the way tactics
+     games frame their boards. Light falls from the upper left, everywhere. */
   :root{
-    --panel:#ffffff; --panel-raised:#f4f3ee; --line:#cfcabd;
-    --ink:#141414; --muted:#77726a;
-    --p1:#0d0d0d; --p2:#8f8a7d;
-    --warrior:#181818; --mage:#6b675e; --archer:#a49f92; --scout:#4a463f;
-    --tile-top:#f2f1ec; --tile-top-alt:#e6e4dc; --tile-side:#c2beb2; --tile-side-dark:#a9a599;
-    --jelly:cubic-bezier(.34,1.56,.64,1);
-    --font-display:'Space Grotesk','Hiragino Sans',sans-serif;
+    --void:#0e1013; --frame:#232a33; --frame-hi:#39434f;
+    --ink:#ece7da; --ink-dim:#9aa3ae; --ink-faint:#626b77;
+
+    --p1:#5b9bd5; --p1-hi:#cfe4f7;
+    --p2:#c9564b; --p2-hi:#f3bdb2;
+    --gold:#e0a33f; --gold-hi:#f7dc9a;
+    --blood:#e2504a; --heal:#6fbf85;
+
+    --font-display:'Cinzel','Hiragino Mincho ProN',serif;
     --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',monospace;
-    --font-body:'Noto Sans JP','Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --panel:#131313; --panel-raised:#1e1e1c; --line:#403d37;
-      --ink:#f2f0ea; --muted:#a19c8f;
-      --p1:#f5f3ee; --p2:#8f8a7d;
-      --warrior:#f0eee7; --mage:#a8a294; --archer:#68645a; --scout:#cfc9bb;
-      --tile-top:#2b2b28; --tile-top-alt:#232320; --tile-side:#171716; --tile-side-dark:#0f0f0e;
-    }
-  }
-  :root[data-theme="dark"]{
-    --panel:#131313; --panel-raised:#1e1e1c; --line:#403d37;
-    --ink:#f2f0ea; --muted:#a19c8f;
-    --p1:#f5f3ee; --p2:#8f8a7d;
-    --warrior:#f0eee7; --mage:#a8a294; --archer:#68645a; --scout:#cfc9bb;
-    --tile-top:#2b2b28; --tile-top-alt:#232320; --tile-side:#171716; --tile-side-dark:#0f0f0e;
+    --font-body:'Noto Sans JP','Hiragino Sans',sans-serif;
+    --jelly:cubic-bezier(.34,1.56,.64,1);
+    --ease:cubic-bezier(.22,.61,.36,1);
   }
 
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{
-    height:100%; margin:0; overflow:hidden; background:var(--panel); color:var(--ink);
-    font-family:var(--font-body);
-    touch-action:manipulation; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
-    overscroll-behavior:none;
+    height:100%; margin:0; overflow:hidden; background:var(--void); color:var(--ink);
+    font-family:var(--font-body); touch-action:manipulation;
+    -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; overscroll-behavior:none;
   }
-  #app{ position:fixed; inset:0; background:
-    radial-gradient(circle, var(--line) 1px, transparent 1px) 0 0/16px 16px, var(--panel); }
+  #app{ position:fixed; inset:0; background:radial-gradient(125% 85% at 50% 4%, #1c222b 0%, #0e1013 68%); }
   .screen{ position:fixed; inset:0; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
   .screen::-webkit-scrollbar{ display:none; }
   .hidden{ display:none !important; }
-  button{ font-family:inherit; -webkit-appearance:none; appearance:none; }
-  .mono{ font-family:var(--font-mono); }
-  .eyebrow{ font-family:var(--font-mono); font-size:.62rem; letter-spacing:.14em; color:var(--muted); text-transform:uppercase; }
+  button{ font-family:inherit; -webkit-appearance:none; appearance:none; color:inherit; }
 
-  .primary-btn{ background:var(--ink); color:var(--panel); border:none; padding:15px 30px;
-    font-family:var(--font-mono); font-weight:700; font-size:.9rem; letter-spacing:.08em; border-radius:8px;
-    text-transform:uppercase; transition:transform .28s var(--jelly); }
-  .primary-btn:active{ transform:scale(.9); }
-  .chip-btn{ background:var(--panel-raised); color:var(--ink); border:2px solid var(--ink); border-radius:8px;
-    padding:9px 12px; font-family:var(--font-mono); font-weight:700; font-size:.7rem;
-    transition:transform .28s var(--jelly); }
-  .chip-btn:active{ transform:scale(.88); }
-  .chip-btn:disabled{ opacity:.3; border-color:var(--line); }
+  .eyebrow{ font-family:var(--font-mono); font-size:.58rem; letter-spacing:.22em;
+    color:var(--ink-faint); text-transform:uppercase; }
+  .plate{ position:relative; background:linear-gradient(180deg,#1b212a,#12171d);
+    border:1px solid var(--frame-hi); border-radius:3px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 6px 18px rgba(0,0,0,.55); }
+  .btn{ background:linear-gradient(180deg,#2c3541,#1a2028); border:1px solid var(--frame-hi);
+    border-radius:3px; padding:13px 26px; font-family:var(--font-mono); font-weight:700;
+    font-size:.8rem; letter-spacing:.14em; text-transform:uppercase;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 3px 0 #0b0e12; }
+  .btn:active{ transform:translateY(2px); box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 1px 0 #0b0e12; }
+  .btn.gold{ background:linear-gradient(180deg,#d0982f,#8a5f1c); border-color:var(--gold-hi);
+    color:#1a1206; text-shadow:0 1px 0 rgba(255,255,255,.3); }
+  .btn:disabled{ opacity:.35; }
 
   /* ---------- title ---------- */
-  #screen-title{ align-items:center; justify-content:center; gap:18px; padding:26px 22px; text-align:center; }
-  .logo-mark{ display:flex; align-items:center; gap:8px; justify-content:center; }
-  .logo-dot{ width:11px; height:11px; border-radius:3px; background:var(--p1); animation:jbob 2.4s ease-in-out infinite; }
-  .logo-dot.b{ background:var(--panel); border:2px solid var(--ink); animation-delay:.3s; }
-  @keyframes jbob{ 0%,100%{ transform:translateY(0) scale(1); } 50%{ transform:translateY(-4px) scale(1.12,.9); } }
-  #screen-title h1{ font-family:var(--font-display); font-weight:700; font-size:1.9rem; margin:6px 0 0; }
-  .subtitle{ font-family:var(--font-mono); font-size:.64rem; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; }
-  .rule-list{ text-align:left; font-size:.76rem; color:var(--muted); line-height:1.95; max-width:320px; }
-  .rule-list b{ color:var(--ink); }
+  #screen-title{ align-items:center; justify-content:center; gap:20px; padding:30px 22px; text-align:center; }
+  .crest{ width:74px; height:74px; }
+  #screen-title h1{ font-family:var(--font-display); font-weight:700; font-size:2rem;
+    letter-spacing:.16em; margin:0; color:var(--gold-hi);
+    text-shadow:0 2px 0 #6b4a12, 0 0 26px rgba(224,163,63,.3); }
+  .subtitle{ font-family:var(--font-mono); font-size:.6rem; letter-spacing:.28em;
+    color:var(--ink-faint); text-transform:uppercase; }
+  .rules{ font-size:.76rem; line-height:2; color:var(--ink-dim); max-width:330px;
+    padding:15px 17px; text-align:left; }
+  .rules b{ color:var(--gold-hi); font-weight:700; }
+  .rules .row{ display:flex; gap:9px; }
+  .rules .row + .row{ margin-top:5px; }
+  .rules .bullet{ color:var(--gold); flex:none; }
 
   /* ---------- handoff ---------- */
-  #screen-handoff{ align-items:center; justify-content:center; gap:18px; padding:24px; text-align:center; }
-  .device-row{ display:flex; align-items:center; gap:14px; }
-  .device-icon{ width:32px; height:52px; border:2px solid var(--line); border-radius:6px; }
-  .device-icon.to{ border-color:var(--ink); border-width:3px; animation:jpop .5s var(--jelly); }
-  .arrow-mono{ font-family:var(--font-mono); font-size:1.3rem; }
-  #screen-handoff h2{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; margin:0; animation:jpop .45s var(--jelly); }
-  #screen-handoff p{ color:var(--muted); margin:0; font-size:.8rem; line-height:1.7; }
-  @keyframes jpop{ 0%{ transform:scale(.5); } 60%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
+  #screen-handoff{ align-items:center; justify-content:center; gap:18px; padding:26px; text-align:center; }
+  .seal{ width:120px; height:120px; }
+  #screen-handoff h2{ font-family:var(--font-display); font-size:1.5rem; margin:0; letter-spacing:.1em; }
+  #screen-handoff p{ color:var(--ink-dim); margin:0; font-size:.8rem; line-height:1.8; }
 
   /* ---------- upgrade ---------- */
-  #screen-upgrade{ padding:14px 14px 18px; gap:11px; }
-  .topbar{ display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--line); }
-  .turn-label{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; }
-  .roster-row{ display:flex; gap:8px; }
-  .roster-card{ flex:1; background:var(--panel-raised); border:2px solid var(--line); border-radius:8px; padding:8px 4px; text-align:center; }
-  .roster-card.gone{ opacity:.32; border-style:dashed; }
-  .roster-card .u-badge{ width:18px; height:18px; margin:0 auto 5px; display:flex; align-items:center; justify-content:center;
-    font-family:var(--font-mono); font-weight:700; font-size:.7rem; color:var(--panel); }
-  .roster-card .u-name{ font-weight:700; font-size:.74rem; }
-  .roster-card .u-stats{ font-family:var(--font-mono); font-size:.56rem; color:var(--muted); margin-top:3px; line-height:1.5; }
-  .upgrade-list{ display:flex; flex-direction:column; gap:10px; }
-  .upgrade-card{ background:var(--panel-raised); border:2px solid var(--line); border-radius:10px; padding:13px;
-    display:flex; flex-direction:column; gap:4px; text-align:left; transition:transform .28s var(--jelly); }
-  .upgrade-card:active{ transform:scale(.95); background:var(--ink); }
-  .upgrade-card:active .u-title, .upgrade-card:active .u-desc{ color:var(--panel); }
-  .upgrade-card .u-title{ font-weight:700; font-size:.94rem; }
-  .upgrade-card .u-desc{ font-family:var(--font-mono); font-size:.66rem; color:var(--muted); }
+  #screen-upgrade{ padding:16px 14px 20px; gap:12px; justify-content:center; }
+  .topbar{ display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+    padding-bottom:9px; border-bottom:1px solid var(--frame); }
+  .turn-label{ font-family:var(--font-display); font-weight:700; font-size:1.08rem; letter-spacing:.05em; }
+  .roster-row{ display:flex; gap:6px; }
+  .roster-card{ flex:1; min-width:0; padding:8px 4px 7px; text-align:center; }
+  .roster-card.gone{ opacity:.32; }
+  .roster-card .rc-art{ height:40px; }
+  .roster-card .u-name{ font-weight:700; font-size:.68rem; margin-top:2px; }
+  .roster-card .u-stats{ font-family:var(--font-mono); font-size:.54rem; color:var(--ink-dim); line-height:1.5; }
+  .roster-card .scar{ color:var(--blood); font-size:.52rem; font-family:var(--font-mono); }
+  .upgrade-list{ display:flex; flex-direction:column; gap:9px; }
+  .upgrade-card{ padding:13px 14px; display:flex; align-items:center; gap:12px; text-align:left; width:100%; }
+  .upgrade-card .uc-icon{ width:30px; height:30px; flex:none; }
+  .upgrade-card > span{ flex:1; min-width:0; }
+  .upgrade-card .u-title{ display:block; font-weight:700; font-size:.9rem; }
+  .upgrade-card .u-desc{ display:block; font-family:var(--font-mono); font-size:.64rem;
+    color:var(--ink-dim); margin-top:3px; }
+  .upgrade-card:active{ border-color:var(--gold); background:linear-gradient(180deg,#2a2417,#1a1610); }
 
   /* ---------- battle ---------- */
-  #screen-battle{ padding:10px 10px 12px; gap:7px; justify-content:center; }
-  .battle-top{ display:flex; align-items:center; justify-content:space-between; font-family:var(--font-mono); font-size:.68rem; font-weight:700; }
-  .team-tag{ display:flex; align-items:center; gap:5px; padding:4px 8px; border-radius:6px; border:2px solid var(--line); }
-  .team-tag.on{ border-color:var(--ink); background:var(--ink); color:var(--panel); animation:jpop .4s var(--jelly); }
-  .round-tag{ font-family:var(--font-mono); font-size:.62rem; color:var(--muted); text-align:center; line-height:1.4; }
+  #screen-battle{ padding:0; gap:0; }
+  .act-banner{ position:relative; padding:7px 12px 6px; text-align:center;
+    background:linear-gradient(180deg,#1c222b,#12161c); border-bottom:1px solid var(--frame); }
+  .act-banner .act-name{ font-family:var(--font-display); font-weight:700; font-size:.86rem;
+    letter-spacing:.14em; color:var(--gold-hi); }
+  .act-banner .act-sub{ font-family:var(--font-mono); font-size:.55rem; letter-spacing:.18em; color:var(--ink-faint); }
+  .side-strip{ display:flex; gap:6px; padding:6px 8px; background:#101419; border-bottom:1px solid var(--frame); }
+  .side-block{ flex:1; display:flex; align-items:center; gap:6px; padding:4px 7px;
+    border:1px solid var(--frame); border-radius:3px; background:#161b22; min-width:0; }
+  .side-block.act{ border-color:var(--gold); box-shadow:0 0 0 1px rgba(224,163,63,.35), inset 0 0 12px rgba(224,163,63,.12); }
+  .side-block .sb-name{ font-family:var(--font-mono); font-weight:700; font-size:.6rem; flex:none; }
+  .side-block.p1 .sb-name{ color:var(--p1-hi); }
+  .side-block.p2 .sb-name{ color:var(--p2-hi); }
+  .sb-pips{ display:flex; gap:3px; flex:1; }
+  .sb-pip{ flex:1; height:9px; border:1px solid var(--frame-hi); border-radius:1px; background:#0d1116; position:relative; overflow:hidden; }
+  .sb-pip i{ position:absolute; inset:0; display:block; transform-origin:left center; }
+  .side-block.p1 .sb-pip i{ background:linear-gradient(180deg,var(--p1-hi),var(--p1)); }
+  .side-block.p2 .sb-pip i{ background:linear-gradient(180deg,var(--p2-hi),var(--p2)); }
+  .sb-pip.dead{ opacity:.3; }
+  .sb-wins{ font-family:var(--font-mono); font-size:.58rem; color:var(--gold); flex:none; }
 
-  .board-wrap{ position:relative; flex:1 1 auto; min-height:0; max-height:calc(100vw * 166 / 160); display:flex; align-items:center; justify-content:center;
-    border:2px solid var(--line); border-radius:10px; background:var(--panel-raised); overflow:hidden; }
-  .board-stage{ position:relative; width:100%; height:100%; }
-  .board-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
-  .tile-top{ fill:var(--tile-top); stroke:var(--line); stroke-width:.7; cursor:pointer; }
-  .tile-top.alt{ fill:var(--tile-top-alt); }
-  .tile-side{ fill:var(--tile-side); stroke:var(--line); stroke-width:.5; }
-  .tile-side.dark{ fill:var(--tile-side-dark); }
-  .tile-mark{ font-family:var(--font-mono); font-size:7px; font-weight:700; fill:var(--ink); text-anchor:middle; pointer-events:none; }
-  .ov-move{ fill:var(--ink); opacity:.22; stroke:var(--ink); stroke-width:1.2; pointer-events:none; }
-  .ov-target{ fill:none; stroke:var(--ink); stroke-width:2.4; pointer-events:none; animation:ovpulse 1s ease-in-out infinite; }
-  .ov-sel{ fill:none; stroke:var(--ink); stroke-width:1.4; stroke-dasharray:5 3; pointer-events:none;
-    animation:ovspin 6s linear infinite; }
-  @keyframes ovspin{ to{ stroke-dashoffset:-32; } }
-  .ov-base{ fill:var(--ink); opacity:.1; stroke:var(--ink); stroke-width:1.2; pointer-events:none; }
-  .ov-base.p2{ stroke-dasharray:3 2.4; }
-  @keyframes ovpulse{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
+  .board-wrap{ position:relative; flex:1 1 auto; min-height:0; overflow:hidden;
+    background:radial-gradient(80% 60% at 50% 38%, #222932 0%, #0d1013 78%); }
+  .board-stage{ position:absolute; inset:0; touch-action:none; }
+  .board-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none; }
+  .board-wrap.shake .board-stage{ animation:shake .3s var(--ease); }
+  @keyframes shake{
+    0%{ transform:translate(0,0); } 20%{ transform:translate(-5px,3px); }
+    40%{ transform:translate(4px,-3px); } 60%{ transform:translate(-3px,-2px); }
+    80%{ transform:translate(2px,2px); } 100%{ transform:translate(0,0); } }
 
-  .board-stage{ touch-action:none; }
-  .board-svg.cam-glide{ transition:none; }
-  .cam-pad{ position:absolute; right:7px; bottom:7px; z-index:8; display:flex; flex-direction:column; gap:5px; }
-  .cam-btn{ width:30px; height:30px; border:2px solid var(--line); border-radius:7px; background:var(--panel);
-    color:var(--ink); font-family:var(--font-mono); font-weight:700; font-size:.86rem; line-height:1;
-    display:flex; align-items:center; justify-content:center; }
-  .cam-btn:active{ background:var(--ink); color:var(--panel); transform:scale(.9); }
+  /* scene animation */
+  .fig{ transition:opacity .25s linear; }
+  .ghost polygon{ animation:pul 1.4s ease-in-out infinite; }
+  .fig-in{ transform-box:fill-box; transform-origin:50% 100%; }
+  .fig.hit .fig-in{ animation:jhit .34s var(--jelly); }
+  .fig.crithit .fig-in{ animation:jcrit .42s var(--jelly); }
+  .fig.dying{ animation:die .42s ease-in forwards; transform-box:fill-box; transform-origin:50% 100%; }
+  .fig.sel .fig-in{ animation:bob 1.1s ease-in-out infinite; }
+  @keyframes jhit{ 0%{ transform:scale(1,1); } 30%{ transform:scale(1.3,.72) translateY(2px); }
+    62%{ transform:scale(.86,1.16); } 100%{ transform:scale(1,1); } }
+  @keyframes jcrit{ 0%{ transform:scale(1,1); filter:brightness(4); }
+    26%{ transform:scale(1.45,.62) translateY(3px); filter:brightness(3); }
+    60%{ transform:scale(.8,1.24); filter:brightness(1); } 100%{ transform:scale(1,1); } }
+  @keyframes die{ to{ opacity:0; transform:scale(.7) translateY(8px) rotate(-12deg); } }
+  @keyframes bob{ 0%,100%{ transform:translateY(0) scale(1,1); } 50%{ transform:translateY(-2.2px) scale(.98,1.02); } }
+  .ov .ring, .board-svg .ring{ animation:spin 7s linear infinite; }
+  @keyframes spin{ to{ stroke-dashoffset:-40; } }
+  .board-svg .pulse{ animation:pul 1s ease-in-out infinite; }
+  @keyframes pul{ 0%,100%{ opacity:1; } 50%{ opacity:.28; } }
+  .flame{ transform-box:fill-box; transform-origin:50% 100%; animation:flick .42s steps(2,end) infinite alternate; }
+  @keyframes flick{ from{ transform:scale(1,1); } to{ transform:scale(.84,1.14) translateX(.4px); } }
+  .blast circle{ animation:blast .6s var(--ease) forwards; transform-box:fill-box; transform-origin:50% 50%; }
+  @keyframes blast{ from{ transform:scale(.2); opacity:1; } to{ transform:scale(1.5); opacity:0; } }
+  .arrow{ animation:arrow .35s linear forwards; }
+  @keyframes arrow{ from{ opacity:1; stroke-dasharray:6 200; stroke-dashoffset:200; } to{ opacity:.15; stroke-dashoffset:0; } }
 
-  .u-slot{ position:absolute; transform-origin:50% 100%;
-    transform:translate(-50%,-74%) scale(var(--tok,1)); z-index:3; pointer-events:none;
-    transition:left .3s var(--jelly), top .3s var(--jelly); }
-  .u-slot::after{ content:''; position:absolute; left:50%; bottom:-4px; width:17px; height:8px; border-radius:50%;
-    background:var(--ink); opacity:.25; transform:translateX(-50%); }
-  .u-card{ pointer-events:auto; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; padding:3px 4px 4px; width:34px;
-    border-radius:6px; background:var(--panel); border:2.5px solid var(--p1); font-family:var(--font-mono); }
-  .u-slot.side-p2 .u-card{ border-color:var(--p2); border-style:dashed; background:var(--panel-raised); }
-  .u-slot.done .u-card{ opacity:.4; }
-  .u-slot.sel .u-card{ animation:jbob .9s ease-in-out infinite; box-shadow:0 0 0 2px var(--ink); }
-  .u-card .c-badge{ width:15px; height:15px; display:flex; align-items:center; justify-content:center;
-    font-weight:700; font-size:.55rem; color:var(--panel); }
-  .u-card .hp-bar{ width:24px; height:4px; border:1px solid var(--ink); border-radius:2px; overflow:hidden; }
-  .u-card .hp-fill{ height:100%; background:var(--ink); transition:width .3s var(--jelly); }
-  .u-slot.hurt .u-card{ animation:jhit .38s var(--jelly); }
-  @keyframes jhit{ 0%{ transform:scale(1); } 35%{ transform:scale(1.35,.7); } 70%{ transform:scale(.85,1.2); } 100%{ transform:scale(1); } }
-  .u-slot.dead .u-card{ animation:jdie .35s ease-in forwards; }
-  @keyframes jdie{ to{ transform:scale(.2) translateY(10px); opacity:0; } }
+  /* camera controls */
+  .tool-row{ display:flex; align-items:center; gap:5px; padding:4px 8px;
+    background:#0d1116; border-bottom:1px solid var(--frame); }
+  .tool-hint{ flex:1; font-family:var(--font-mono); font-size:.5rem; letter-spacing:.06em; color:var(--ink-faint); }
+  .cam-btn{ width:30px; height:26px; display:flex; align-items:center; justify-content:center; flex:none;
+    border:1px solid var(--frame-hi); border-radius:3px; background:#1a2028;
+    font-family:var(--font-mono); font-weight:700; font-size:.78rem; }
+  .cam-btn:active{ background:var(--gold); color:#16100a; }
 
-  .dmg-pop{ position:absolute; transform:translate(-50%,-100%); font-family:var(--font-mono); font-weight:800;
-    font-size:.74rem; z-index:6; pointer-events:none; animation:dmgfly .9s var(--jelly) forwards; white-space:nowrap; }
-  @keyframes dmgfly{ 0%{ opacity:0; transform:translate(-50%,-100%) scale(.4); }
-    30%{ opacity:1; transform:translate(-50%,-155%) scale(1.2); }
-    100%{ opacity:0; transform:translate(-50%,-235%) scale(1); } }
+  /* floating labels over the board */
+  .dmg-pop{ position:absolute; transform:translate(-50%,-100%); font-family:var(--font-display);
+    font-weight:700; font-size:1.05rem; z-index:7; pointer-events:none; white-space:nowrap;
+    text-shadow:0 2px 0 #000, 0 0 12px rgba(0,0,0,.9); animation:dmgfly 1s var(--jelly) forwards; }
+  .dmg-pop.heal{ color:var(--heal); } .dmg-pop.hurt{ color:var(--blood); }
+  .dmg-pop.crit{ color:var(--gold-hi); font-size:1.35rem; }
+  .dmg-pop.info{ color:var(--ink); font-family:var(--font-body); font-size:.76rem; font-weight:700; }
+  @keyframes dmgfly{ 0%{ opacity:0; transform:translate(-50%,-90%) scale(.5); }
+    22%{ opacity:1; transform:translate(-50%,-150%) scale(1.18); }
+    38%{ transform:translate(-50%,-140%) scale(1); }
+    100%{ opacity:0; transform:translate(-50%,-215%) scale(.95); } }
 
-  .dice-pop{ position:absolute; left:50%; top:12%; transform:translateX(-50%); z-index:7; pointer-events:none;
-    display:flex; align-items:center; gap:6px; background:var(--ink); color:var(--panel); border-radius:10px;
-    padding:6px 12px; font-family:var(--font-mono); font-weight:800; font-size:.8rem; animation:dicein .75s var(--jelly) forwards; }
-  @keyframes dicein{ 0%{ opacity:0; transform:translateX(-50%) scale(.3) rotate(-25deg); }
-    35%{ opacity:1; transform:translateX(-50%) scale(1.18) rotate(6deg); }
-    75%{ opacity:1; transform:translateX(-50%) scale(1) rotate(0); }
-    100%{ opacity:0; transform:translateX(-50%) scale(.9); } }
-  .die-face{ font-size:1.15rem; line-height:1; }
+  .roll-pop{ position:absolute; left:50%; top:10%; transform:translateX(-50%); z-index:9;
+    pointer-events:none; display:flex; align-items:center; gap:8px; padding:6px 13px;
+    background:rgba(10,13,17,.92); border:1px solid var(--gold); border-radius:3px;
+    font-family:var(--font-mono); font-size:.62rem; letter-spacing:.06em; white-space:nowrap;
+    animation:rollin .3s var(--jelly); }
+  .roll-pop .die{ font-size:1.25rem; line-height:1; color:var(--gold-hi); }
+  @keyframes rollin{ from{ opacity:0; transform:translateX(-50%) translateY(-9px) scale(.8); } }
 
-  .cls-warrior .c-badge, .cls-warrior .u-badge{ background:var(--warrior); border-radius:2px; }
-  .cls-mage .c-badge, .cls-mage .u-badge{ background:var(--mage); clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
-  .cls-archer .c-badge, .cls-archer .u-badge{ background:var(--archer); border-radius:50%; color:var(--ink); }
-  .cls-scout .c-badge, .cls-scout .u-badge{ background:var(--scout); color:var(--panel);
-    clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%); }
+  .kill-banner{ position:absolute; left:50%; top:26%; transform:translateX(-50%); z-index:9;
+    pointer-events:none; padding:7px 20px; background:rgba(10,13,17,.94);
+    border-top:1px solid var(--blood); border-bottom:1px solid var(--blood);
+    font-family:var(--font-display); font-weight:700; font-size:.9rem; letter-spacing:.12em;
+    white-space:nowrap; animation:killpop 1.5s var(--ease) forwards; }
+  @keyframes killpop{ 0%{ opacity:0; transform:translateX(-50%) scaleX(.5); }
+    14%{ opacity:1; transform:translateX(-50%) scaleX(1); }
+    80%{ opacity:1; } 100%{ opacity:0; } }
 
-  .squad-bar{ display:flex; align-items:center; gap:6px; font-family:var(--font-mono); }
-  .squad-bar .sq-name{ font-size:.6rem; font-weight:700; width:20px; flex:none; }
-  .squad-bar .sq-list{ display:flex; gap:5px; flex:1; }
-  .sq-unit{ flex:1; display:flex; align-items:center; gap:4px; padding:3px 5px; border-radius:6px;
-    border:1.5px solid var(--line); background:var(--panel-raised); min-width:0; }
-  .squad-bar.side-p2 .sq-unit{ border-style:dashed; }
-  .sq-unit.gone{ opacity:.3; }
-  .sq-unit.acted{ opacity:.5; }
-  .sq-unit .u-badge{ width:13px; height:13px; flex:none; display:flex; align-items:center; justify-content:center;
-    font-size:.5rem; font-weight:700; color:var(--panel); }
-  .sq-unit .sq-hp{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
-  .sq-unit .sq-bar{ display:block; width:100%; height:4px; border:1px solid var(--ink); border-radius:2px; overflow:hidden; }
-  .sq-unit .sq-fill{ display:block; height:100%; background:var(--ink); transition:width .3s var(--jelly); }
-  .sq-unit .sq-num{ display:block; font-size:.48rem; letter-spacing:-.02em; }
+  /* ---------- bottom command deck ---------- */
+  .deck{ display:flex; gap:7px; padding:7px 8px 9px; background:linear-gradient(180deg,#141920,#0e1218);
+    border-top:1px solid var(--frame); align-items:stretch; min-height:92px; }
+  .unit-card{ flex:1; display:flex; gap:9px; padding:7px 9px; min-width:0; }
+  .unit-card .uc-portrait{ width:44px; height:52px; flex:none; border:1px solid var(--frame-hi);
+    border-radius:2px; background:#0d1116; }
+  .unit-card .uc-body{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; justify-content:center; }
+  .uc-top{ display:flex; align-items:baseline; gap:6px; }
+  .uc-name{ font-weight:700; font-size:.82rem; }
+  .uc-job{ font-family:var(--font-mono); font-size:.55rem; color:var(--ink-faint); letter-spacing:.1em; }
+  .uc-bar{ height:8px; border:1px solid var(--frame-hi); border-radius:1px; background:#0d1116;
+    overflow:hidden; position:relative; }
+  .uc-bar i{ display:block; height:100%; background:linear-gradient(180deg,#8fd6a2,var(--heal));
+    transition:width .35s var(--ease); }
+  .uc-bar.low i{ background:linear-gradient(180deg,#f0958e,var(--blood)); }
+  .uc-nums{ display:flex; gap:8px; font-family:var(--font-mono); font-size:.54rem;
+    color:var(--ink-faint); white-space:nowrap; overflow:hidden; }
+  .uc-nums span{ display:flex; align-items:baseline; gap:3px; }
+  .uc-nums b{ color:var(--ink); font-size:.68rem; }
+  .uc-hint{ font-family:var(--font-mono); font-size:.56rem; color:var(--gold); letter-spacing:.04em; }
 
-  /* held sideways there is no spare height, so the rosters move beside the board */
-  @media (orientation:landscape) and (max-height:560px){
-    #screen-battle{ display:grid; padding:6px 8px 8px; gap:5px;
-      grid-template-columns:minmax(90px,1fr) minmax(0,2.2fr) minmax(90px,1fr);
-      grid-template-rows:auto minmax(0,1fr) auto;
-      grid-template-areas:"top top top" "p1 board p2" "act act act"; }
-    .battle-top{ grid-area:top; font-size:.6rem; }
-    #squadP1{ grid-area:p1; } #squadP2{ grid-area:p2; }
-    .board-wrap{ grid-area:board; max-height:none; }
-    .action-bar{ grid-area:act; }
-    .squad-bar{ flex-direction:column; align-items:stretch; justify-content:center; gap:5px; }
-    .squad-bar .sq-name{ width:auto; }
-    .squad-bar .sq-list{ flex-direction:column; flex:0 1 auto; }
-    .sq-unit{ padding:2px 5px; }
-  }
+  .cmd{ width:104px; flex:none; display:flex; flex-direction:column; padding:4px; gap:2px; }
+  .cmd button{ flex:1; display:flex; align-items:center; gap:5px; padding:0 7px;
+    background:linear-gradient(180deg,rgba(255,255,255,.045),transparent);
+    border:none; border-bottom:1px solid rgba(255,255,255,.05); border-radius:2px;
+    font-family:var(--font-body); font-weight:700; font-size:.74rem; letter-spacing:.06em; text-align:left; }
+  .cmd button:last-child{ border-bottom:none; }
+  .cmd button .ck{ width:12px; opacity:0; color:var(--gold); }
+  .cmd button:not(:disabled):active{ background:var(--gold); color:#16100a; }
+  .cmd button:not(:disabled):active .ck{ opacity:1; color:#16100a; }
+  .cmd button:disabled{ color:var(--ink-faint); }
+  .cmd button.on{ background:rgba(224,163,63,.16); color:var(--gold-hi); }
+  .cmd button.on .ck{ opacity:1; }
 
-  .action-bar{ display:flex; align-items:center; gap:7px; min-height:44px; }
-  .sel-info{ flex:1; font-family:var(--font-mono); font-size:.64rem; color:var(--muted); line-height:1.5; }
-  .sel-info b{ color:var(--ink); font-size:.7rem; }
-
-  .phase-overlay{ position:absolute; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center;
-    justify-content:center; gap:12px; text-align:center; padding:20px;
-    background:color-mix(in srgb, var(--panel) 93%, transparent); }
-  .phase-overlay h3{ font-family:var(--font-display); font-size:1.4rem; margin:0; animation:jpop .5s var(--jelly); }
-  .phase-overlay p{ font-size:.76rem; color:var(--muted); margin:0; line-height:1.6; }
-  .legend{ display:flex; gap:10px; font-family:var(--font-mono); font-size:.58rem; color:var(--muted); flex-wrap:wrap; justify-content:center; }
+  .phase-veil{ position:absolute; inset:0; z-index:12; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px; text-align:center; padding:22px;
+    background:rgba(8,10,13,.93); backdrop-filter:blur(3px); }
+  .phase-veil h3{ font-family:var(--font-display); font-size:1.4rem; margin:0; letter-spacing:.08em; }
+  .phase-veil h3.p1{ color:var(--p1-hi); } .phase-veil h3.p2{ color:var(--p2-hi); }
+  .phase-veil p{ margin:0; font-size:.76rem; color:var(--ink-dim); line-height:1.8; }
+  .legend{ display:flex; flex-wrap:wrap; gap:5px 11px; justify-content:center;
+    font-family:var(--font-mono); font-size:.56rem; color:var(--ink-faint); max-width:310px; }
+  .legend b{ color:var(--gold); }
 
   /* ---------- result ---------- */
-  #screen-result{ align-items:center; justify-content:center; gap:14px; padding:28px; text-align:center; }
-  .result-stencil{ font-family:var(--font-display); font-weight:700; font-size:1.6rem; padding:12px 20px;
-    border:3px solid var(--ink); border-radius:10px; animation:jpop .5s var(--jelly); }
-  .result-sub{ font-family:var(--font-mono); font-size:.72rem; color:var(--muted); line-height:1.7; }
+  #screen-result{ align-items:center; justify-content:center; gap:15px; padding:28px 22px; text-align:center; }
+  .result-title{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; letter-spacing:.06em;
+    padding:11px 20px; border-top:2px solid currentColor; border-bottom:2px solid currentColor;
+    word-break:keep-all; line-break:strict; text-wrap:balance; }
+  .result-title.p1{ color:var(--p1-hi); } .result-title.p2{ color:var(--p2-hi); }
+  .result-title.draw{ color:var(--ink-dim); }
+  .result-sub{ font-family:var(--font-mono); font-size:.68rem; color:var(--ink-dim); line-height:2; }
+  .tally{ display:flex; gap:22px; font-family:var(--font-mono); }
+  .tally .t-col{ text-align:center; }
+  .tally .t-n{ font-family:var(--font-display); font-size:1.7rem; font-weight:700; }
+  .tally .t-col.p1 .t-n{ color:var(--p1-hi); } .tally .t-col.p2 .t-n{ color:var(--p2-hi); }
 
-  @media (orientation: landscape) and (max-height: 520px){
-    #screen-title{ gap:8px; padding:12px 26px; }
-    #screen-title h1{ font-size:1.35rem; }
-    .rule-list{ font-size:.68rem; line-height:1.6; max-width:520px; }
-    #screen-upgrade{ padding:8px 18px 12px; gap:8px; max-width:660px; margin:0 auto; }
+  /* Held sideways there is almost no height to spare, so the panels move beside
+     the board and it takes the full column. */
+  @media (orientation:landscape) and (max-height:560px){
+    #screen-battle{ display:grid;
+      grid-template-columns:minmax(0,1fr) 238px;
+      grid-template-rows:auto auto minmax(0,1fr);
+      grid-template-areas:"banner strip" "board tools" "board deck"; }
+    .act-banner{ grid-area:banner; padding:4px 10px 3px; }
+    .act-banner .act-name{ font-size:.72rem; }
+    .side-strip{ grid-area:strip; border-left:1px solid var(--frame); }
+    .tool-row{ grid-area:tools; border-left:1px solid var(--frame); }
+    .tool-hint{ display:none; }
+    .board-wrap{ grid-area:board; }
+    .deck{ grid-area:deck; flex-direction:column; min-height:0; border-left:1px solid var(--frame);
+      border-top:none; }
+    .unit-card{ flex:0 0 auto; }
+    .unit-card .uc-portrait{ width:38px; height:46px; }
+    .cmd{ width:auto; flex:1 1 auto; min-height:112px; }
+    #screen-title{ gap:12px; padding:16px; }
+    #screen-title h1{ font-size:1.5rem; }
+    .rules{ max-width:470px; font-size:.68rem; line-height:1.7; }
+    .rules .row + .row{ margin-top:2px; }
+    #screen-handoff{ gap:10px; }
+    .seal{ width:80px; height:80px; }
+    #screen-upgrade{ padding:10px 16px; gap:8px; max-width:660px; margin:0 auto; }
+    .roster-card .rc-art{ height:32px; }
+    .upgrade-card{ padding:9px 12px; }
   }
 </style>
 </head>
@@ -234,38 +280,43 @@
 
   <!-- TITLE -->
   <div id="screen-title" class="screen">
+    <svg class="crest" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 4 L56 14 L56 34 Q56 52 32 60 Q8 52 8 34 L8 14 Z" fill="#161c24" stroke="#e0a33f" stroke-width="2"/>
+      <path d="M32 10 L50 18 L50 34 Q50 47 32 54 Q14 47 14 34 L14 18 Z" fill="none" stroke="#8a5f1c" stroke-width="1"/>
+      <path d="M18 40 L28 26 L34 34 L40 22 L48 40 Z" fill="#5b9bd5"/>
+      <path d="M18 40 L28 26 L32 31 L32 40 Z" fill="#c9564b"/>
+      <circle cx="32" cy="19" r="3" fill="#f7dc9a"/>
+    </svg>
     <div>
-      <div class="logo-mark"><span class="logo-dot"></span><span class="logo-dot b"></span></div>
-      <h1>ALTITUDE 01</h1>
-      <div class="subtitle">Roguelike Board Tactics / 2P 1-Device</div>
+      <h1>ALTITUDE</h1>
+      <div class="subtitle">Two Players · One Device · Five Minutes</div>
     </div>
-    <div class="rule-list">
-      ・スマホ1台を渡し合う<b>手動</b>ボードタクティクス<br>
-      ・<b>全3ステージのラン</b>。ステージ前に3択の強化を1つ選ぶ<br>
-      ・倒れた仲間は<b>傷</b>を負って次ステージに復帰。最大HPが永久に減る<br>
-      ・攻撃は<b>ダイス</b>判定 — ATK+出目、6なら会心、高所は+30%<br>
-      ・マスには<b>宝箱／罠／泉</b>。中央の丘は<b>高所＋泉</b>の要衝<br>
-      ・先に<b>2ステージ</b>勝った方がランの勝者（1プレイ約5分）
+    <div class="rules plate">
+      <div class="row"><span class="bullet">◆</span><span>スマホ1台を渡し合う<b>手動タクティクス</b>。全3ステージのランで先に2勝</span></div>
+      <div class="row"><span class="bullet">◆</span><span>コマンドは<b>移動 / 攻撃 / 特技 / 待機</b>。1体ずつ動かして相手に渡す</span></div>
+      <div class="row"><span class="bullet">◆</span><span><b>高所</b>から殴ると強い。<b>側面+25% / 背後+50%</b>の不意打ちも狙える</span></div>
+      <div class="row"><span class="bullet">◆</span><span>段差は<b>跳躍力</b>まで。ダイスの出目で威力が振れ、6は<b>会心</b></span></div>
+      <div class="row"><span class="bullet">◆</span><span>倒れた仲間は<b>傷</b>を負って復帰。ステージ前に強化を1つ選ぶ</span></div>
     </div>
-    <button class="primary-btn" id="titleStartBtn">Start Run</button>
+    <button class="btn gold" id="titleStartBtn">Start Run</button>
   </div>
 
   <!-- HANDOFF -->
   <div id="screen-handoff" class="screen hidden">
-    <div class="eyebrow" id="handoffEyebrow">Turn Change</div>
-    <div class="device-row"><div class="device-icon"></div><div class="arrow-mono">→</div><div class="device-icon to"></div></div>
+    <div class="eyebrow" id="handoffEyebrow">Pass the device</div>
+    <svg class="seal" id="handoffSeal" viewBox="0 0 100 100" aria-hidden="true"></svg>
     <h2 id="handoffTitle">プレイヤー1</h2>
-    <p id="handoffSub">スマホを渡してください</p>
-    <button class="primary-btn" id="handoffBtn">はじめる</button>
+    <p id="handoffSub">相手に見られないように受け取ってください</p>
+    <button class="btn gold" id="handoffBtn">確認した</button>
   </div>
 
   <!-- UPGRADE -->
   <div id="screen-upgrade" class="screen hidden">
     <div class="topbar">
-      <div class="turn-label" id="upgradeTurnLabel">プレイヤー1 の強化</div>
+      <div class="turn-label" id="upgradeTurnLabel">プレイヤー1 の編成</div>
       <div class="eyebrow" id="upgradeStage">Stage 1 / 3</div>
     </div>
-    <div class="eyebrow">Your Squad</div>
+    <div class="eyebrow">Your Company</div>
     <div class="roster-row" id="rosterRow"></div>
     <div class="eyebrow">強化を1つ選ぶ</div>
     <div class="upgrade-list" id="upgradeList"></div>
@@ -273,47 +324,76 @@
 
   <!-- BATTLE -->
   <div id="screen-battle" class="screen hidden">
-    <div class="battle-top">
-      <div class="team-tag" id="tagP1"><span>P1</span><span id="hpP1">0</span></div>
-      <div class="round-tag" id="roundTag">STAGE 1 / ROUND 1</div>
-      <div class="team-tag" id="tagP2"><span>P2</span><span id="hpP2">0</span></div>
+    <div class="act-banner">
+      <div class="act-name" id="actName">1ST ACT — THE HIGH KEEP</div>
+      <div class="act-sub" id="actSub">ROUND 1 / 3</div>
     </div>
-    <div class="squad-bar side-p2" id="squadP2"><span class="sq-name">P2</span><span class="sq-list"></span></div>
+    <div class="side-strip">
+      <div class="side-block p1" id="sideP1"><span class="sb-name">P1</span><span class="sb-pips"></span><span class="sb-wins">0</span></div>
+      <div class="side-block p2" id="sideP2"><span class="sb-wins">0</span><span class="sb-pips"></span><span class="sb-name">P2</span></div>
+    </div>
+    <div class="tool-row">
+      <span class="tool-hint">ドラッグで視点移動 · ピンチで拡大</span>
+      <button class="cam-btn" id="rotLBtn" aria-label="左に回転">↺</button>
+      <button class="cam-btn" id="rotRBtn" aria-label="右に回転">↻</button>
+      <button class="cam-btn" id="zoomOutBtn" aria-label="ズームアウト">−</button>
+      <button class="cam-btn" id="zoomInBtn" aria-label="ズームイン">+</button>
+      <button class="cam-btn" id="camHomeBtn" aria-label="全体表示">⤢</button>
+    </div>
     <div class="board-wrap" id="boardWrap">
       <div class="board-stage" id="boardStage">
-        <svg class="board-svg" id="boardSvg" viewBox="-130 -60 260 280" preserveAspectRatio="xMidYMid slice">
-          <g id="tileLayer"></g>
-          <g id="overlayLayer"></g>
-          <g id="markLayer"></g>
+        <svg class="board-svg" id="boardSvg" preserveAspectRatio="xMidYMid slice">
+          <defs id="boardDefs">
+            <radialGradient id="stageGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#5d6d7d" stop-opacity=".34"/>
+              <stop offset="55%" stop-color="#33404d" stop-opacity=".16"/>
+              <stop offset="100%" stop-color="#0d1013" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <g id="sceneLayer"></g>
         </svg>
       </div>
-      <div class="cam-pad">
-        <button class="cam-btn" id="zoomInBtn" aria-label="ズームイン">+</button>
-        <button class="cam-btn" id="zoomOutBtn" aria-label="ズームアウト">−</button>
-        <button class="cam-btn" id="camHomeBtn" aria-label="全体表示">⤢</button>
-      </div>
-      <div class="phase-overlay hidden" id="phaseOverlay">
-        <h3 id="phaseTitle">プレイヤー1 のフェーズ</h3>
-        <p id="phaseSub">スマホを渡してタップ</p>
-        <div class="legend"><span>宝 = ATK+2</span><span>泉 = HP+6</span><span>罠 = HP-5</span><span>▲ = 高所</span></div>
-        <button class="primary-btn" id="phaseStartBtn">Start Phase</button>
+      <div class="phase-veil hidden" id="phaseVeil">
+        <div class="eyebrow" id="veilEyebrow">Round 1</div>
+        <h3 id="veilTitle">プレイヤー1 のフェーズ</h3>
+        <p id="veilSub">スマホを渡してタップ</p>
+        <div class="legend">
+          <span><b>宝</b> ATK+2</span><span><b>泉</b> HP回復</span><span><b>罠</b> ダメージ</span>
+          <span><b>▲</b> 高所 +30%</span><span>側面 +25%</span><span>背後 +50%</span>
+        </div>
+        <button class="btn gold" id="veilStartBtn">Begin Phase</button>
       </div>
     </div>
-    <div class="squad-bar side-p1" id="squadP1"><span class="sq-name">P1</span><span class="sq-list"></span></div>
-    <div class="action-bar">
-      <div class="sel-info" id="selInfo">ユニットをタップして選択</div>
-      <button class="chip-btn" id="undoBtn">もどす</button>
-      <button class="chip-btn" id="waitBtn">待機</button>
-      <button class="chip-btn" id="endPhaseBtn">終了</button>
+    <div class="deck">
+      <div class="unit-card plate" id="unitCard">
+        <svg class="uc-portrait" id="ucPortrait" viewBox="0 0 44 52"></svg>
+        <div class="uc-body">
+          <div class="uc-top"><span class="uc-name" id="ucName">ユニットを選択</span><span class="uc-job" id="ucJob"></span></div>
+          <div class="uc-bar" id="ucBar"><i style="width:100%"></i></div>
+          <div class="uc-nums" id="ucNums"></div>
+          <div class="uc-hint" id="ucHint">自軍をタップして選択</div>
+        </div>
+      </div>
+      <div class="cmd plate" id="cmdMenu">
+        <button id="cmdMove"><span class="ck">▸</span>移動</button>
+        <button id="cmdAttack"><span class="ck">▸</span>攻撃</button>
+        <button id="cmdSkill"><span class="ck">▸</span>特技</button>
+        <button id="cmdWait"><span class="ck">▸</span>待機</button>
+      </div>
     </div>
   </div>
 
   <!-- RESULT -->
   <div id="screen-result" class="screen hidden">
     <div class="eyebrow" id="resultEyebrow">Stage Result</div>
-    <div class="result-stencil" id="resultTitle">プレイヤー1の勝利</div>
+    <div class="result-title" id="resultTitle">プレイヤー1の勝利</div>
+    <div class="tally">
+      <div class="t-col p1"><div class="eyebrow">Player 1</div><div class="t-n" id="tallyP1">0</div></div>
+      <div class="t-col"><div class="eyebrow">Stages</div><div class="t-n">—</div></div>
+      <div class="t-col p2"><div class="eyebrow">Player 2</div><div class="t-n" id="tallyP2">0</div></div>
+    </div>
     <div class="result-sub" id="resultSub"></div>
-    <button class="primary-btn" id="resultBtn">つぎへ</button>
+    <button class="btn gold" id="resultBtn">つぎへ</button>
   </div>
 </div>
 
@@ -321,82 +401,125 @@
 (function(){
   'use strict';
   var $ = function(id){ return document.getElementById(id); };
-  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs){
+    var n = document.createElementNS(NS, tag);
+    if(attrs) for(var k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  }
 
-  // ---------- config ----------
-  var CLASS_DEFS = {
-    warrior:{ name:'戦士', letter:'W', hp:30, atk:5, range:1, move:4 },
-    mage:{ name:'魔術士', letter:'M', hp:20, atk:8, range:2, move:3 },
-    archer:{ name:'弓兵', letter:'A', hp:24, atk:6, range:3, move:3 },
-    scout:{ name:'斥候', letter:'S', hp:22, atk:5, range:1, move:6 }
+  // ================= config =================
+  var JOBS = {
+    knight:{ name:'重騎士', job:'KNIGHT', hp:30, atk:6, range:1, move:3, jump:2,
+      skill:{ name:'薙ぎ払い', desc:'隣接する敵すべてに攻撃', kind:'cleave' } },
+    mage:{ name:'魔術師', job:'MAGE', hp:18, atk:9, range:3, move:3, jump:1,
+      skill:{ name:'業火', desc:'着弾点と その隣接マスを焼く', kind:'blast', rng:3 } },
+    archer:{ name:'狙撃手', job:'ARCHER', hp:22, atk:6, range:4, move:3, jump:1,
+      skill:{ name:'頭上狙い', desc:'高所無視・射程+1で必ず会心', kind:'snipe', rng:5 } },
+    scout:{ name:'斥候', job:'SCOUT', hp:20, atk:6, range:1, move:5, jump:3,
+      skill:{ name:'影走り', desc:'攻撃後にもう一度動ける', kind:'dash' } }
   };
-  var CLASS_KEYS = ['warrior','mage','archer','scout'];
-  var GRID = 8, TILE_W = 30, TILE_H = 26, ELEV_H = 11;
+  var JOB_KEYS = ['knight','mage','archer','scout'];
+
+  var GRID = 8, TW = 34, TH = 19, EH = 13;   // 2:1-ish diamond, blocks a little shorter
   var STAGES = 3, WINS_NEEDED = 2, MAX_ROUNDS = 3;
-  var HIGH_BONUS = 0.30, COUNTER_RATE = 0.7;
-  var SCAR_HP = 5, MIN_HP = 8; // a fallen member returns weaker, and only so many times
-  var DIE_FACES = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+  var HIGH_BONUS = 0.30, FLANK_SIDE = 0.25, FLANK_BACK = 0.50, COUNTER_RATE = 0.65;
+  var SCAR_HP = 5, MIN_HP = 8;
+  var DIE = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+  var ACTS = ['1ST ACT — THE HIGH KEEP','2ND ACT — THE BROKEN SPAN','3RD ACT — ASHES AT DAWN'];
+
   var TILE_FX = {
-    treasure:{ mark:'宝', apply:function(u){ u.atk += 2; return '宝箱 ATK+2'; } },
-    spring:{ mark:'泉', apply:function(u){ u.hp = Math.min(u.maxHp, u.hp+6); return '泉 HP+6'; } },
-    trap:{ mark:'罠', apply:function(u){ u.hp -= 5; return '罠 HP-5'; } }
+    chest:{ mark:'宝', tone:'gold', apply:function(u){ u.atk += 2; return { text:'宝箱 ATK+2', cls:'info' }; } },
+    spring:{ mark:'泉', tone:'heal', apply:function(u){
+      var g = Math.min(8, u.maxHp - u.hp); u.hp += g;
+      return { text:'+' + g, cls:'heal' }; } },
+    trap:{ mark:'罠', tone:'blood', apply:function(u){ u.hp -= 6; return { text:'-6', cls:'hurt' }; } }
   };
 
   var UPGRADES = [
-    { title:'鍛錬 — 体力', desc:'全員 最大HP +5', apply:function(p){ p.bonusHp += 5; } },
-    { title:'鍛錬 — 攻撃', desc:'全員 ATK +2', apply:function(p){ p.bonusAtk += 2; } },
-    { title:'俊足', desc:'全員 移動 +1', apply:function(p){ p.bonusMove += 1; } },
-    { title:'幸運のダイス', desc:'ダイスの出目 +1', apply:function(p){ p.diceBonus += 1; } },
-    { title:'高所の心得', desc:'高所ダメージ +25%', apply:function(p){ p.high += 0.25; } },
-    { title:'新兵を雇う', desc:'離脱した仲間を新品の体で1人復帰',
-      cond:function(p){ return p.squad.length < CLASS_KEYS.length; },
+    { icon:'heart', title:'不屈の鍛錬', desc:'全員 最大HP +6', apply:function(p){ p.bonusHp += 6; } },
+    { icon:'sword', title:'刃を研ぐ', desc:'全員 ATK +2', apply:function(p){ p.bonusAtk += 2; } },
+    { icon:'boot', title:'軽装行軍', desc:'全員 移動 +1', apply:function(p){ p.bonusMove += 1; } },
+    { icon:'die', title:'幸運の賽', desc:'ダイスの出目 +1', apply:function(p){ p.dice += 1; } },
+    { icon:'peak', title:'高所の心得', desc:'高所ダメージ +25%', apply:function(p){ p.high += 0.25; } },
+    { icon:'dagger', title:'背後の作法', desc:'側面・背後ダメージ +20%', apply:function(p){ p.flank += 0.20; } },
+    { icon:'boot', title:'岩場の足場', desc:'全員 跳躍力 +1', apply:function(p){ p.bonusJump += 1; } },
+    { icon:'shield', title:'受けの型', desc:'被ダメージ -12%', apply:function(p){ p.guard += 0.12; } },
+    { icon:'heart', title:'野戦病院', desc:'仲間全員の傷をひとつ癒す',
+      cond:function(p){ return JOB_KEYS.some(function(c){ return p.scars[c]; }); },
       apply:function(p){
-        var missing = CLASS_KEYS.filter(function(c){ return p.squad.indexOf(c) === -1; });
-        if(!missing.length) return;
-        var pick = missing[Math.floor(Math.random()*missing.length)];
-        p.scars[pick] = 0;
-        p.squad.push(pick);
-      } },
-    { title:'野戦病院', desc:'仲間全員の傷をひとつ癒す',
-      cond:function(p){ return CLASS_KEYS.some(function(c){ return p.scars[c]; }); },
-      apply:function(p){
-        CLASS_KEYS.forEach(function(c){ if(p.scars[c]) p.scars[c] -= 1; });
-        CLASS_KEYS.forEach(function(c){
+        JOB_KEYS.forEach(function(c){ if(p.scars[c]) p.scars[c] -= 1; });
+        JOB_KEYS.forEach(function(c){
           if(p.squad.indexOf(c) === -1 && maxHpFor(p, c) >= MIN_HP) p.squad.push(c);
         });
+      } },
+    { icon:'sword', title:'新兵を雇う', desc:'離脱した仲間を万全の体で復帰',
+      cond:function(p){ return p.squad.length < JOB_KEYS.length; },
+      apply:function(p){
+        var missing = JOB_KEYS.filter(function(c){ return p.squad.indexOf(c) === -1; });
+        if(!missing.length) return;
+        var pick = missing[Math.floor(Math.random()*missing.length)];
+        p.scars[pick] = 0; p.squad.push(pick);
       } }
   ];
 
   var P1_START = [ {x:1,y:7}, {x:3,y:7}, {x:5,y:7}, {x:7,y:6} ];
   var P2_START = [ {x:6,y:0}, {x:4,y:0}, {x:2,y:0}, {x:0,y:1} ];
 
-  // full extent of the board in its own coordinates, used as the camera's home
-  var MAX_ELEV = 2;
+  var uid = 1, G = null, B = null;
+
+  function newPlayer(){
+    return { squad:JOB_KEYS.slice(), scars:{}, bonusHp:0, bonusAtk:0, bonusMove:0, bonusJump:0,
+             dice:0, high:0, flank:0, guard:0, wins:0, margin:0 };
+  }
+  function maxHpFor(p, job){ return JOBS[job].hp + p.bonusHp - SCAR_HP * (p.scars[job] || 0); }
+
+  var SCREENS = ['title','handoff','upgrade','battle','result'];
+  function show(n){ SCREENS.forEach(function(s){ $('screen-'+s).classList.toggle('hidden', s !== n); }); }
+
+  // ================= isometric + camera =================
+  // The board is stored in fixed coordinates; the camera may rotate the view in
+  // 90° steps, which only changes how a tile is projected and depth-sorted.
+  var ROT = 0;
+  function view(x, y){
+    switch(ROT & 3){
+      case 1: return { x:y, y:GRID-1-x };
+      case 2: return { x:GRID-1-x, y:GRID-1-y };
+      case 3: return { x:GRID-1-y, y:x };
+      default: return { x:x, y:y };
+    }
+  }
+  function iso(x, y, e){
+    var v = view(x, y);
+    return { cx:(v.x - v.y) * (TW/2), cy:(v.x + v.y) * (TH/2) - e * EH };
+  }
+  function depth(x, y){ var v = view(x, y); return v.x + v.y; }
+  function diamond(cx, cy, k){
+    var w = TW/2 * (k||1), h = TH/2 * (k||1);
+    return cx+','+(cy-h)+' '+(cx+w)+','+cy+' '+cx+','+(cy+h)+' '+(cx-w)+','+cy;
+  }
+
+  var MAX_ELEV = 2, MIN_ZOOM = 0.65, MAX_ZOOM = 3.4;
   var BOARD = (function(){
-    var pad = 10;
-    var x1 = (GRID-1)*TILE_W/2 + TILE_W/2;
-    var y0 = -(MAX_ELEV*ELEV_H) - TILE_H/2;
-    var y1 = (GRID-1)*TILE_H + TILE_H/2;
+    var pad = 14;
+    var x1 = (GRID-1)*TW/2 + TW/2;
+    var y0 = -(MAX_ELEV*EH) - TH/2 - 5;           // headroom for standing figures
+    var y1 = (GRID-1)*TH + TH/2 + 6;
     return { cx:0, cy:(y0+y1)/2, w:x1*2 + pad*2, h:(y1-y0) + pad*2 };
   })();
-  var MIN_ZOOM = 0.6, MAX_ZOOM = 3.2; // 1 = whole board on screen
-
-  var uid = 1;
-  var G = null, B = null;
-
-  function newPlayer(){ return { squad:CLASS_KEYS.slice(), scars:{}, bonusHp:0, bonusAtk:0, bonusMove:0, diceBonus:0, high:0, wins:0, margin:0 }; }
-  var SCREENS = ['title','handoff','upgrade','battle','result'];
-  function show(n){ SCREENS.forEach(function(s){ $('screen-'+s).classList.toggle('hidden', s!==n); }); }
-
-  // ---------- iso helpers ----------
-  function isoC(x,y,e){ return { cx:(x-y)*(TILE_W/2), cy:(x+y)*(TILE_H/2) - e*ELEV_H }; }
   var CAM = { cx:BOARD.cx, cy:BOARD.cy, zoom:1 };
 
+  var stage = null, svg = null, scene = null;
+
+  function sizeBoardBox(){
+    var wrap = $('boardWrap');
+    var w = wrap.parentNode.clientWidth || window.innerWidth;
+    wrap.style.setProperty('--boardMax', Math.round(w * BOARD.h / BOARD.w) + 'px');
+  }
+
   function applyCam(){
-    var svg = $('boardSvg');
     var box = stage.getBoundingClientRect();
     var ratio = (box.width && box.height) ? box.height / box.width : 1;
-    // the home view fits the board's width, or its height when that binds harder
     var baseW = Math.max(BOARD.w, BOARD.h / (ratio || 1));
     var w = baseW / CAM.zoom, h = w * ratio;
     CAM.cx = w >= BOARD.w ? BOARD.cx
@@ -404,741 +527,1326 @@
     CAM.cy = h >= BOARD.h ? BOARD.cy
       : Math.max(BOARD.cy - BOARD.h/2 + h/2, Math.min(BOARD.cy + BOARD.h/2 - h/2, CAM.cy));
     svg.setAttribute('viewBox', (CAM.cx - w/2) + ' ' + (CAM.cy - h/2) + ' ' + w + ' ' + h);
-    // shrink the tokens as the camera pulls back so they stop covering each other
-    stage.style.setProperty('--tok', Math.max(0.62, Math.min(1.15, CAM.zoom * 0.86)).toFixed(3));
-    if(B) B.units.forEach(function(u){ if(u.hp > 0) positionSlot(slotOf(u), u); });
   }
-
-  function camTo(x, y, animate){
+  // the zoom at which the board exactly fills the frame's short axis, so a
+  // phase never opens on a letterboxed board
+  function fillZoom(){
+    var box = stage.getBoundingClientRect();
+    var ratio = (box.width && box.height) ? box.height / box.width : 1;
+    var baseW = Math.max(BOARD.w, BOARD.h / (ratio || 1));
+    return Math.max(1, (baseW * ratio) / BOARD.h);
+  }
+  function camTo(x, y){
     var t = tileAt(x,y);
-    var c = isoC(x, y, t ? t.e : 0);
-    CAM.cx = c.cx; CAM.cy = c.cy;
-    if(animate) $('boardSvg').classList.add('cam-glide');
-    applyCam();
+    var c = iso(x, y, t ? t.e : 0);
+    CAM.cx = c.cx; CAM.cy = c.cy; applyCam();
   }
-
-  // keep a tile comfortably inside the view rather than snapping on every tap
   function camReveal(x, y){
-    var svg = $('boardSvg');
     var vb = svg.viewBox.baseVal;
     var t = tileAt(x,y);
-    var c = isoC(x, y, t ? t.e : 0);
-    var padX = vb.width * 0.22, padY = vb.height * 0.22;
-    if(c.cx < vb.x + padX || c.cx > vb.x + vb.width - padX ||
-       c.cy < vb.y + padY || c.cy > vb.y + vb.height - padY) camTo(x, y, true);
+    var c = iso(x, y, t ? t.e : 0);
+    var px = vb.width * 0.24, py = vb.height * 0.24;
+    if(c.cx < vb.x + px || c.cx > vb.x + vb.width - px ||
+       c.cy < vb.y + py || c.cy > vb.y + vb.height - py) camTo(x, y);
   }
-  function toStagePx(cx,cy){
-    var svg = $('boardSvg'), ctm = svg.getScreenCTM();
+  function toStagePx(cx, cy){
+    var ctm = svg.getScreenCTM();
     if(!ctm) return { left:0, top:0 };
-    var pt = svg.createSVGPoint(); pt.x = cx; pt.y = cy;
-    var s = pt.matrixTransform(ctm);
+    var p = svg.createSVGPoint(); p.x = cx; p.y = cy;
+    var s = p.matrixTransform(ctm);
     var r = stage.getBoundingClientRect();
     return { left:s.x - r.left, top:s.y - r.top };
   }
-  function diamond(cx,cy){
-    return [cx+','+(cy-TILE_H/2), (cx+TILE_W/2)+','+cy, cx+','+(cy+TILE_H/2), (cx-TILE_W/2)+','+cy].join(' ');
+
+  // ================= palette =================
+  var PAL = {
+    top:'#bcc1ae', topAlt:'#b1b7a4', topHigh:'#c8cdb9', topMoss:'#8fa07a', topMossAlt:'#88996f',
+    left:'#79806f', right:'#545c58', lip:'#d8dcc9', ao:'#0b0e11',
+    steel:'#b9bfc7', steelDark:'#767e88', leather:'#6b5942', leatherDark:'#463a2c',
+    ivory:'#ded7c5', dark:'#171b20', gold:'#e0a33f', goldHi:'#f7dc9a',
+    water:'#4a7fa8', waterHi:'#9fd0e8', flame:'#f0a63c', flameHi:'#ffe6a8',
+    heal:'#6fbf85', blood:'#e2504a'
+  };
+  var SIDE_COL = {
+    1:{ main:'#5b9bd5', dark:'#2f5f8f', hi:'#cfe4f7' },
+    2:{ main:'#c9564b', dark:'#7d2e29', hi:'#f3bdb2' }
+  };
+  function hash(x, y){ var h = (x*374761393 + y*668265263) ^ 0x5bf03635; h = (h ^ (h>>13)) * 1274126177; return ((h ^ (h>>16)) >>> 0) / 4294967296; }
+
+  // ================= terrain art =================
+  // Light is fixed at the upper left: top face brightest, left face mid, right
+  // face darkest, with a bright lip along the lit edges to read the silhouette.
+  function tileNode(t){
+    var g = el('g', { 'data-tile':t.x + ',' + t.y });
+    var c = iso(t.x, t.y, t.e), h = t.e * EH;
+    var checker = ((t.x + t.y) % 2) === 1;
+
+    if(h > 0){
+      var b = iso(t.x, t.y, 0);
+      g.appendChild(el('ellipse', { cx:b.cx, cy:b.cy + TH/2 - 1, rx:TW/2 * .92, ry:TH/2 * .8,
+        fill:PAL.ao, opacity:.34 }));
+      g.appendChild(el('polygon', { points:
+        (c.cx-TW/2)+','+c.cy + ' ' + c.cx+','+(c.cy+TH/2) + ' ' +
+        b.cx+','+(b.cy+TH/2) + ' ' + (b.cx-TW/2)+','+b.cy,
+        fill:PAL.left }));
+      g.appendChild(el('polygon', { points:
+        c.cx+','+(c.cy+TH/2) + ' ' + (c.cx+TW/2)+','+c.cy + ' ' +
+        (b.cx+TW/2)+','+b.cy + ' ' + b.cx+','+(b.cy+TH/2),
+        fill:PAL.right }));
+      // a stone course line so tall blocks do not read as flat slabs
+      for(var s = EH; s < h - 2; s += EH){
+        g.appendChild(el('path', { d:'M' + (c.cx-TW/2) + ' ' + (c.cy+s) + ' L' + c.cx + ' ' + (c.cy+TH/2+s) +
+          ' L' + (c.cx+TW/2) + ' ' + (c.cy+s), fill:'none', stroke:PAL.ao, 'stroke-width':.6, opacity:.4 }));
+      }
+    }
+
+    var fill = t.e > 0 ? (checker ? PAL.topHigh : PAL.top)
+             : (t.moss ? (checker ? PAL.topMoss : PAL.topMossAlt) : (checker ? PAL.top : PAL.topAlt));
+    g.appendChild(el('polygon', { points:diamond(c.cx, c.cy), fill:fill,
+      stroke:PAL.ao, 'stroke-width':.35, 'stroke-opacity':.5 }));
+    g.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy-TH/2) + ' L' + (c.cx-TW/2) + ' ' + c.cy,
+      stroke:PAL.lip, 'stroke-width':.9, fill:'none', opacity:.75 }));
+
+    // speckles and cracks, seeded per tile so the ground is never uniform
+    var r = hash(t.x, t.y), n = Math.floor(r * 4);
+    for(var i = 0; i < n; i++){
+      var a = hash(t.x + i*7, t.y - i*3), b2 = hash(t.x - i*5, t.y + i*11);
+      var ox = (a - .5) * TW * .55, oy = (b2 - .5) * TH * .5;
+      if(Math.abs(ox)/(TW/2) + Math.abs(oy)/(TH/2) > .78) continue;
+      g.appendChild(el('rect', { x:c.cx + ox, y:c.cy + oy, width:1.4, height:1,
+        fill:PAL.ao, opacity:.2 + a * .18 }));
+    }
+    if(r > .82){
+      g.appendChild(el('path', { d:'M' + (c.cx - TW*.22) + ' ' + (c.cy + TH*.08) +
+        ' l' + (TW*.16) + ' ' + (-TH*.12) + ' l' + (TW*.14) + ' ' + (TH*.14),
+        fill:'none', stroke:PAL.ao, 'stroke-width':.5, opacity:.3 }));
+    }
+    return g;
   }
-  function diamondInset(cx,cy,k){
-    var w = TILE_W/2*k, h = TILE_H/2*k;
-    return [cx+','+(cy-h), (cx+w)+','+cy, cx+','+(cy+h), (cx-w)+','+cy].join(' ');
+
+  function propNode(t){
+    var c = iso(t.x, t.y, t.e);
+    var g = el('g', {});
+    if(t.fx === 'chest'){
+      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy + 1.5, rx:7, ry:3, fill:PAL.ao, opacity:.4 }));
+      g.appendChild(el('path', { d:'M' + (c.cx-7) + ' ' + (c.cy-1) + ' l7 -3.6 l7 3.6 l-7 3.6 z', fill:PAL.leather }));
+      g.appendChild(el('path', { d:'M' + (c.cx-7) + ' ' + (c.cy-1) + ' l0 -4 l7 -3.6 l0 4 z', fill:'#7d6a4f' }));
+      g.appendChild(el('path', { d:'M' + (c.cx) + ' ' + (c.cy-4.6) + ' l7 -3.6 l0 4 l-7 3.6 z', fill:PAL.leatherDark }));
+      g.appendChild(el('path', { d:'M' + (c.cx-3.4) + ' ' + (c.cy-6.7) + ' l7 -3.6 l0 4 l-7 3.6 z', fill:PAL.gold, opacity:.9 }));
+    } else if(t.fx === 'spring'){
+      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy, rx:TW*.3, ry:TH*.3, fill:PAL.water }));
+      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy - .6, rx:TW*.19, ry:TH*.19, fill:'none',
+        stroke:PAL.waterHi, 'stroke-width':.9, opacity:.85 }));
+      g.appendChild(el('ellipse', { cx:c.cx - 2, cy:c.cy - 1.6, rx:2.4, ry:1.1, fill:PAL.waterHi, opacity:.7 }));
+    } else if(t.fx === 'trap'){
+      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .62), fill:'#14100f' }));
+      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .62), fill:'none',
+        stroke:'#8d3b36', 'stroke-width':.9 }));
+      for(var i = 0; i < 4; i++){
+        var ax = c.cx + (i - 1.5) * 3.6, ay = c.cy + ((i % 2) ? 1.6 : -1.2);
+        g.appendChild(el('path', { d:'M' + (ax-1.5) + ' ' + (ay+1.4) + ' l1.5 -5 l1.5 5 z',
+          fill:PAL.steel }));
+        g.appendChild(el('path', { d:'M' + ax + ' ' + (ay-3.6) + ' l1.5 5 l-1.5 0 z', fill:PAL.steelDark }));
+      }
+    } else if(t.prop === 'torch'){
+      g.appendChild(el('rect', { x:c.cx-1, y:c.cy-13, width:2, height:13, fill:PAL.leatherDark }));
+      var fl = el('g', { class:'flame' });
+      fl.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy-22) + ' q4.6 4 0 8.4 q-4.6 -4.4 0 -8.4 z', fill:PAL.flame }));
+      fl.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy-19.4) + ' q2.2 2.2 0 4.6 q-2.2 -2.4 0 -4.6 z', fill:PAL.flameHi }));
+      g.appendChild(fl);
+      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy - 15, rx:11, ry:8, fill:PAL.flame, opacity:.14 }));
+    } else if(t.prop === 'rock'){
+      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy + 1, rx:5.5, ry:2.4, fill:PAL.ao, opacity:.35 }));
+      g.appendChild(el('path', { d:'M' + (c.cx-5) + ' ' + c.cy + ' l2.2 -4.4 l4 -1.4 l3.6 2.4 l-1.4 3.4 z', fill:'#8a9186' }));
+      g.appendChild(el('path', { d:'M' + (c.cx-5) + ' ' + c.cy + ' l2.2 -4.4 l2.4 1 l-.8 3.4 z', fill:'#a6ac9f' }));
+    } else if(t.prop === 'grass'){
+      for(var k = 0; k < 3; k++){
+        var gx = c.cx + (k-1) * 3.2, gy = c.cy + (hash(t.x+k, t.y) - .5) * 3;
+        g.appendChild(el('path', { d:'M' + gx + ' ' + gy + ' q.6 -3.4 2.2 -4.6', fill:'none',
+          stroke:'#6f8256', 'stroke-width':.9, 'stroke-linecap':'round' }));
+      }
+    }
+    return g;
   }
-  function manhattan(a,b){ return Math.abs(a.x-b.x)+Math.abs(a.y-b.y); }
-  function roll(){ return 1 + Math.floor(Math.random()*6); }
 
-  // ---------- run flow ----------
-  $('titleStartBtn').addEventListener('click', function(){
-    G = { players:{ 1:newPlayer(), 2:newPlayer() }, stage:1 };
-    goHandoff(1, 'ステージ1の強化を選びます', function(){ startUpgrade(1); });
-  });
+  // ================= character figures =================
+  // Each job gets a distinct silhouette — the thing that reads first at small
+  // sizes — plus two tones of its side colour so the volume survives zooming out.
+  function figureArt(job, side){
+    var C = SIDE_COL[side], g = el('g', {});
+    function add(tag, a){ g.appendChild(el(tag, a)); return g; }
+    add('ellipse', { cx:0, cy:0, rx:8.5, ry:3.4, fill:PAL.ao, opacity:.42 });
 
-  function goHandoff(pn, sub, cb){
-    $('handoffEyebrow').textContent = 'Player ' + pn;
-    $('handoffTitle').textContent = 'プレイヤー' + pn;
-    $('handoffSub').textContent = sub;
-    $('handoffBtn').onclick = cb;
-    show('handoff');
+    if(job === 'knight'){
+      add('path', { d:'M-4 0 l1.4 -7 h5.2 l1.4 7 z', fill:PAL.steelDark });
+      add('path', { d:'M-6.4 -6.6 q0 -9.6 6.4 -9.6 q6.4 0 6.4 9.6 z', fill:C.main });
+      add('path', { d:'M0 -16.2 q6.4 0 6.4 9.6 l-6.4 0 z', fill:C.dark });
+      add('path', { d:'M-8.6 -12.4 q2.4 -3.4 4.4 -3.4 l0 4.6 q-2.6 .4 -4.4 -1.2 z', fill:PAL.steel });
+      add('path', { d:'M8.6 -12.4 q-2.4 -3.4 -4.4 -3.4 l0 4.6 q2.6 .4 4.4 -1.2 z', fill:PAL.steelDark });
+      add('path', { d:'M-4.4 -16.4 q0 -5.4 4.4 -5.4 q4.4 0 4.4 5.4 q0 2.6 -4.4 2.6 q-4.4 0 -4.4 -2.6 z', fill:PAL.steel });
+      add('path', { d:'M0 -21.8 q4.4 0 4.4 5.4 q0 2.6 -4.4 2.6 z', fill:PAL.steelDark });
+      add('rect', { class:'face', x:-4, y:-18.4, width:6.4, height:1.9, fill:PAL.dark, rx:.6 });
+      add('path', { d:'M0 -21.6 q1.6 -4.4 4.4 -5.2 q-.6 3.6 -2.6 5.6 z', fill:C.hi });
+      add('path', { class:'wep', d:'M9.4 -14.6 l2.2 0 l0 11.4 l-1.1 1.6 l-1.1 -1.6 z', fill:PAL.steel });
+      add('rect', { class:'wep', x:8.2, y:-15.6, width:4.6, height:1.5, fill:PAL.gold, rx:.4 });
+    } else if(job === 'mage'){
+      add('path', { d:'M-7.4 0 q1 -13.6 7.4 -13.6 q6.4 0 7.4 13.6 z', fill:C.main });
+      add('path', { d:'M0 -13.6 q6.4 0 7.4 13.6 l-7.4 0 z', fill:C.dark });
+      add('path', { d:'M-3.2 0 l.8 -9 l1.4 0 l-.6 9 z', fill:C.hi, opacity:.5 });
+      add('ellipse', { cx:0, cy:-15.6, rx:3.8, ry:4.1, fill:'#e8cba8' });
+      add('path', { class:'face', d:'M-2.6 -16.4 q2.6 1.6 5.2 0 q-.4 3.6 -2.6 3.6 q-2.2 0 -2.6 -3.6 z', fill:PAL.dark, opacity:.55 });
+      add('path', { d:'M-6.6 -17.6 q6.6 -4.2 13.2 0 q-6.6 2.6 -13.2 0 z', fill:C.dark });
+      add('path', { d:'M-4.6 -18.6 q4.6 -12.4 9 -1.2 q-4.4 2.6 -9 1.2 z', fill:C.main });
+      add('path', { d:'M0 -26.4 q3 4.6 4.4 6.8 q-2.2 1 -4.4 1 z', fill:C.dark });
+      add('path', { class:'wep', d:'M9.2 -19 l0 18.4', stroke:PAL.leather, 'stroke-width':1.6, fill:'none' });
+      add('circle', { class:'wep', cx:9.2, cy:-20.6, r:2.8, fill:PAL.gold });
+      add('circle', { class:'wep', cx:8.4, cy:-21.4, r:1.1, fill:PAL.goldHi });
+    } else if(job === 'archer'){
+      add('path', { d:'M-3.6 0 l1 -7.4 h5.2 l1 7.4 z', fill:PAL.leatherDark });
+      add('path', { d:'M-5.8 -7 q0 -9 5.8 -9 q5.8 0 5.8 9 z', fill:C.main });
+      add('path', { d:'M0 -16 q5.8 0 5.8 9 l-5.8 0 z', fill:C.dark });
+      add('path', { d:'M-6.2 -14.6 q6.2 -4.6 12.4 0 l-1.6 4 q-4.6 -2.6 -9.2 0 z', fill:PAL.leather });
+      add('ellipse', { cx:0, cy:-19, rx:3.6, ry:3.9, fill:'#e8cba8' });
+      add('path', { d:'M-4.6 -19.4 q0 -6 4.6 -6 q4.6 0 4.6 6 q-2.4 -2.6 -4.6 -2.6 q-2.2 0 -4.6 2.6 z', fill:C.dark });
+      add('path', { class:'face', d:'M-2.2 -19.6 q2.2 1 4.4 0 q-.6 2.6 -2.2 2.6 q-1.6 0 -2.2 -2.6 z', fill:PAL.dark, opacity:.5 });
+      add('path', { class:'wep', d:'M10 -22 q5 8.4 0 17', fill:'none', stroke:PAL.leather, 'stroke-width':1.5 });
+      add('path', { class:'wep', d:'M10 -22 L10 -5', stroke:PAL.ivory, 'stroke-width':.6, opacity:.85, fill:'none' });
+    } else {
+      add('path', { d:'M-3.4 0 l.8 -7 h4.8 l.8 7 z', fill:PAL.dark });
+      add('path', { d:'M-2.4 -14.4 q-7.6 4.4 -8.4 13.4 q4.4 -3.4 8.4 -4.6 z', fill:C.dark });
+      add('path', { d:'M-5 -7.4 q0 -8 5 -8 q5 0 5 8 z', fill:C.main });
+      add('path', { d:'M0 -15.4 q5 0 5 8 l-5 0 z', fill:C.dark });
+      add('path', { d:'M-5.2 -12.6 q5.2 -2.6 10.4 0 l0 2 q-5.2 -2 -10.4 0 z', fill:PAL.leather });
+      add('ellipse', { cx:0, cy:-18.4, rx:3.4, ry:3.7, fill:'#e8cba8' });
+      add('path', { d:'M-4.2 -19.2 q0 -5.2 4.2 -5.2 q4.2 0 4.2 5.2 z', fill:C.dark });
+      add('rect', { class:'face', x:-3.6, y:-19.4, width:7.2, height:1.8, fill:PAL.dark, rx:.6 });
+      add('path', { class:'wep', d:'M8 -12.4 l1.4 0 l0 7 l-.7 1.2 l-.7 -1.2 z', fill:PAL.steel });
+    }
+    return g;
   }
 
-  function startUpgrade(pn){
-    var p = G.players[pn];
-    $('upgradeTurnLabel').textContent = 'プレイヤー' + pn + ' の強化';
-    $('upgradeStage').textContent = 'Stage ' + G.stage + ' / ' + STAGES;
+  function jobIcon(job, side, size){
+    var s = el('svg', { viewBox:'-16 -30 32 34', width:size, height:size });
+    var g = figureArt(job, side || 1);
+    s.appendChild(g);
+    return s;
+  }
 
-    var rr = $('rosterRow');
-    rr.innerHTML = '';
-    CLASS_KEYS.forEach(function(cls){
-      var d = CLASS_DEFS[cls];
-      var alive = p.squad.indexOf(cls) !== -1;
-      var card = document.createElement('div');
-      card.className = 'roster-card cls-' + cls + (alive ? '' : ' gone');
-      var scars = p.scars[cls] || 0;
-      card.innerHTML = '<div class="u-badge">' + d.letter + '</div><div class="u-name">' + d.name + '</div>' +
-        '<div class="u-stats">' + (alive ? ('HP' + maxHpFor(p, cls) + ' AT' + (d.atk+p.bonusAtk) + '<br>移動' + (d.move+p.bonusMove) + ' 射程' + d.range +
-          (scars ? '<br>傷 ' + '×'.repeat(scars) : '')) : '戦線離脱') + '</div>';
-      rr.appendChild(card);
+  // ================= scene graph =================
+  // One depth-sorted layer so a figure standing behind a block is hidden by it,
+  // the way a real isometric scene resolves. Terrain nodes are built once per
+  // stage; figures persist so their movement can be tweened.
+  var terrainNodes = [], overlayNodes = [], figureNodes = {};
+
+  function sortKey(x, y, rank){ return depth(x, y) * 10 + rank; }
+
+  // A raised tile in front genuinely hides what stands behind it. Rather than
+  // let a unit disappear, draw it again as a ghost on top — visible, tappable,
+  // and obviously "behind something".
+  function coveredBy(x, y, dy){
+    var t0 = tileAt(x, y);
+    var c = iso(x, y, t0 ? t0.e : 0);
+    var px = c.cx, py = c.cy - dy, d0 = depth(x, y);
+    for(var i = 0; i < B.tiles.length; i++){
+      var t = B.tiles[i];
+      if(t.e === 0 || depth(t.x, t.y) <= d0) continue;
+      var c2 = iso(t.x, t.y, t.e);
+      var ddx = Math.abs(px - c2.cx);
+      if(ddx/(TW/2) + Math.abs(py - c2.cy)/(TH/2) <= 1) return true;
+      if(ddx < TW/2 - 0.01){
+        var edge = c2.cy + TH/2 - ddx * TH / TW;
+        if(py >= edge && py <= edge + t.e * EH) return true;
+      }
+    }
+    return false;
+  }
+
+  function compose(){
+    var items = terrainNodes.concat(overlayNodes);
+    var ghosts = [];
+    B.units.forEach(function(u){
+      if(u.hp <= 0) return;
+      var n = figureNodes[u.uid];
+      if(!n) return;
+      items.push({ k:sortKey(u.x, u.y, 3), n:n });
+      if(coveredBy(u.x, u.y, 11)) ghosts.push(u);
     });
-
-    var pool = UPGRADES.filter(function(u){ return !u.cond || u.cond(p); });
-    for(var i=pool.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
-    var list = $('upgradeList');
-    list.innerHTML = '';
-    pool.slice(0,3).forEach(function(u){
-      var c = document.createElement('div');
-      c.className = 'upgrade-card';
-      c.innerHTML = '<div class="u-title">' + u.title + '</div><div class="u-desc">' + u.desc + '</div>';
-      c.addEventListener('click', function(){
-        u.apply(p);
-        if(pn === 1) goHandoff(2, 'ステージ' + G.stage + 'の強化を選びます', function(){ startUpgrade(2); });
-        else startStage();
-      });
-      list.appendChild(c);
+    items.sort(function(a, b){ return a.k - b.k; });
+    var frag = document.createDocumentFragment();
+    items.forEach(function(it){ frag.appendChild(it.n); });
+    ghosts.forEach(function(u){
+      var t = tileAt(u.x, u.y);
+      var c = iso(u.x, u.y, t ? t.e : 0);
+      var g = el('g', { class:'fig ghost', 'data-uid':u.uid,
+        transform:'translate(' + c.cx + ',' + c.cy + ')' });
+      g.appendChild(el('polygon', { points:diamond(0, 0, .82), fill:'none',
+        stroke:SIDE_COL[u.side].hi, 'stroke-width':1, 'stroke-dasharray':'3 2' }));
+      var art = figureArt(u.job, u.side);
+      art.setAttribute('opacity', '.42');
+      g.appendChild(art);
+      frag.appendChild(g);
     });
-    show('upgrade');
+    scene.innerHTML = '';
+    scene.appendChild(frag);
   }
 
-  // ---------- board ----------
-  var tileLayer = $('tileLayer'), overlayLayer = $('overlayLayer'), markLayer = $('markLayer'), stage = $('boardStage');
+  function buildTerrain(){
+    terrainNodes = [];
+    var glow = el('g', {});
+    glow.appendChild(el('ellipse', { cx:BOARD.cx, cy:BOARD.cy + 14, rx:BOARD.w*.62, ry:BOARD.h*.52,
+      fill:'url(#stageGlow)' }));
+    terrainNodes.push({ k:-1e9, n:glow });
+    B.tiles.forEach(function(t){
+      terrainNodes.push({ k:sortKey(t.x, t.y, 0), n:tileNode(t) });
+      if(t.fx || t.prop) terrainNodes.push({ k:sortKey(t.x, t.y, 1), n:propNode(t) });
+    });
+  }
 
-  // Both armies get the same board: every feature is placed in 180°-rotated
-  // pairs, so the only asymmetry is who reaches the middle first.
-  function buildBoard(){
+  function buildFigures(){
+    figureNodes = {};
+    B.units.forEach(function(u){
+      var g = el('g', { class:'fig', 'data-uid':u.uid });
+      var inner = el('g', { class:'fig-in' });
+      inner.appendChild(figureArt(u.job, u.side));
+      g.appendChild(inner);
+      var bar = el('g', { class:'fig-hp' });
+      bar.appendChild(el('rect', { x:-6, y:-31.4, width:12, height:2.2, fill:'#0b0e11',
+        opacity:.72, rx:.6 }));
+      bar.appendChild(el('rect', { class:'hpfill', x:-5.6, y:-31, width:11.2, height:1.4, fill:PAL.heal, rx:.3 }));
+      g.appendChild(bar);
+      figureNodes[u.uid] = g;
+      placeFigure(u, true);
+    });
+  }
+
+  function placeFigure(u, instant){
+    var g = figureNodes[u.uid];
+    if(!g) return;
+    var t = tileAt(u.x, u.y);
+    var c = iso(u.x, u.y, t ? t.e : 0);
+    g.setAttribute('transform', 'translate(' + c.cx + ',' + c.cy + ')');
+    var vf = (u.face - ROT + 8) % 4;              // facing, expressed in view space
+    var inner = g.querySelector('.fig-in');
+    inner.setAttribute('transform', (vf === 1 || vf === 2) ? 'scale(-1,1)' : '');
+    var away = (vf === 2 || vf === 3);
+    Array.prototype.forEach.call(g.querySelectorAll('.face'), function(f){
+      f.setAttribute('opacity', away ? 0 : (f.getAttribute('data-op') || 1));
+    });
+    refreshFigure(u);
+  }
+
+  function refreshFigure(u){
+    var g = figureNodes[u.uid];
+    if(!g) return;
+    var pct = Math.max(0, u.hp / u.maxHp);
+    var fill = g.querySelector('.hpfill');
+    fill.setAttribute('width', 11.2 * pct);
+    fill.setAttribute('fill', pct > .5 ? PAL.heal : (pct > .25 ? PAL.gold : PAL.blood));
+    g.querySelector('.fig-hp').setAttribute('opacity', pct >= 1 && B.sel !== u ? 0 : 1);
+    g.setAttribute('opacity', (u.done && u.side === B.phase) ? .45 : 1);
+    g.classList.toggle('sel', B.sel === u);
+  }
+
+  function setOverlays(list){
+    overlayNodes = list.map(function(o){
+      var t = tileAt(o.x, o.y);
+      var c = iso(o.x, o.y, t ? t.e : 0);
+      var g = el('g', { 'data-ov':o.cls, 'data-x':o.x, 'data-y':o.y });
+      if(o.cls === 'move'){
+        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .96), fill:'#7fd8ff', opacity:.2 }));
+        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .96), fill:'none',
+          stroke:'#9fe4ff', 'stroke-width':.9, opacity:.85 }));
+      } else if(o.cls === 'target'){
+        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .96), fill:'#ff6b5e', opacity:.26 }));
+        g.appendChild(el('polygon', { class:'pulse', points:diamond(c.cx, c.cy, .96), fill:'none',
+          stroke:'#ffb0a5', 'stroke-width':1.4 }));
+      } else if(o.cls === 'sel'){
+        g.appendChild(el('polygon', { class:'ring', points:diamond(c.cx, c.cy, 1), fill:'none',
+          stroke:PAL.goldHi, 'stroke-width':1.4, 'stroke-dasharray':'4 2.6' }));
+      }
+      return { k:sortKey(o.x, o.y, 2), n:g };
+    });
+  }
+
+  // ================= board =================
+  function tileAt(x, y){ return (x<0||y<0||x>=GRID||y>=GRID) ? null : B.tiles[y*GRID+x]; }
+
+  // Mirrored through the centre so neither army starts with better ground.
+  function buildBoard(stageNo){
     var tiles = [];
-    for(var y=0;y<GRID;y++) for(var x=0;x<GRID;x++) tiles.push({ x:x, y:y, e:0, fx:null });
+    for(var y=0;y<GRID;y++) for(var x=0;x<GRID;x++)
+      tiles.push({ x:x, y:y, e:0, fx:null, prop:null, moss:hash(x*3+1, y*5+2) > .62 });
     var at = function(x,y){ return tiles[y*GRID+x]; };
-    var mirror = function(t){ return at(GRID-1-t.x, GRID-1-t.y); };
+    var mir = function(t){ return at(GRID-1-t.x, GRID-1-t.y); };
     var isStart = function(t){
       return P1_START.concat(P2_START).some(function(s){ return s.x===t.x && s.y===t.y; });
     };
 
-    // the keep in the middle: a 2x2 plateau, a step around it, and the springs on top
-    var mid = GRID/2;
-    [[mid-1,mid-1],[mid,mid-1],[mid-1,mid],[mid,mid]].forEach(function(p){ at(p[0],p[1]).e = 2; });
-    at(mid-1,mid).fx = 'spring'; at(mid,mid-1).fx = 'spring';
-    // one step up on each face of the keep, so it can be climbed from any side
-    [[mid-2,mid-1],[mid-2,mid],[mid+1,mid-1],[mid+1,mid],
-     [mid-1,mid-2],[mid,mid-2],[mid-1,mid+1],[mid,mid+1]].forEach(function(p){
-      var t = at(p[0],p[1]);
-      if(t) t.e = 1;
-    });
+    var m = GRID/2;
+    [[m-1,m-1],[m,m-1],[m-1,m],[m,m]].forEach(function(p){ at(p[0],p[1]).e = 2; });
+    at(m-1,m).fx = 'spring'; at(m,m-1).fx = 'spring';
+    [[m-2,m-1],[m-2,m],[m+1,m-1],[m+1,m],[m-1,m-2],[m,m-2],[m-1,m+1],[m,m+1]]
+      .forEach(function(p){ var t = at(p[0],p[1]); if(t) t.e = 1; });
+    at(m-2,m-1).prop = 'torch'; at(m+1,m).prop = 'torch';   // mirrored, and off the centre column
 
     var pool = tiles.filter(function(t){
-      return t.e === 0 && !t.fx && !isStart(t) && mirror(t) !== t &&
-             !isStart(mirror(t)) && mirror(t).e === 0;
+      // x === y sits on the screen's centre column, where a mirrored pair would
+      // stack into one another
+      return t.e === 0 && !t.fx && !t.prop && !isStart(t) && mir(t) !== t &&
+             !isStart(mir(t)) && mir(t).e === 0 && t.x !== t.y;
     });
     for(var i=pool.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var s=pool[i]; pool[i]=pool[j]; pool[j]=s; }
-
     var take = function(fn){
       while(pool.length){
-        var t = pool.shift();
-        var m = mirror(t);
-        var k = pool.indexOf(m);
+        var t = pool.shift(), mm = mir(t), k = pool.indexOf(mm);
         if(k === -1) continue;
-        pool.splice(k,1);
-        fn(t); fn(m);
-        return;
+        pool.splice(k,1); fn(t); fn(mm); return;
       }
     };
-    take(function(t){ t.e = 2; });                 // a pair of outcrops
-    take(function(t){ t.e = 1; });                 // and some low ledges
+    take(function(t){ t.e = 2; t.prop = 'torch'; });
     take(function(t){ t.e = 1; });
-    take(function(t){ t.fx = 'treasure'; });
-    take(function(t){ t.fx = 'treasure'; });
+    take(function(t){ t.e = 1; });
+    if(stageNo >= 2) take(function(t){ t.e = 1; });
+    take(function(t){ t.fx = 'chest'; });
+    take(function(t){ t.fx = 'chest'; });
     take(function(t){ t.fx = 'trap'; });
     take(function(t){ t.fx = 'trap'; });
+    take(function(t){ t.prop = 'rock'; });
+    take(function(t){ t.prop = 'grass'; });
+    take(function(t){ t.prop = 'grass'; });
     return tiles;
   }
 
-  function tileAt(x,y){ return (x<0||y<0||x>=GRID||y>=GRID) ? null : B.tiles[y*GRID+x]; }
-
-  // Hit-testing is done in board coordinates rather than by SVG paint order:
-  // raised tiles overlap their neighbours on screen, so a plain click target
-  // would sometimes hand the tap to the tile drawn in front of it.
-  function tileFromPoint(px, py){
-    var hit = null, hitOrder = -Infinity;
-    B.tiles.forEach(function(t){
-      var c = isoC(t.x, t.y, t.e);
-      var h = t.e * ELEV_H;
-      // top face: the diamond drawn at the raised centre
-      var inside = Math.abs(px - c.cx)/(TILE_W/2) + Math.abs(py - c.cy)/(TILE_H/2) <= 1;
-      // side faces: the two parallelograms hanging off the diamond's lower edges
-      if(!inside && h > 0 && Math.abs(px - c.cx) <= TILE_W/2){
-        var edge = c.cy + TILE_H/2 - Math.abs(px - c.cx) * TILE_H / TILE_W;
-        inside = py >= edge && py <= edge + h;
-      }
-      if(!inside) return;
-      // the tile painted last is the one the player sees, so it takes the tap
-      var order = t.x + t.y;
-      if(order >= hitOrder){ hitOrder = order; hit = t; }
-    });
-    return hit;
-  }
-
-  function boardPoint(clientX, clientY){
-    var svg = $('boardSvg');
-    var ctm = svg.getScreenCTM();
-    if(!ctm) return null;
-    var pt = svg.createSVGPoint();
-    pt.x = clientX; pt.y = clientY;
-    return pt.matrixTransform(ctm.inverse());
-  }
-  function overlayFromPoint(px, py){
-    var els = overlayLayer.querySelectorAll('.ov-move, .ov-target');
-    for(var i = els.length - 1; i >= 0; i--){
-      var x = +els[i].getAttribute('data-x'), y = +els[i].getAttribute('data-y');
-      var t = tileAt(x, y);
-      if(!t) continue;
-      var c = isoC(x, y, t.e);
-      if(Math.abs(px - c.cx)/(TILE_W/2) + Math.abs(py - c.cy)/(TILE_H/2) <= 1) return t;
-    }
-    return null;
-  }
-  function tapAtPointer(ev){
-    var loc = boardPoint(ev.clientX, ev.clientY);
-    if(!loc) return;
-    var t = overlayFromPoint(loc.x, loc.y) || tileFromPoint(loc.x, loc.y);
-    if(t) onTileTap(t.x, t.y);
-  }
-
-  // Drag to look around, pinch to zoom. One handler on the whole board area
-  // owns every gesture, so a tap is resolved the same way whether it lands on a
-  // tile or on a character standing over one.
-  var TAP_SLOP = 10;
-  var ptrs = {}, drag = null, pinch = null, moved = false;
-
-  function svgUnitsPerPx(){
-    var vb = $('boardSvg').viewBox.baseVal;
-    var box = stage.getBoundingClientRect();
-    return box.width ? vb.width / box.width : 1;
-  }
-  function ptrList(){ return Object.keys(ptrs).map(function(k){ return ptrs[k]; }); }
-  function resetGesture(){ ptrs = {}; drag = null; pinch = null; moved = false; }
-
-  function resolveTap(ev){
-    if(!B) return;
-    // a highlighted tile is the thing the player is aiming at, then a character
-    // they can act on, and only then whatever terrain is under the finger
-    var loc = boardPoint(ev.clientX, ev.clientY);
-    if(loc){
-      var ov = overlayFromPoint(loc.x, loc.y);
-      if(ov && onTileTap(ov.x, ov.y)) return;
-    }
-    var el = document.elementFromPoint(ev.clientX, ev.clientY);
-    var slot = el && el.closest ? el.closest('.u-slot') : null;
-    if(slot){
-      var uid = +slot.dataset.uid;
-      var u = null;
-      B.units.forEach(function(o){ if(o.uid === uid) u = o; });
-      if(u && onTileTap(u.x, u.y)) return;
-    }
-    if(loc){
-      var t = tileFromPoint(loc.x, loc.y);
-      if(t) onTileTap(t.x, t.y);
-    }
-  }
-
-  stage.addEventListener('pointerdown', function(ev){
-    ptrs[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
-    var list = ptrList();
-    if(list.length === 1){
-      moved = false;
-      drag = { x:ev.clientX, y:ev.clientY, cx:CAM.cx, cy:CAM.cy };
-    } else if(list.length === 2){
-      drag = null;
-      pinch = { dist:Math.hypot(list[0].x-list[1].x, list[0].y-list[1].y), zoom:CAM.zoom };
-      moved = true;
-    }
-    try{ stage.setPointerCapture(ev.pointerId); }catch(e){}
-  });
-
-  stage.addEventListener('pointermove', function(ev){
-    if(!ptrs[ev.pointerId]) return;
-    ptrs[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
-    var list = ptrList();
-    if(pinch && list.length >= 2){
-      var d = Math.hypot(list[0].x-list[1].x, list[0].y-list[1].y);
-      if(pinch.dist > 0){
-        CAM.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinch.zoom * (d / pinch.dist)));
-        applyCam();
-      }
-      return;
-    }
-    if(!drag) return;
-    var dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
-    if(!moved && Math.hypot(dx, dy) < TAP_SLOP) return;
-    moved = true;
-    var k = svgUnitsPerPx();
-    CAM.cx = drag.cx - dx * k;
-    CAM.cy = drag.cy - dy * k;
-    applyCam();
-  });
-
-  function endPointer(ev){
-    var had = !!ptrs[ev.pointerId];
-    delete ptrs[ev.pointerId];
-    var wasTap = had && drag && !moved;
-    if(!ptrList().length){
-      drag = null; pinch = null;
-      if(wasTap) resolveTap(ev);
-    } else {
-      drag = null; pinch = null;
-    }
-  }
-  stage.addEventListener('pointerup', endPointer);
-  stage.addEventListener('pointercancel', function(ev){ delete ptrs[ev.pointerId]; drag = null; pinch = null; });
-
-  $('zoomInBtn').addEventListener('click', function(){
-    CAM.zoom = Math.min(MAX_ZOOM, CAM.zoom * 1.35); applyCam();
-  });
-  $('zoomOutBtn').addEventListener('click', function(){
-    CAM.zoom = Math.max(MIN_ZOOM, CAM.zoom / 1.35); applyCam();
-  });
-  $('camHomeBtn').addEventListener('click', function(){
-    CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy; applyCam();
-  });
-
-  window.addEventListener('resize', applyCam);
-  function unitAt(x,y){
-    for(var i=0;i<B.units.length;i++){ var u=B.units[i]; if(u.hp>0 && u.x===x && u.y===y) return u; }
-    return null;
-  }
-
-  function maxHpFor(p, cls){ return CLASS_DEFS[cls].hp + p.bonusHp - SCAR_HP * (p.scars[cls] || 0); }
-
   function makeUnits(pn, starts){
     var p = G.players[pn];
-    return p.squad.map(function(cls, i){
-      var d = CLASS_DEFS[cls];
-      var hp = maxHpFor(p, cls);
-      return { uid:uid++, side:pn, cls:cls, name:d.name, hp:hp, maxHp:hp,
+    return p.squad.map(function(job, i){
+      var d = JOBS[job];
+      var hp = maxHpFor(p, job);
+      return { uid:uid++, side:pn, job:job, name:d.name, hp:hp, maxHp:hp,
         atk:d.atk + p.bonusAtk, range:d.range, move:d.move + p.bonusMove,
-        x:starts[i].x, y:starts[i].y, done:false };
+        jump:d.jump + p.bonusJump, x:starts[i].x, y:starts[i].y,
+        face:(pn === 1 ? 0 : 2), done:false, acted:false, extraMove:false };
     });
   }
 
-  function renderTiles(){
-    tileLayer.innerHTML = '';
-    markLayer.innerHTML = '';
-    B.tiles.slice().sort(function(a,b){ return (a.x+a.y)-(b.x+b.y); }).forEach(function(t){
-      var top = isoC(t.x,t.y,t.e);
-      if(t.e > 0){
-        var base = isoC(t.x,t.y,0);
-        var L=[top.cx-TILE_W/2, top.cy], Bt=[top.cx, top.cy+TILE_H/2], R=[top.cx+TILE_W/2, top.cy];
-        var Lb=[base.cx-TILE_W/2, base.cy], Bb=[base.cx, base.cy+TILE_H/2], Rb=[base.cx+TILE_W/2, base.cy];
-        var lf = document.createElementNS(SVG_NS,'polygon');
-        lf.setAttribute('points', [L.join(','), Bt.join(','), Bb.join(','), Lb.join(',')].join(' '));
-        lf.setAttribute('class','tile-side'); tileLayer.appendChild(lf);
-        var rf = document.createElementNS(SVG_NS,'polygon');
-        rf.setAttribute('points', [Bt.join(','), R.join(','), Rb.join(','), Bb.join(',')].join(' '));
-        rf.setAttribute('class','tile-side dark'); tileLayer.appendChild(rf);
+  // ================= rules =================
+  function manh(a, b){ return Math.abs(a.x-b.x) + Math.abs(a.y-b.y); }
+  function roll(){ return 1 + Math.floor(Math.random()*6); }
+  function unitAt(x, y){
+    for(var i=0;i<B.units.length;i++){ var u = B.units[i]; if(u.hp>0 && u.x===x && u.y===y) return u; }
+    return null;
+  }
+  var DIRS = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}];   // N E S W
+
+  // A unit walks tile by tile and may only step within its jump, so a plateau
+  // has to be entered from its steps rather than scaled from any side.
+  function reachable(u){
+    var start = tileAt(u.x, u.y);
+    var seen = {}, out = [], q = [{ x:u.x, y:u.y, c:0, e:start.e }];
+    seen[u.x + ',' + u.y] = 0;
+    while(q.length){
+      var cur = q.shift();
+      if(cur.c >= u.move) continue;
+      for(var d = 0; d < 4; d++){
+        var nx = cur.x + DIRS[d].x, ny = cur.y + DIRS[d].y;
+        var t = tileAt(nx, ny);
+        if(!t) continue;
+        if(Math.abs(t.e - cur.e) > u.jump) continue;
+        var occ = unitAt(nx, ny);
+        if(occ && occ.side !== u.side) continue;         // enemies block the way
+        var key = nx + ',' + ny, cost = cur.c + 1;
+        if(seen[key] !== undefined && seen[key] <= cost) continue;
+        seen[key] = cost;
+        q.push({ x:nx, y:ny, c:cost, e:t.e });
+        if(!occ) out.push({ x:nx, y:ny });
       }
-      var poly = document.createElementNS(SVG_NS,'polygon');
-      poly.setAttribute('points', diamond(top.cx, top.cy));
-      poly.setAttribute('class','tile-top' + (((t.x+t.y)%2) ? ' alt' : ''));
-      poly.setAttribute('data-x', t.x); poly.setAttribute('data-y', t.y);
-      tileLayer.appendChild(poly);
-    });
-    drawMarks();
-  }
-
-  function drawMarks(){
-    markLayer.innerHTML = '';
-    B.tiles.forEach(function(t){
-      var label = t.fx ? TILE_FX[t.fx].mark : (t.e > 0 ? '▲' : null);
-      if(!label) return;
-      var c = isoC(t.x,t.y,t.e);
-      var txt = document.createElementNS(SVG_NS,'text');
-      txt.setAttribute('x', c.cx); txt.setAttribute('y', c.cy + 2.5);
-      txt.setAttribute('class','tile-mark');
-      txt.textContent = label;
-      markLayer.appendChild(txt);
-    });
-  }
-
-  function renderUnits(){
-    Array.prototype.slice.call(stage.querySelectorAll('.u-slot')).forEach(function(el){ el.remove(); });
-    B.units.forEach(function(u){
-      if(u.hp <= 0) return;
-      var slot = document.createElement('div');
-      slot.className = 'u-slot side-p' + u.side + ' cls-' + u.cls;
-      slot.dataset.uid = u.uid;
-      slot.innerHTML = '<div class="u-card"><span class="c-badge">' + CLASS_DEFS[u.cls].letter + '</span>' +
-        '<span class="hp-bar"><span class="hp-fill"></span></span></div>';
-      stage.appendChild(slot);
-      positionSlot(slot, u);
-      refreshSlot(u);
-    });
-  }
-  function slotOf(u){ return stage.querySelector('.u-slot[data-uid="' + u.uid + '"]'); }
-  function positionSlot(slot, u){
-    if(!slot) return;
-    slot.dataset.gx = u.x; slot.dataset.gy = u.y;
-    slot.style.zIndex = 3 + u.x + u.y;
-    var t = tileAt(u.x,u.y);
-    var c = isoC(u.x, u.y, t ? t.e : 0);
-    var p = toStagePx(c.cx, c.cy);
-    slot.style.left = p.left + 'px';
-    slot.style.top = p.top + 'px';
-  }
-  function refreshSlot(u){
-    var slot = slotOf(u); if(!slot) return;
-    slot.querySelector('.hp-fill').style.width = Math.max(0, u.hp/u.maxHp*100) + '%';
-    slot.classList.toggle('done', !!u.done && u.side === B.phase);
-    slot.classList.toggle('sel', B.sel === u);
-  }
-
-  function clearOverlays(){ overlayLayer.innerHTML = ''; }
-  function addOverlay(x,y,cls){
-    var t = tileAt(x,y); if(!t) return;
-    var c = isoC(x,y,t.e);
-    var poly = document.createElementNS(SVG_NS,'polygon');
-    poly.setAttribute('points', diamond(c.cx,c.cy));
-    poly.setAttribute('class', cls);
-    poly.setAttribute('data-x', x); poly.setAttribute('data-y', y);
-    overlayLayer.appendChild(poly);
-  }
-
-  function teamHp(side){
-    return B.units.filter(function(u){ return u.side===side && u.hp>0; }).reduce(function(s,u){ return s+u.hp; },0);
-  }
-
-  function updateHud(){
-    $('hpP1').textContent = teamHp(1); $('hpP2').textContent = teamHp(2);
-    $('tagP1').classList.toggle('on', B.phase===1);
-    $('tagP2').classList.toggle('on', B.phase===2);
-    $('roundTag').innerHTML = 'STAGE ' + G.stage + ' / ' + STAGES + '<br>ROUND ' + B.round + ' / ' + MAX_ROUNDS +
-      ' — 勝 ' + G.players[1].wins + ':' + G.players[2].wins;
-    var remain = B.units.filter(function(u){ return u.side===B.phase && u.hp>0 && !u.done; }).length;
-    if(B.sel){
-      var u = B.sel;
-      $('selInfo').innerHTML = '<b>' + u.name + '</b> HP' + u.hp + '/' + u.maxHp + ' AT' + u.atk + ' 射程' + u.range +
-        (B.moved ? ' — 敵をタップで攻撃' : ' — 移動先をタップ');
-    } else {
-      $('selInfo').textContent = '自軍ユニットをタップ（のこり ' + remain + '）';
     }
-    $('undoBtn').disabled = B.busy || !(B.sel && B.moved);
-    $('waitBtn').disabled = B.busy || !B.sel;
-    $('endPhaseBtn').disabled = B.busy || B.overlayOpen;
-    drawSquad(1); drawSquad(2);
+    return out.filter(function(o){ return !(o.x === u.x && o.y === u.y); });
   }
 
-  // the roster carries the numbers, so the board tokens can stay small
-  function drawSquad(side){
-    var list = $('squadP' + side).querySelector('.sq-list');
-    var html = B.units.filter(function(u){ return u.side === side; }).map(function(u){
-      var alive = u.hp > 0;
-      var pct = alive ? Math.max(0, u.hp / u.maxHp * 100) : 0;
-      return '<span class="sq-unit cls-' + u.cls + (alive ? (u.done && B.phase === side ? ' acted' : '') : ' gone') + '">' +
-        '<span class="u-badge">' + CLASS_DEFS[u.cls].letter + '</span>' +
-        '<span class="sq-hp"><span class="sq-bar"><span class="sq-fill" style="width:' + pct + '%"></span></span>' +
-        '<span class="sq-num">' + (alive ? u.hp + '/' + u.maxHp : '戦闘不能') + '</span></span></span>';
-    }).join('');
-    if(list.innerHTML !== html) list.innerHTML = html;
+  function targetsFor(u, range){
+    var r = range || u.range;
+    return B.units.filter(function(o){ return o.hp > 0 && o.side !== u.side && manh(o, u) <= r; });
   }
 
-  // ---------- interaction ----------
-  function reachableTiles(u){
-    var out = [];
-    for(var y=0;y<GRID;y++) for(var x=0;x<GRID;x++){
-      if(x===u.x && y===u.y) continue;
-      if(manhattan({x:x,y:y}, u) > u.move) continue;
-      if(unitAt(x,y)) continue;
-      out.push({x:x,y:y});
-    }
-    return out;
+  // Which side of the defender the blow lands on: front, flank or back.
+  function flankOf(att, def){
+    var dx = att.x - def.x, dy = att.y - def.y;
+    var f = DIRS[def.face];
+    var dot = dx * f.x + dy * f.y;
+    var cross = Math.abs(dx * f.y - dy * f.x);
+    if(dot > 0 && dot >= cross) return { mult:0, label:'' };
+    if(dot < 0 && -dot >= cross) return { mult:FLANK_BACK, label:'背後' };
+    return { mult:FLANK_SIDE, label:'側面' };
   }
-  function targetsFor(u){
-    return B.units.filter(function(o){ return o.hp>0 && o.side!==u.side && manhattan(o,u) <= u.range; });
+  function faceToward(u, tx, ty){
+    var dx = tx - u.x, dy = ty - u.y;
+    if(dx === 0 && dy === 0) return;
+    u.face = Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0);
   }
-
-  function drawState(){
-    clearOverlays();
-    B.units.forEach(function(u){
-      if(u.hp <= 0) return;
-      var t = tileAt(u.x,u.y);
-      var c = isoC(u.x, u.y, t ? t.e : 0);
-      var ring = document.createElementNS(SVG_NS,'polygon');
-      ring.setAttribute('points', diamondInset(c.cx, c.cy, 0.66));
-      ring.setAttribute('class', 'ov-base' + (u.side === 2 ? ' p2' : ''));
-      overlayLayer.appendChild(ring);
-    });
-    if(B.sel){
-      addOverlay(B.sel.x, B.sel.y, 'ov-sel');
-      if(!B.moved) B.moveTiles.forEach(function(t){ addOverlay(t.x,t.y,'ov-move'); });
-      else B.targets.forEach(function(t){ addOverlay(t.x,t.y,'ov-target'); });
-    }
-    B.units.forEach(function(u){ if(u.hp>0) refreshSlot(u); });
-    updateHud();
+  function autoFace(u){
+    var foes = B.units.filter(function(o){ return o.hp > 0 && o.side !== u.side; });
+    if(!foes.length) return;
+    var near = foes.reduce(function(a, b){ return manh(b, u) < manh(a, u) ? b : a; });
+    faceToward(u, near.x, near.y);
   }
 
-  function selectUnit(u){
-    B.sel = u; B.moved = false; B.origin = {x:u.x,y:u.y};
-    B.moveTiles = reachableTiles(u); B.targets = [];
-    camReveal(u.x, u.y);
-    drawState();
-  }
-
-  function onTileTap(x,y){
-    if(!B || B.busy || B.overlayOpen) return false;
-    var u = unitAt(x,y);
-    if(!B.sel){
-      if(u && u.side===B.phase && !u.done){ selectUnit(u); return true; }
-      return false;
-    }
-    if(!B.moved){
-      if(x===B.sel.x && y===B.sel.y){ enterActPhase(); return true; }
-      if(u){ if(u.side===B.phase && !u.done){ selectUnit(u); return true; } return false; }
-      if(!B.moveTiles.some(function(t){ return t.x===x && t.y===y; })) return false;
-      B.busy = true;
-      B.sel.x = x; B.sel.y = y;
-      positionSlot(slotOf(B.sel), B.sel);
-      clearOverlays(); updateHud();
-      setTimeout(function(){
-        var t = tileAt(x,y);
-        if(t && t.fx){
-          var msg = TILE_FX[t.fx].apply(B.sel);
-          t.fx = null; drawMarks();
-          popText(B.sel, msg);
-          refreshSlot(B.sel);
-          if(B.sel.hp <= 0){
-            var dead = B.sel;
-            killIfDead(dead);
-            B.busy = false;
-            B.sel = null; B.moved = false; B.moveTiles = []; B.targets = [];
-            drawState();
-            setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 380);
-            return;
-          }
-          setTimeout(function(){ B.busy = false; enterActPhase(); }, 480);
-          return;
-        }
-        B.busy = false; enterActPhase();
-      }, 340);
-      return true;
-    }
-    if(u && u.side !== B.phase && B.targets.indexOf(u) !== -1){ doAttack(B.sel, u); return true; }
-    return false;
-  }
-
-  function enterActPhase(){
-    if(!B.sel) return;
-    B.moved = true;
-    B.targets = targetsFor(B.sel);
-    drawState();
-    if(!B.targets.length) setTimeout(function(){ if(B.sel && B.moved && !B.targets.length) endUnit(B.sel); }, 300);
-  }
-
-  function popText(u, text){
-    var t = tileAt(u.x,u.y);
-    var c = isoC(u.x,u.y,t?t.e:0);
-    var p = toStagePx(c.cx, c.cy);
-    var el = document.createElement('div');
-    el.className = 'dmg-pop';
-    el.textContent = text;
-    el.style.left = p.left + 'px';
-    el.style.top = p.top + 'px';
-    stage.appendChild(el);
-    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 920);
-  }
-
-  function popDice(die, label){
-    var el = document.createElement('div');
-    el.className = 'dice-pop';
-    el.innerHTML = '<span class="die-face">' + DIE_FACES[die] + '</span><span>' + label + '</span>';
-    stage.appendChild(el);
-    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 780);
-  }
-
-  function strike(att, def, isCounter){
-    var p = G.players[att.side];
-    var at = tileAt(att.x,att.y), dt = tileAt(def.x,def.y);
-    var high = !!(at && dt && at.e > dt.e);
+  function strike(att, def, opt){
+    opt = opt || {};
+    var p = G.players[att.side], dp = G.players[def.side];
+    var at = tileAt(att.x, att.y), dt = tileAt(def.x, def.y);
+    var high = !!(at && dt && at.e > dt.e) && !opt.ignoreHigh;
+    var fl = opt.noFlank ? { mult:0, label:'' } : flankOf(att, def);
     var die = roll();
-    var eff = Math.min(6, die + p.diceBonus);
-    var crit = eff >= 6;
-    var base = att.atk + eff;
-    var mult = (high ? (1 + HIGH_BONUS + p.high) : 1) * (crit ? 1.5 : 1) * (isCounter ? COUNTER_RATE : 1);
-    var dmg = Math.max(1, Math.round(base * mult));
+    var eff = Math.min(6, die + p.dice);
+    var crit = opt.forceCrit || eff >= 6;
+    var mult = 1;
+    if(high) mult += HIGH_BONUS + p.high;
+    if(fl.mult) mult += fl.mult + p.flank;
+    if(crit) mult *= 1.5;
+    if(opt.counter) mult *= COUNTER_RATE;
+    if(opt.scale) mult *= opt.scale;
+    mult *= (1 - dp.guard);
+    var dmg = Math.max(1, Math.round((att.atk + eff) * mult));
     def.hp -= dmg;
-    B.dmg[att.side] += dmg; // running total, used to break a stage tie
-    popDice(eff, (isCounter ? '反撃 ' : '') + 'ATK' + att.atk + '+' + eff + (high ? ' 高所' : '') + (crit ? ' 会心' : ''));
-    var slot = slotOf(def);
-    if(slot){ slot.classList.remove('hurt'); void slot.offsetWidth; slot.classList.add('hurt'); }
-    popText(def, '-' + dmg);
-    refreshSlot(def);
+    B.dmg[att.side] += dmg;
+
+    var tags = [];
+    if(opt.counter) tags.push('反撃');
+    if(high) tags.push('高所');
+    if(fl.label) tags.push(fl.label);
+    if(crit) tags.push('会心');
+    showRoll(eff, att.atk, tags);
+    hitFigure(def, crit);
+    popText(def, '-' + dmg, crit ? 'crit' : 'hurt');
+    refreshFigure(def);
+    if(crit) shake();
+    return dmg;
   }
 
   function killIfDead(u){
     if(u.hp > 0) return false;
     u.hp = 0;
-    var slot = slotOf(u);
-    if(slot){ slot.classList.add('dead'); setTimeout(function(){ if(slot.parentNode) slot.parentNode.removeChild(slot); }, 340); }
-    var p = G.players[u.side];
-    p.scars[u.cls] = (p.scars[u.cls] || 0) + 1;
-    if(maxHpFor(p, u.cls) < MIN_HP){
-      var i = p.squad.indexOf(u.cls);
-      if(i !== -1) p.squad.splice(i,1);
+    var g = figureNodes[u.uid];
+    if(g){
+      g.classList.add('dying');
+      setTimeout(function(){ if(g.parentNode) g.parentNode.removeChild(g); }, 420);
     }
+    var p = G.players[u.side];
+    p.scars[u.job] = (p.scars[u.job] || 0) + 1;
+    if(maxHpFor(p, u.job) < MIN_HP){
+      var i = p.squad.indexOf(u.job);
+      if(i !== -1) p.squad.splice(i, 1);
+    }
+    killBanner(u);
+    shake();
     return true;
   }
 
-  function doAttack(att, def){
-    B.busy = true;
-    clearOverlays(); updateHud();
-    strike(att, def, false);
-    setTimeout(function(){
-      var died = killIfDead(def);
-      if(!died && manhattan(att,def) <= def.range){
-        strike(def, att, true);
-        setTimeout(function(){
-          killIfDead(att);
-          B.busy = false;
-          if(checkEnd()) return;
-          if(att.hp > 0) endUnit(att); else { B.sel=null; B.moved=false; drawState(); checkPhaseDone(); }
-        }, 620);
-      } else {
-        setTimeout(function(){
-          B.busy = false;
-          if(checkEnd()) return;
-          endUnit(att);
-        }, 320);
+  // ================= effects =================
+  function shake(){
+    var w = $('boardWrap');
+    w.classList.remove('shake'); void w.offsetWidth; w.classList.add('shake');
+  }
+  function hitFigure(u, crit){
+    var g = figureNodes[u.uid];
+    if(!g) return;
+    g.classList.remove('hit','crithit'); void g.getBBox;
+    g.classList.add(crit ? 'crithit' : 'hit');
+    setTimeout(function(){ g.classList.remove('hit','crithit'); }, 420);
+  }
+  function popText(u, text, cls){
+    var t = tileAt(u.x, u.y);
+    var c = iso(u.x, u.y, t ? t.e : 0);
+    var p = toStagePx(c.cx, c.cy - 20);
+    var d = document.createElement('div');
+    d.className = 'dmg-pop ' + (cls || '');
+    d.textContent = text;
+    d.style.left = p.left + 'px'; d.style.top = p.top + 'px';
+    stage.appendChild(d);
+    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1000);
+  }
+  function showRoll(eff, atk, tags){
+    var old = stage.querySelector('.roll-pop');
+    if(old) old.remove();
+    var d = document.createElement('div');
+    d.className = 'roll-pop';
+    d.innerHTML = '<span class="die">' + DIE[eff] + '</span><span>ATK ' + atk + ' + ' + eff +
+      (tags.length ? '　' + tags.join(' · ') : '') + '</span>';
+    stage.appendChild(d);
+    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1500);
+  }
+  function killBanner(u){
+    var d = document.createElement('div');
+    d.className = 'kill-banner';
+    d.style.color = u.side === 1 ? SIDE_COL[2].hi : SIDE_COL[1].hi;
+    d.textContent = 'P' + u.side + ' ' + u.name + ' 撃破';
+    stage.appendChild(d);
+    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1550);
+  }
+
+  // Movement is tweened rather than transitioned so re-sorting the scene graph
+  // mid-walk cannot cancel it.
+  function walkTo(u, path, done){
+    var i = 0;
+    function step(){
+      if(i >= path.length){ done && done(); return; }
+      var from = { x:u.x, y:u.y };
+      var to = path[i++];
+      faceToward(u, to.x, to.y);
+      var ft = tileAt(from.x, from.y), tt = tileAt(to.x, to.y);
+      var a = iso(from.x, from.y, ft.e), b = iso(to.x, to.y, tt.e);
+      var g = figureNodes[u.uid];
+      var t0 = performance.now(), dur = 150;
+      u.x = to.x; u.y = to.y;
+      placeFigure(u, true);
+      compose();
+      g = figureNodes[u.uid];
+      function frame(now){
+        var k = Math.min(1, (now - t0) / dur);
+        var e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2;
+        var hop = Math.sin(k * Math.PI) * (tt.e !== ft.e ? 4 : 1.6);
+        g.setAttribute('transform', 'translate(' + (a.cx + (b.cx-a.cx)*e) + ',' +
+          (a.cy + (b.cy-a.cy)*e - hop) + ')');
+        if(k < 1) requestAnimationFrame(frame);
+        else { g.setAttribute('transform', 'translate(' + b.cx + ',' + b.cy + ')'); step(); }
       }
-    }, 620);
+      requestAnimationFrame(frame);
+    }
+    step();
+  }
+
+  function pathTo(u, tx, ty){
+    var start = tileAt(u.x, u.y);
+    var prev = {}, seen = {}, q = [{ x:u.x, y:u.y, e:start.e }];
+    seen[u.x + ',' + u.y] = true;
+    while(q.length){
+      var cur = q.shift();
+      if(cur.x === tx && cur.y === ty) break;
+      for(var d = 0; d < 4; d++){
+        var nx = cur.x + DIRS[d].x, ny = cur.y + DIRS[d].y;
+        var t = tileAt(nx, ny);
+        if(!t || seen[nx + ',' + ny]) continue;
+        if(Math.abs(t.e - cur.e) > u.jump) continue;
+        var occ = unitAt(nx, ny);
+        if(occ && occ.side !== u.side) continue;
+        seen[nx + ',' + ny] = true;
+        prev[nx + ',' + ny] = { x:cur.x, y:cur.y };
+        q.push({ x:nx, y:ny, e:t.e });
+      }
+    }
+    var path = [], k = tx + ',' + ty;
+    if(!seen[k]) return [{ x:tx, y:ty }];
+    while(k !== u.x + ',' + u.y){
+      var parts = k.split(',');
+      path.unshift({ x:+parts[0], y:+parts[1] });
+      var pnode = prev[k];
+      if(!pnode) break;
+      k = pnode.x + ',' + pnode.y;
+    }
+    return path;
+  }
+
+  // ================= command flow =================
+  // mode: 'idle' | 'menu' | 'move' | 'attack' | 'skill'
+  function setMode(m){
+    B.mode = m;
+    var u = B.sel;
+    var ovs = [];
+    if(u){
+      ovs.push({ x:u.x, y:u.y, cls:'sel' });
+      if(m === 'move') reachable(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'move' }); });
+      if(m === 'attack') targetsFor(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'target' }); });
+      if(m === 'skill') skillTargets(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'target' }); });
+    }
+    setOverlays(ovs);
+    compose();
+    updateHud();
+  }
+
+  function skillTargets(u){
+    var sk = JOBS[u.job].skill;
+    if(sk.kind === 'cleave') return targetsFor(u, 1);
+    if(sk.kind === 'dash') return targetsFor(u, u.range);
+    return targetsFor(u, sk.rng);
+  }
+
+  function selectUnit(u){
+    B.sel = u;
+    B.moved = u.moved || false;
+    B.origin = { x:u.x, y:u.y };
+    camReveal(u.x, u.y);
+    B.units.forEach(function(o){ if(o.hp > 0) refreshFigure(o); });
+    setMode('menu');
+  }
+
+  function clearSel(){
+    B.sel = null; B.moved = false;
+    B.units.forEach(function(o){ if(o.hp > 0) refreshFigure(o); });
+    setMode('idle');
   }
 
   function endUnit(u){
     u.done = true;
-    B.sel = null; B.moved = false; B.moveTiles = []; B.targets = [];
-    drawState();
-    checkPhaseDone();
-  }
-  function checkPhaseDone(){
-    var remain = B.units.filter(function(o){ return o.side===B.phase && o.hp>0 && !o.done; }).length;
-    if(remain === 0) setTimeout(endPhase, 340);
+    autoFace(u);
+    placeFigure(u, true);
+    clearSel();
+    var next = B.units.filter(function(o){ return o.side === B.phase && o.hp > 0 && !o.done; })[0];
+    if(next) camReveal(next.x, next.y);
+    setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 200);
   }
 
-  $('waitBtn').addEventListener('click', function(){ if(B && B.sel && !B.busy) endUnit(B.sel); });
-  $('undoBtn').addEventListener('click', function(){
-    if(!B || !B.sel || !B.moved || B.busy) return;
-    B.sel.x = B.origin.x; B.sel.y = B.origin.y;
-    positionSlot(slotOf(B.sel), B.sel);
-    selectUnit(B.sel);
-  });
-  $('endPhaseBtn').addEventListener('click', function(){
-    if(!B || B.busy || B.overlayOpen) return;
-    B.units.forEach(function(u){ if(u.side===B.phase) u.done = true; });
-    B.sel=null; B.moved=false; drawState();
-    setTimeout(endPhase, 200);
-  });
+  function onTap(x, y){
+    if(!B || B.busy || B.veil) return false;
+    var u = unitAt(x, y);
+    if(B.mode === 'move' && B.sel){
+      if(x === B.sel.x && y === B.sel.y){ setMode('menu'); return true; }
+      var ok = reachable(B.sel).some(function(t){ return t.x === x && t.y === y; });
+      if(!ok) return pickOther(u);
+      doMove(B.sel, x, y);
+      return true;
+    }
+    if((B.mode === 'attack' || B.mode === 'skill') && B.sel){
+      var list = B.mode === 'attack' ? targetsFor(B.sel) : skillTargets(B.sel);
+      var hit = list.filter(function(o){ return o.x === x && o.y === y; })[0];
+      if(!hit) return pickOther(u);
+      if(B.mode === 'attack') doAttack(B.sel, hit);
+      else doSkill(B.sel, hit);
+      return true;
+    }
+    return pickOther(u);
+  }
+  // Only a real state change counts as handling the tap; simply looking at a
+  // unit must not block the tile underneath from getting its turn to respond.
+  function pickOther(u){
+    if(u && u.side === B.phase && !u.done){ selectUnit(u); return true; }
+    return false;
+  }
 
-  // ---------- stage / phase ----------
+  function doMove(u, x, y){
+    B.busy = true; setOverlays([]); compose(); updateHud();
+    var path = pathTo(u, x, y);
+    walkTo(u, path, function(){
+      var t = tileAt(u.x, u.y);
+      u.moved = true; B.moved = true;
+      if(t && t.fx){
+        var res = TILE_FX[t.fx].apply(u);
+        t.fx = null;
+        buildTerrain();
+        popText(u, res.text, res.cls);
+        refreshFigure(u);
+        setTimeout(function(){
+          if(u.hp <= 0){ killIfDead(u); B.busy = false; clearSel();
+            setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 420); return; }
+          B.busy = false; setMode('menu');
+        }, 520);
+        return;
+      }
+      B.busy = false;
+      setMode(u.acted ? 'idle' : 'menu');
+      if(u.acted) endUnit(u);
+    });
+  }
+
+  function lunge(att, def, then){
+    var g = figureNodes[att.uid];
+    var at = tileAt(att.x, att.y), dt = tileAt(def.x, def.y);
+    var a = iso(att.x, att.y, at.e), b = iso(def.x, def.y, dt.e);
+    var dx = (b.cx - a.cx), dy = (b.cy - a.cy);
+    var len = Math.hypot(dx, dy) || 1;
+    var reach = Math.min(7, len * .34);
+    faceToward(att, def.x, def.y);
+    placeFigure(att, true);
+    var t0 = performance.now(), dur = 260;
+    function frame(now){
+      var k = Math.min(1, (now - t0) / dur);
+      var p = k < .35 ? (k/.35) : (1 - (k-.35)/.65);
+      g.setAttribute('transform', 'translate(' + (a.cx + dx/len*reach*p) + ',' + (a.cy + dy/len*reach*p) + ')');
+      if(k < 1) requestAnimationFrame(frame);
+      else { g.setAttribute('transform', 'translate(' + a.cx + ',' + a.cy + ')'); }
+    }
+    requestAnimationFrame(frame);
+    setTimeout(then, 150);   // hit lands at the top of the lunge
+  }
+
+  function doAttack(att, def){
+    B.busy = true; setOverlays([]); compose(); updateHud();
+    att.acted = true;
+    lunge(att, def, function(){
+      strike(att, def);
+      setTimeout(function(){
+        var died = killIfDead(def);
+        var canCounter = !died && def.hp > 0 && manh(att, def) <= def.range && att.hp > 0;
+        if(canCounter){
+          setTimeout(function(){
+            lunge(def, att, function(){
+              strike(def, att, { counter:true });
+              setTimeout(function(){
+                killIfDead(att);
+                finishAction(att);
+              }, 340);
+            });
+          }, 190);
+        } else setTimeout(function(){ finishAction(att); }, 300);
+      }, 300);
+    });
+  }
+
+  function finishAction(u){
+    B.busy = false;
+    if(u.hp <= 0){ clearSel(); setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 260); return; }
+    if(u.extraMove && !u.usedExtra){ u.usedExtra = true; u.moved = false; B.moved = false; setMode('menu'); return; }
+    endUnit(u);
+  }
+
+  function doSkill(u, target){
+    B.busy = true; setOverlays([]); compose(); updateHud();
+    u.acted = true;
+    var sk = JOBS[u.job].skill;
+    if(sk.kind === 'cleave'){
+      var foes = targetsFor(u, 1);
+      lunge(u, target, function(){
+        foes.forEach(function(f, i){
+          setTimeout(function(){
+            if(f.hp <= 0) return;
+            faceToward(u, f.x, f.y); placeFigure(u, true);
+            strike(u, f, { scale:.8, noFlank:true });
+            setTimeout(function(){ killIfDead(f); }, 320);
+          }, i * 240);
+        });
+        setTimeout(function(){ finishAction(u); }, foes.length * 240 + 620);
+      });
+    } else if(sk.kind === 'blast'){
+      var area = B.units.filter(function(o){
+        return o.hp > 0 && o.side !== u.side && manh(o, target) <= 1;
+      });
+      faceToward(u, target.x, target.y); placeFigure(u, true);
+      blastFx(target);
+      setTimeout(function(){
+        area.forEach(function(f){
+          if(f.hp <= 0) return;
+          strike(u, f, { scale:f === target ? .95 : .6, noFlank:true, ignoreHigh:true });
+          killIfDead(f);
+        });
+        setTimeout(function(){ finishAction(u); }, 520);
+      }, 420);
+    } else if(sk.kind === 'snipe'){
+      faceToward(u, target.x, target.y); placeFigure(u, true);
+      arrowFx(u, target);
+      setTimeout(function(){
+        strike(u, target, { ignoreHigh:true, forceCrit:true, scale:.85 });
+        setTimeout(function(){ killIfDead(target); finishAction(u); }, 420);
+      }, 300);
+    } else {
+      u.extraMove = true;
+      lunge(u, target, function(){
+        strike(u, target, { scale:.9 });
+        setTimeout(function(){ killIfDead(target); finishAction(u); }, 420);
+      });
+    }
+  }
+
+  function blastFx(target){
+    var t = tileAt(target.x, target.y);
+    var c = iso(target.x, target.y, t.e);
+    var g = el('g', { class:'blast' });
+    for(var i = 0; i < 3; i++){
+      g.appendChild(el('circle', { cx:c.cx, cy:c.cy - 6, r:4 + i*5,
+        fill:'none', stroke:i ? PAL.flame : PAL.flameHi, 'stroke-width':2 - i*.4, opacity:.9 }));
+    }
+    scene.appendChild(g);
+    setTimeout(function(){ if(g.parentNode) g.parentNode.removeChild(g); }, 620);
+    shake();
+  }
+  function arrowFx(u, target){
+    var a = iso(u.x, u.y, tileAt(u.x,u.y).e), b = iso(target.x, target.y, tileAt(target.x,target.y).e);
+    var l = el('line', { class:'arrow', x1:a.cx, y1:a.cy - 16, x2:b.cx, y2:b.cy - 14,
+      stroke:PAL.goldHi, 'stroke-width':1.4 });
+    scene.appendChild(l);
+    setTimeout(function(){ if(l.parentNode) l.parentNode.removeChild(l); }, 420);
+  }
+
+  function inspect(u){
+    B.inspect = u;
+    updateHud();
+  }
+
+  // ================= HUD =================
+  function updateHud(){
+    $('actName').textContent = ACTS[Math.min(ACTS.length-1, G.stage-1)];
+    $('actSub').textContent = 'ROUND ' + B.round + ' / ' + MAX_ROUNDS;
+    [1,2].forEach(function(s){
+      var blk = $('sideP' + s);
+      blk.classList.toggle('act', B.phase === s && !B.veil);
+      blk.querySelector('.sb-wins').textContent = G.players[s].wins;
+      var pips = blk.querySelector('.sb-pips');
+      var mine = B.units.filter(function(u){ return u.side === s; });
+      if(pips.childElementCount !== mine.length){
+        pips.innerHTML = '';
+        mine.forEach(function(){ var d = document.createElement('span'); d.className = 'sb-pip';
+          d.appendChild(document.createElement('i')); pips.appendChild(d); });
+      }
+      mine.forEach(function(u, i){
+        var pip = pips.children[i];
+        pip.classList.toggle('dead', u.hp <= 0);
+        pip.firstChild.style.transform = 'scaleX(' + Math.max(0, u.hp / u.maxHp) + ')';
+      });
+    });
+
+    var u = B.sel || B.inspect;
+    var card = $('unitCard');
+    if(u && u.hp > 0){
+      var d = JOBS[u.job];
+      $('ucName').textContent = u.name;
+      $('ucJob').textContent = d.job + ' · P' + u.side;
+      var pct = Math.max(0, u.hp / u.maxHp);
+      $('ucBar').classList.toggle('low', pct <= .35);
+      $('ucBar').firstElementChild.style.width = (pct*100) + '%';
+      $('ucNums').innerHTML =
+        '<span>HP<b>' + Math.max(0,u.hp) + '</b>/' + u.maxHp + '</span>' +
+        '<span>攻<b>' + u.atk + '</b></span><span>射<b>' + u.range + '</b></span>' +
+        '<span>移<b>' + u.move + '</b></span><span>跳<b>' + u.jump + '</b></span>';
+      var port = $('ucPortrait');
+      if(port.dataset.k !== u.job + u.side){
+        port.dataset.k = u.job + u.side;
+        port.innerHTML = '';
+        port.setAttribute('viewBox', '-16 -30 32 33');
+        port.appendChild(figureArt(u.job, u.side));
+      }
+      $('ucHint').textContent = B.sel === u
+        ? (B.mode === 'move' ? '移動先をタップ' : B.mode === 'attack' ? '敵をタップして攻撃'
+          : B.mode === 'skill' ? d.skill.name + ' の対象をタップ' : 'コマンドを選ぶ')
+        : '相手ユニットの情報';
+      card.style.opacity = 1;
+    } else {
+      $('ucName').textContent = 'ユニットを選択';
+      $('ucJob').textContent = ''; $('ucNums').innerHTML = '';
+      $('ucBar').firstElementChild.style.width = '0%';
+      var remain = B.units.filter(function(o){ return o.side===B.phase && o.hp>0 && !o.done; }).length;
+      $('ucHint').textContent = '自軍をタップ（のこり ' + remain + '）';
+      $('ucPortrait').innerHTML = ''; $('ucPortrait').dataset.k = '';
+      card.style.opacity = .8;
+    }
+
+    var s = B.sel, live = s && s.hp > 0 && !B.busy && !B.veil;
+    setCmd('cmdMove', live && !s.moved, B.mode === 'move');
+    setCmd('cmdAttack', live && !s.acted && targetsFor(s).length > 0, B.mode === 'attack');
+    setCmd('cmdSkill', live && !s.acted && skillTargets(s).length > 0, B.mode === 'skill');
+    setCmd('cmdWait', live, false);
+    $('cmdSkill').lastChild.textContent = s ? JOBS[s.job].skill.name : '特技';
+  }
+  function setCmd(id, enabled, on){
+    var b = $(id);
+    b.disabled = !enabled;
+    b.classList.toggle('on', !!on);
+  }
+
+  // ================= input =================
+  var TAP_SLOP = 11;
+  var ptrs = {}, drag = null, pinch = null, movedGesture = false;
+
+  function unitsPerPx(){
+    var vb = svg.viewBox.baseVal, box = stage.getBoundingClientRect();
+    return box.width ? vb.width / box.width : 1;
+  }
+  function boardPoint(cx, cy){
+    var ctm = svg.getScreenCTM();
+    if(!ctm) return null;
+    var p = svg.createSVGPoint(); p.x = cx; p.y = cy;
+    return p.matrixTransform(ctm.inverse());
+  }
+  function tileFromPoint(px, py){
+    var hit = null, best = -Infinity;
+    B.tiles.forEach(function(t){
+      var c = iso(t.x, t.y, t.e), h = t.e * EH;
+      var dx = Math.abs(px - c.cx);
+      var inside = dx/(TW/2) + Math.abs(py - c.cy)/(TH/2) <= 1;
+      // the side faces taper to nothing at the tile's left and right corners, so
+      // the span there must be excluded or it swallows the neighbour's centre
+      if(!inside && h > 0 && dx < TW/2 - 0.01){
+        var edge = c.cy + TH/2 - dx * TH / TW;
+        inside = py >= edge && py <= edge + h;
+      }
+      if(!inside) return;
+      var k = depth(t.x, t.y);
+      if(k >= best){ best = k; hit = t; }
+    });
+    return hit;
+  }
+  function overlayFromPoint(px, py){
+    for(var i = overlayNodes.length - 1; i >= 0; i--){
+      var n = overlayNodes[i].n;
+      var cls = n.getAttribute('data-ov');
+      if(cls === 'sel') continue;
+      var x = +n.getAttribute('data-x'), y = +n.getAttribute('data-y');
+      var t = tileAt(x, y);
+      if(!t) continue;
+      var c = iso(x, y, t.e);
+      if(Math.abs(px - c.cx)/(TW/2) + Math.abs(py - c.cy)/(TH/2) <= 1) return t;
+    }
+    return null;
+  }
+  // Hit-testing works in board coordinates rather than through the DOM: a
+  // figure's own shadow, its HP bar, or a neighbouring tile's ambient shadow
+  // would otherwise intercept the tap depending on paint order.
+  var BODY = { x0:-10, x1:12, y0:-27, y1:3 };
+  function figureFromPoint(px, py){
+    var hit = null, best = -Infinity;
+    B.units.forEach(function(u){
+      if(u.hp <= 0) return;
+      var t = tileAt(u.x, u.y);
+      var c = iso(u.x, u.y, t ? t.e : 0);
+      var lx = px - c.cx, ly = py - c.cy;
+      if(lx < BODY.x0 || lx > BODY.x1 || ly < BODY.y0 || ly > BODY.y1) return;
+      // a ghosted unit is painted over everything, so it always wins its point
+      var k = depth(u.x, u.y) + (coveredBy(u.x, u.y, 11) ? 100 : 0);
+      if(k >= best){ best = k; hit = u; }
+    });
+    return hit;
+  }
+
+  function resolveTap(ev){
+    if(!B) return;
+    var loc = boardPoint(ev.clientX, ev.clientY);
+    if(!loc) return;
+    var ov = overlayFromPoint(loc.x, loc.y);
+    if(ov && onTap(ov.x, ov.y)) return;
+
+    var fu = figureFromPoint(loc.x, loc.y);
+    var t = tileFromPoint(loc.x, loc.y);
+    // whichever the player actually sees at that point: a figure wins unless a
+    // tile drawn in front of it covers the spot
+    var figFirst = fu && (!t || depth(fu.x, fu.y) >= depth(t.x, t.y) || coveredBy(fu.x, fu.y, 11));
+    if(figFirst && onTap(fu.x, fu.y)) return;
+    if(t && onTap(t.x, t.y)) return;
+    if(!figFirst && fu && onTap(fu.x, fu.y)) return;
+
+    var occupant = t ? unitAt(t.x, t.y) : null;
+    if(occupant){ inspect(occupant); return; }
+    if(fu){ inspect(fu); return; }
+    // a near miss on one of your own still counts, the way a finger deserves
+    if(B.mode === 'idle' || B.mode === 'menu'){
+      var near = null, nd = 15;
+      B.units.forEach(function(u){
+        if(u.hp <= 0 || u.side !== B.phase || u.done) return;
+        var tt = tileAt(u.x, u.y), c = iso(u.x, u.y, tt ? tt.e : 0);
+        var d = Math.hypot(loc.x - c.cx, loc.y - (c.cy - 12));
+        if(d < nd){ nd = d; near = u; }
+      });
+      if(near) onTap(near.x, near.y);
+    }
+  }
+  function resetGesture(){ ptrs = {}; drag = null; pinch = null; movedGesture = false; }
+  function ptrArr(){ return Object.keys(ptrs).map(function(k){ return ptrs[k]; }); }
+
+  function bindInput(){
+    stage.addEventListener('pointerdown', function(ev){
+      ptrs[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
+      var l = ptrArr();
+      if(l.length === 1){ movedGesture = false; drag = { x:ev.clientX, y:ev.clientY, cx:CAM.cx, cy:CAM.cy }; }
+      else if(l.length === 2){ drag = null; movedGesture = true;
+        pinch = { d:Math.hypot(l[0].x-l[1].x, l[0].y-l[1].y), z:CAM.zoom }; }
+      try{ stage.setPointerCapture(ev.pointerId); }catch(e){}
+    });
+    stage.addEventListener('pointermove', function(ev){
+      if(!ptrs[ev.pointerId]) return;
+      ptrs[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
+      var l = ptrArr();
+      if(pinch && l.length >= 2){
+        var d = Math.hypot(l[0].x-l[1].x, l[0].y-l[1].y);
+        if(pinch.d > 0){ CAM.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinch.z * (d/pinch.d))); applyCam(); }
+        return;
+      }
+      if(!drag) return;
+      var dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+      if(!movedGesture && Math.hypot(dx, dy) < TAP_SLOP) return;
+      movedGesture = true;
+      var k = unitsPerPx();
+      CAM.cx = drag.cx - dx*k; CAM.cy = drag.cy - dy*k;
+      applyCam();
+    });
+    function up(ev){
+      var had = !!ptrs[ev.pointerId];
+      delete ptrs[ev.pointerId];
+      var tap = had && drag && !movedGesture;
+      drag = null; pinch = null;
+      if(!ptrArr().length && tap) resolveTap(ev);
+    }
+    stage.addEventListener('pointerup', up);
+    stage.addEventListener('pointercancel', function(ev){ delete ptrs[ev.pointerId]; drag = null; pinch = null; });
+
+    $('zoomInBtn').onclick = function(){ CAM.zoom = Math.min(MAX_ZOOM, CAM.zoom*1.35); applyCam(); };
+    $('zoomOutBtn').onclick = function(){ CAM.zoom = Math.max(MIN_ZOOM, CAM.zoom/1.35); applyCam(); };
+    $('camHomeBtn').onclick = function(){ CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy; applyCam(); };
+    $('rotLBtn').onclick = function(){ rotate(-1); };
+    $('rotRBtn').onclick = function(){ rotate(1); };
+    window.addEventListener('resize', function(){ sizeBoardBox(); applyCam(); });
+
+    $('cmdMove').onclick = function(){ if(B.sel && !B.sel.moved) setMode(B.mode === 'move' ? 'menu' : 'move'); };
+    $('cmdAttack').onclick = function(){ if(B.sel) setMode(B.mode === 'attack' ? 'menu' : 'attack'); };
+    $('cmdSkill').onclick = function(){ if(B.sel) setMode(B.mode === 'skill' ? 'menu' : 'skill'); };
+    $('cmdWait').onclick = function(){ if(B.sel && !B.busy) endUnit(B.sel); };
+  }
+
+  function rotate(dir){
+    if(!B) return;
+    ROT = (ROT + dir + 4) % 4;
+    buildTerrain();
+    B.units.forEach(function(u){ if(u.hp > 0) placeFigure(u, true); });
+    setMode(B.mode || 'idle');
+    var focus = B.sel || B.units.filter(function(u){ return u.side === B.phase && u.hp > 0; })[0];
+    if(focus) camTo(focus.x, focus.y); else applyCam();
+  }
+
+  // ================= stage / phase / run =================
+  function teamHp(s){
+    return B.units.filter(function(u){ return u.side===s && u.hp>0; })
+      .reduce(function(a,u){ return a+u.hp; }, 0);
+  }
+  function aliveCount(s){ return B.units.filter(function(u){ return u.side===s && u.hp>0; }).length; }
+
   function startStage(){
-    B = { tiles:buildBoard(), units:[], round:1, phase:1, sel:null, moved:false,
-          moveTiles:[], targets:[], busy:false, overlayOpen:false, origin:null,
-          dmg:{ 1:0, 2:0 } };
+    B = { tiles:buildBoard(G.stage), units:[], round:1, phase:1, sel:null, inspect:null,
+          mode:'idle', moved:false, busy:false, veil:false, origin:null, dmg:{1:0,2:0} };
     B.units = makeUnits(1, P1_START).concat(makeUnits(2, P2_START));
     show('battle');
-    renderTiles();
-    renderUnits();
+    ROT = 0;
+    sizeBoardBox();
+    buildTerrain();
+    buildFigures();
     CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy;
     applyCam();
-    drawState();
-    openPhaseOverlay();
+    setMode('idle');
+    openVeil();
   }
 
-  function openPhaseOverlay(){
-    B.overlayOpen = true;
-    resetGesture();
+  function openVeil(){
+    B.veil = true; resetGesture();
+    B.units.forEach(function(u){ if(u.hp > 0) placeFigure(u, true); });
     var own = B.units.filter(function(u){ return u.side === B.phase && u.hp > 0; });
     if(own.length){
-      var mx = own.reduce(function(s,u){ return s + u.x; }, 0) / own.length;
-      var my = own.reduce(function(s,u){ return s + u.y; }, 0) / own.length;
-      CAM.zoom = 1.45;
-      camTo(Math.round(mx), Math.round(my), true);
+      var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+      own.forEach(function(u){
+        var t = tileAt(u.x, u.y), c = iso(u.x, u.y, t ? t.e : 0);
+        x0 = Math.min(x0, c.cx - TW); x1 = Math.max(x1, c.cx + TW);
+        y0 = Math.min(y0, c.cy - 34); y1 = Math.max(y1, c.cy + TH);
+      });
+      // pull the framing a little toward the middle so the approach shows too
+      var mid = iso((GRID-1)/2, (GRID-1)/2, 1);
+      var cx = (x0+x1)/2, cy = (y0+y1)/2;
+      cx += (mid.cx - cx) * .25; cy += (mid.cy - cy) * .25;
+      // fill the frame rather than fit every unit: the camera follows the flow
+      // from here, and the side strip already shows the whole force
+      CAM.zoom = Math.min(MAX_ZOOM, Math.max(1, fillZoom()));
+      CAM.cx = cx; CAM.cy = cy; applyCam();
     }
-    $('phaseTitle').textContent = 'プレイヤー' + B.phase + ' のフェーズ';
-    $('phaseSub').textContent = 'ステージ' + G.stage + ' ラウンド' + B.round + ' — スマホを渡してタップ';
-    $('phaseOverlay').classList.remove('hidden');
+    $('veilEyebrow').textContent = 'Round ' + B.round + ' / ' + MAX_ROUNDS;
+    var h = $('veilTitle');
+    h.textContent = 'プレイヤー' + B.phase + ' のフェーズ';
+    h.className = 'p' + B.phase;
+    $('veilSub').textContent = 'スマホを渡してから始めてください';
+    $('phaseVeil').classList.remove('hidden');
+    updateHud();
   }
-  $('phaseStartBtn').addEventListener('click', function(){
-    $('phaseOverlay').classList.add('hidden');
-    B.overlayOpen = false;
-    B.units.forEach(function(u){ if(u.side===B.phase) u.done = false; });
-    drawState();
-  });
 
-  function endPhase(){
-    if(checkEnd()) return;
-    if(B.phase === 1) B.phase = 2;
-    else { B.phase = 1; B.round += 1; }
-    if(B.round > MAX_ROUNDS){ finishStage('time'); return; }
-    B.sel=null; B.moved=false; B.moveTiles=[]; B.targets=[];
-    drawState();
-    openPhaseOverlay();
+  function beginPhase(){
+    B.veil = false;
+    $('phaseVeil').classList.add('hidden');
+    B.units.forEach(function(u){
+      if(u.side !== B.phase) return;
+      u.done = false; u.moved = false; u.acted = false; u.extraMove = false; u.usedExtra = false;
+    });
+    B.inspect = null;
+    clearSel();
+  }
+
+  function checkPhaseDone(){
+    var left = B.units.filter(function(u){ return u.side===B.phase && u.hp>0 && !u.done; });
+    if(left.length) return;
+    if(B.phase === 1){ B.phase = 2; openVeil(); return; }
+    B.phase = 1; B.round += 1;
+    if(B.round > MAX_ROUNDS){ finishStage('rounds'); return; }
+    openVeil();
   }
 
   function checkEnd(){
-    var a1 = B.units.some(function(u){ return u.side===1 && u.hp>0; });
-    var a2 = B.units.some(function(u){ return u.side===2 && u.hp>0; });
+    var a1 = aliveCount(1), a2 = aliveCount(2);
     if(a1 && a2) return false;
     finishStage('wipe');
     return true;
   }
 
-  function aliveCount(side){
-    return B.units.filter(function(u){ return u.side===side && u.hp>0; }).length;
-  }
-
   function finishStage(reason){
     var h1 = teamHp(1), h2 = teamHp(2);
-    var winner = 0, tiebreak = '';
+    var winner = 0, tie = '';
     if(h1 !== h2) winner = h1 > h2 ? 1 : 2;
-    else if(aliveCount(1) !== aliveCount(2)){ winner = aliveCount(1) > aliveCount(2) ? 1 : 2; tiebreak = '生存数'; }
-    else if(B.dmg[1] !== B.dmg[2]){ winner = B.dmg[1] > B.dmg[2] ? 1 : 2; tiebreak = '与ダメージ'; }
+    else if(aliveCount(1) !== aliveCount(2)){ winner = aliveCount(1) > aliveCount(2) ? 1 : 2; tie = '生存数'; }
+    else if(B.dmg[1] !== B.dmg[2]){ winner = B.dmg[1] > B.dmg[2] ? 1 : 2; tie = '与ダメージ'; }
     if(winner) G.players[winner].wins += 1;
-    G.players[1].margin += h1 - h2;
-    G.players[2].margin += h2 - h1;
+    G.players[1].margin += h1 - h2; G.players[2].margin += h2 - h1;
 
     var w1 = G.players[1].wins, w2 = G.players[2].wins;
-    var runOver = w1 >= WINS_NEEDED || w2 >= WINS_NEEDED || G.stage >= STAGES ||
-                  !G.players[1].squad.length || !G.players[2].squad.length;
+    var s1 = G.players[1].squad.length, s2 = G.players[2].squad.length;
+    var over = w1 >= WINS_NEEDED || w2 >= WINS_NEEDED || G.stage >= STAGES || !s1 || !s2;
 
-    $('resultEyebrow').textContent = runOver ? 'Run Complete' : ('Stage ' + G.stage + ' / ' + STAGES);
-    if(runOver){
-      var s1 = G.players[1].squad.length, s2 = G.players[2].squad.length;
-      // a squad wiped out of the run loses it outright, whatever the stage score
+    $('tallyP1').textContent = w1; $('tallyP2').textContent = w2;
+    var title = $('resultTitle');
+    if(over){
       var wiped = !s1 || !s2;
-      var m1 = G.players[1].margin, m2 = G.players[2].margin;
       var champ = wiped ? ((!s1 && !s2) ? 0 : (s1 ? 1 : 2))
-                : (w1 !== w2 ? (w1 > w2 ? 1 : 2) : (m1 === m2 ? 0 : (m1 > m2 ? 1 : 2)));
-      $('resultTitle').textContent = champ===0 ? 'ランは引き分け' : ('プレイヤー' + champ + 'のラン勝利');
+        : (w1 !== w2 ? (w1 > w2 ? 1 : 2)
+        : (G.players[1].margin === G.players[2].margin ? 0 : (G.players[1].margin > G.players[2].margin ? 1 : 2)));
+      $('resultEyebrow').textContent = 'Run Complete';
+      title.textContent = champ === 0 ? 'ランは引き分け' : 'P' + champ + ' ラン勝利';
+      title.className = 'result-title ' + (champ ? 'p'+champ : 'draw');
       $('resultSub').innerHTML = (wiped ? '部隊が全滅しました<br>' : '') +
-        'ステージ勝数 ' + w1 + ' : ' + w2 + (w1 === w2 && !wiped ? '（HP差で決着）' : '') +
-        '<br>残存 P1 ' + s1 + '人 / P2 ' + s2 + '人';
+        (w1 === w2 && !wiped ? 'HP差による決着<br>' : '') +
+        '残存 P1 ' + s1 + '人 / P2 ' + s2 + '人';
       $('resultBtn').textContent = 'タイトルへ';
       $('resultBtn').onclick = function(){ show('title'); };
     } else {
-      $('resultTitle').textContent = winner===0 ? 'ステージ引き分け' : ('プレイヤー' + winner + 'がステージ制圧');
-      $('resultSub').innerHTML = (reason==='wipe' ? '全滅' : 'ラウンド終了') + (tiebreak ? '（' + tiebreak + 'で判定）' : '') +
-        ' — 残HP P1:' + h1 + ' / P2:' + h2 +
-        '<br>ステージ勝数 ' + w1 + ' : ' + w2 + '<br>倒れた仲間は傷を負って次ステージへ';
+      $('resultEyebrow').textContent = 'Stage ' + G.stage + ' / ' + STAGES;
+      title.textContent = winner === 0 ? 'ステージ引き分け' : 'P' + winner + ' ステージ制圧';
+      title.className = 'result-title ' + (winner ? 'p'+winner : 'draw');
+      $('resultSub').innerHTML = (reason === 'wipe' ? '全滅' : 'ラウンド終了') +
+        (tie ? '（' + tie + 'で判定）' : '') + ' — 残HP P1:' + h1 + ' / P2:' + h2 +
+        '<br>倒れた仲間は傷を負って次ステージへ';
       $('resultBtn').textContent = 'つぎのステージへ';
       $('resultBtn').onclick = function(){
         G.stage += 1;
-        goHandoff(1, 'ステージ' + G.stage + 'の強化を選びます', function(){ startUpgrade(1); });
+        goHandoff(1, function(){ startUpgrade(1); });
       };
     }
     show('result');
   }
 
-  // debug hook (used by the automated playthrough test)
-  window.__dbg = function(){
-    if(!B) return null;
-    return { busy:B.busy, overlayOpen:B.overlayOpen, phase:B.phase, round:B.round, stage:G.stage,
-      sel: B.sel ? [B.sel.side,B.sel.x,B.sel.y] : null, moved:B.moved,
-      units: B.units.map(function(u){ return { s:u.side, x:u.x, y:u.y, hp:u.hp, done:u.done }; }) };
+  // ================= handoff / upgrade =================
+  function sealArt(pn){
+    var C = SIDE_COL[pn];
+    return '<circle cx="50" cy="50" r="44" fill="#12171d" stroke="' + C.main + '" stroke-width="2"/>' +
+      '<circle cx="50" cy="50" r="36" fill="none" stroke="' + C.dark + '" stroke-width="1"/>' +
+      '<path d="M50 22 L70 34 L70 58 Q70 74 50 82 Q30 74 30 58 L30 34 Z" fill="' + C.main + '" opacity=".22"/>' +
+      '<path d="M50 22 L70 34 L70 58 Q70 74 50 82 Q30 74 30 58 L30 34 Z" fill="none" stroke="' + C.hi + '" stroke-width="1.6"/>' +
+      '<text x="50" y="60" text-anchor="middle" font-family="Cinzel,serif" font-size="26" font-weight="700" fill="' + C.hi + '">' + pn + '</text>';
+  }
+  function goHandoff(pn, cb){
+    $('handoffEyebrow').textContent = 'Stage ' + G.stage + ' — Pass the device';
+    $('handoffTitle').textContent = 'プレイヤー' + pn;
+    $('handoffSub').textContent = '相手に選択を見られないように受け取ってください';
+    $('handoffSeal').innerHTML = sealArt(pn);
+    $('handoffBtn').onclick = function(){ cb(); };
+    show('handoff');
+  }
+
+  var UP_ICONS = {
+    heart:'<path d="M15 26 C4 18 4 9 10 7 C13 6 15 9 15 9 C15 9 17 6 20 7 C26 9 26 18 15 26 Z" fill="#c9564b"/>',
+    sword:'<path d="M15 3 L18 8 L18 22 L15 26 L12 22 L12 8 Z" fill="#b9bfc7"/><rect x="9" y="20" width="12" height="2.6" fill="#e0a33f"/>',
+    boot:'<path d="M9 5 L15 5 L16 17 L23 20 L23 25 L9 25 Z" fill="#6b5942"/><rect x="9" y="21" width="14" height="4" fill="#463a2c"/>',
+    die:'<rect x="6" y="6" width="18" height="18" rx="3" fill="#ded7c5"/><circle cx="12" cy="12" r="2" fill="#171b20"/><circle cx="18" cy="18" r="2" fill="#171b20"/><circle cx="15" cy="15" r="2" fill="#171b20"/>',
+    peak:'<path d="M4 24 L13 8 L18 16 L21 12 L27 24 Z" fill="#79806f"/><path d="M13 8 L18 16 L15 18 L10 14 Z" fill="#ded7c5"/>',
+    dagger:'<path d="M16 3 L19 9 L19 18 L16 21 L13 18 L13 9 Z" fill="#b9bfc7"/><path d="M11 19 L21 19 L21 21 L11 21 Z" fill="#463a2c"/>',
+    shield:'<path d="M15 4 L25 8 L25 17 Q25 25 15 28 Q5 25 5 17 L5 8 Z" fill="#5b9bd5"/><path d="M15 4 L25 8 L25 17 Q25 25 15 28 Z" fill="#2f5f8f"/>'
   };
 
+  function startUpgrade(pn){
+    var p = G.players[pn];
+    $('upgradeTurnLabel').textContent = 'プレイヤー' + pn + ' の編成';
+    $('upgradeStage').textContent = 'Stage ' + G.stage + ' / ' + STAGES;
+
+    var rr = $('rosterRow');
+    rr.innerHTML = '';
+    JOB_KEYS.forEach(function(job){
+      var d = JOBS[job], alive = p.squad.indexOf(job) !== -1, scars = p.scars[job] || 0;
+      var card = document.createElement('div');
+      card.className = 'roster-card plate' + (alive ? '' : ' gone');
+      var art = document.createElement('div');
+      art.className = 'rc-art';
+      art.appendChild(jobIcon(job, pn, 40));
+      card.appendChild(art);
+      var name = document.createElement('div');
+      name.className = 'u-name'; name.textContent = d.name;
+      card.appendChild(name);
+      var st = document.createElement('div');
+      st.className = 'u-stats';
+      st.innerHTML = alive
+        ? ('HP' + maxHpFor(p, job) + ' AT' + (d.atk + p.bonusAtk) + '<br>移' + (d.move + p.bonusMove) + ' 跳' + (d.jump + p.bonusJump))
+        : '戦線離脱';
+      card.appendChild(st);
+      if(scars){
+        var sc = document.createElement('div');
+        sc.className = 'scar'; sc.textContent = '傷 ' + '✚'.repeat(scars);
+        card.appendChild(sc);
+      }
+      rr.appendChild(card);
+    });
+
+    var pool = UPGRADES.filter(function(u){ return !u.cond || u.cond(p); });
+    for(var i=pool.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
+    var offer = pool.slice(0, 3);
+    var list = $('upgradeList');
+    list.innerHTML = '';
+    offer.forEach(function(def){
+      var b = document.createElement('button');
+      b.className = 'upgrade-card plate';
+      b.innerHTML = '<svg class="uc-icon" viewBox="0 0 30 30">' + (UP_ICONS[def.icon]||'') + '</svg>' +
+        '<span><span class="u-title">' + def.title + '</span>' +
+        '<span class="u-desc">' + def.desc + '</span></span>';
+      b.onclick = function(){
+        def.apply(p);
+        if(pn === 1) goHandoff(2, function(){ startUpgrade(2); });
+        else startStage();
+      };
+      list.appendChild(b);
+    });
+    show('upgrade');
+  }
+
+  // ================= boot =================
+  function startRun(){
+    G = { stage:1, players:{ 1:newPlayer(), 2:newPlayer() } };
+    uid = 1;
+    goHandoff(1, function(){ startUpgrade(1); });
+  }
+
+  stage = $('boardStage'); svg = $('boardSvg'); scene = $('sceneLayer');
+  bindInput();
+  $('titleStartBtn').onclick = startRun;
+  $('veilStartBtn').onclick = beginPhase;
   show('title');
+
+  // debug hook for the automated playthrough test
+  window.__dbg = function(){
+    if(!B) return null;
+    return { busy:B.busy, veil:B.veil, mode:B.mode, phase:B.phase, round:B.round, stage:G.stage,
+      sel: B.sel ? { uid:B.sel.uid, x:B.sel.x, y:B.sel.y, moved:!!B.sel.moved, acted:!!B.sel.acted } : null,
+      units: B.units.map(function(u){
+        return { uid:u.uid, s:u.side, job:u.job, x:u.x, y:u.y, hp:u.hp, done:u.done }; }) };
+  };
+  window.__cmd = function(id){ var b = $(id); if(b && !b.disabled) b.click(); return !!(b && !b.disabled); };
+  window.__pt = function(x, y){
+    var t = tileAt(x, y), c = iso(x, y, t ? t.e : 0);
+    var p = toStagePx(c.cx, c.cy);
+    var r = stage.getBoundingClientRect();
+    return { x:r.left + p.left, y:r.top + p.top };
+  };
+  window.__tap = function(x, y){ return onTap(x, y); };
+  window.__hit = function(cx, cy){
+    var loc = boardPoint(cx, cy);
+    return loc ? tileFromPoint(loc.x, loc.y) : null;
+  };
+  window.__ptUnit = function(x, y){
+    var t = tileAt(x, y), c = iso(x, y, t ? t.e : 0);
+    var p = toStagePx(c.cx, c.cy - 11);
+    var r = stage.getBoundingClientRect();
+    return { x:r.left + p.left, y:r.top + p.top };
+  };
+  window.__reveal = function(x, y){ camReveal(x, y); };
+  window.__moves = function(){ return B.sel ? reachable(B.sel) : []; };
+  window.__targets = function(){
+    if(!B.sel) return [];
+    var l = B.mode === 'skill' ? skillTargets(B.sel) : targetsFor(B.sel);
+    return l.map(function(u){ return { x:u.x, y:u.y }; });
+  };
 })();
 </script>
 </body>
