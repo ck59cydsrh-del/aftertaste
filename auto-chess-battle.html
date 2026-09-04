@@ -11,7 +11,7 @@
     --paper:#FAFAF7; --ink:#30343A;
     --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',monospace;
     --font-body:'Noto Sans JP','Hiragino Sans',sans-serif;
-    --rail:22px;
+    --rail:26px;
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{
@@ -39,16 +39,16 @@
   .ticks i{ width:1px; height:4px; background:var(--ink); }
   .ticks i:nth-child(5n+1){ height:7px; }
 
-  .key{ display:flex; align-items:center; gap:6px; padding:0 8px; height:26px; width:100%;
+  .key{ display:flex; align-items:center; gap:5px; padding:0 6px; height:23px; width:100%;
     background:var(--paper); border:1.5px solid var(--ink); font-size:.66rem; font-weight:700;
-    letter-spacing:.14em; text-align:left; }
+    letter-spacing:.1em; text-align:left; }
   .key .cur{ width:7px; opacity:0; }
   .key.on{ background:var(--ink); color:var(--paper); }
   .key.on .cur{ opacity:1; }
   .key:disabled{ opacity:.28; }
   .key:not(:disabled):active{ background:var(--ink); color:var(--paper); }
 
-  .seg{ display:flex; gap:2px; height:9px; flex:1; }
+  .seg{ display:flex; gap:2px; height:8px; flex:1; }
   .seg i{ flex:1; border:1px solid var(--ink); background:var(--paper); }
   .seg i.f{ background:var(--ink); }
   .lamps{ display:flex; gap:4px; }
@@ -70,11 +70,11 @@
     background:var(--paper); border-bottom:1.5px solid var(--ink); flex:none; }
   .rail .glyph{ width:13px; height:13px; border:1.5px solid var(--ink); flex:none; position:relative; }
   .rail .glyph::after{ content:''; position:absolute; inset:2.5px; background:var(--ink); }
-  .rail .name{ font-size:.6rem; font-weight:700; letter-spacing:.18em; white-space:nowrap; }
+  .rail .name{ font-size:.56rem; font-weight:700; letter-spacing:.14em; white-space:nowrap; }
   .rail .fill{ flex:1; height:1px; background:var(--ink); opacity:.5; position:relative; }
   .rail .fill::before, .rail .fill::after{ content:''; position:absolute; top:-3px; width:1px; height:7px; background:var(--ink); }
   .rail .fill::before{ left:33%; } .rail .fill::after{ left:66%; }
-  .rail .grid{ font-size:.55rem; letter-spacing:.16em; white-space:nowrap; }
+  .rail .grid{ font-size:.5rem; letter-spacing:.12em; white-space:nowrap; }
 
   /* ---------- title ---------- */
   #screen-title{ align-items:center; justify-content:center; gap:16px; padding:26px 18px;
@@ -122,44 +122,45 @@
     shape-rendering:crispEdges; }
   .board-svg .tile-tag{ font-family:var(--font-mono); font-size:6px; font-weight:700;
     letter-spacing:.08em; fill:var(--ink); text-anchor:middle; opacity:.75; }
-  .board-wrap.shake .board-stage{ animation:shake .26s steps(4,end); }
-  @keyframes shake{ 0%{ transform:translate(0,0);} 25%{ transform:translate(-4px,3px);}
-    50%{ transform:translate(4px,-2px);} 75%{ transform:translate(-2px,-3px);} 100%{ transform:translate(0,0);} }
+  .board-wrap.shake .board-stage{ animation:shake .2s cubic-bezier(.3,.9,.4,1); }
+  @keyframes shake{ 0%{ transform:translate(0,0);} 22%{ transform:translate(-5px,3px);}
+    48%{ transform:translate(4px,-2px);} 74%{ transform:translate(-2px,-2px);} 100%{ transform:translate(0,0);} }
 
-  .fig.hit .fig-in{ animation:jhit .3s steps(3,end); }
-  .fig.crithit .fig-in{ animation:jcrit .38s steps(4,end); }
-  .fig.dying{ animation:die .4s steps(4,end) forwards; transform-box:fill-box; transform-origin:50% 100%; }
-  .fig.sel .fig-in{ animation:bob .8s steps(2,end) infinite; }
+  .fig.hit .fig-in{ animation:jhit .24s cubic-bezier(.2,.9,.3,1); }
+  .fig.crithit .fig-in{ animation:jcrit .3s cubic-bezier(.2,.9,.3,1); }
+  .fig.dying{ animation:die .3s cubic-bezier(.4,0,.7,.2) forwards;
+    transform-box:fill-box; transform-origin:50% 100%; }
+  .fig.sel .fig-in{ animation:bob 1.5s cubic-bezier(.45,0,.55,1) infinite; }
   .fig-in{ transform-box:fill-box; transform-origin:50% 100%; }
-  @keyframes jhit{ 0%{ transform:scale(1,1);} 34%{ transform:scale(1.24,.78) translateY(2px);}
-    67%{ transform:scale(.9,1.12);} 100%{ transform:scale(1,1);} }
-  @keyframes jcrit{ 0%{ transform:scale(1,1);} 25%{ transform:scale(1.4,.66) translateY(3px);}
-    60%{ transform:scale(.84,1.2);} 100%{ transform:scale(1,1);} }
-  @keyframes die{ to{ opacity:0; transform:scale(.6) translateY(6px); } }
-  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-2px);} }
-  .board-svg .pulse{ animation:pul .7s steps(2,end) infinite; }
-  @keyframes pul{ 0%,100%{ opacity:1;} 50%{ opacity:.15;} }
-  .board-svg .ring{ animation:march 1.6s linear infinite; }
+  @keyframes jhit{ 0%{ transform:scale(1,1);} 30%{ transform:scale(1.18,.84) translateY(1.5px);}
+    64%{ transform:scale(.94,1.07);} 100%{ transform:scale(1,1);} }
+  @keyframes jcrit{ 0%{ transform:scale(1,1);} 24%{ transform:scale(1.3,.74) translateY(2.5px);}
+    58%{ transform:scale(.9,1.12);} 100%{ transform:scale(1,1);} }
+  @keyframes die{ to{ opacity:0; transform:scale(.72) translateY(5px); } }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-1.6px);} }
+  .board-svg .pulse{ animation:pul 1.1s cubic-bezier(.45,0,.55,1) infinite; }
+  @keyframes pul{ 0%,100%{ opacity:1;} 50%{ opacity:.28;} }
+  .board-svg .ring{ animation:march 2.2s linear infinite; }
   @keyframes march{ to{ stroke-dashoffset:-16; } }
-  .path-dot{ animation:dotin .3s steps(2,end) backwards; }
+  .path-dot{ animation:dotin .2s ease-out backwards; }
   @keyframes dotin{ from{ opacity:0; } }
 
-  .cam-row{ display:flex; align-items:center; gap:4px; padding:3px 6px; background:var(--paper);
-    border-bottom:1.5px solid var(--ink); flex:none; }
-  .cam-row .hint{ flex:1; font-size:.46rem; letter-spacing:.1em; opacity:.7; }
-  .cam-btn{ width:29px; height:20px; display:flex; align-items:center; justify-content:center; flex:none;
-    border:1.5px solid var(--ink); background:var(--paper); font-size:.68rem; font-weight:700; }
+  .cam-btn{ width:26px; height:18px; display:flex; align-items:center; justify-content:center; flex:none;
+    border:1.5px solid var(--ink); background:var(--paper); font-size:.62rem; font-weight:700; }
   .cam-btn:active{ background:var(--ink); color:var(--paper); }
+  .cam-btn.off{ opacity:.35; }
 
   /* floating readouts over the board */
   .dmg-pop{ position:absolute; transform:translate(-50%,-100%); z-index:7; pointer-events:none;
     font-weight:700; font-size:1rem; letter-spacing:.04em; white-space:nowrap;
     background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:1px 5px;
-    animation:dmgfly .95s steps(6,end) forwards; }
+    animation:dmgfly .8s cubic-bezier(.15,.85,.3,1) forwards; }
   .dmg-pop.crit{ background:var(--ink); color:var(--paper); font-size:1.15rem; }
   .dmg-pop.info{ font-size:.6rem; font-family:var(--font-body); }
-  @keyframes dmgfly{ 0%{ opacity:0; transform:translate(-50%,-88%);} 20%{ opacity:1; transform:translate(-50%,-150%);}
-    100%{ opacity:0; transform:translate(-50%,-210%);} }
+  @keyframes dmgfly{ 0%{ opacity:0; transform:translate(-50%,-88%) scale(.8);}
+    18%{ opacity:1; transform:translate(-50%,-152%) scale(1.06);}
+    32%{ transform:translate(-50%,-148%) scale(1);}
+    100%{ opacity:0; transform:translate(-50%,-205%) scale(1);} }
 
   .roll-pop{ position:absolute; left:50%; top:8px; transform:translateX(-50%); z-index:9;
     pointer-events:none; display:flex; align-items:stretch; background:var(--paper);
@@ -171,7 +172,7 @@
   .kill-banner{ position:absolute; left:50%; top:24%; transform:translateX(-50%); z-index:9;
     pointer-events:none; padding:4px 16px; background:var(--ink); color:var(--paper);
     font-weight:700; font-size:.72rem; letter-spacing:.2em; white-space:nowrap;
-    animation:killpop 1.4s steps(8,end) forwards; }
+    animation:killpop 1.15s cubic-bezier(.2,.8,.3,1) forwards; }
   @keyframes killpop{ 0%{ opacity:0; } 10%{ opacity:1; } 82%{ opacity:1; } 100%{ opacity:0; } }
 
   .phase-veil{ position:absolute; inset:0; z-index:12; display:flex; flex-direction:column;
@@ -186,10 +187,10 @@
   .legend b{ display:inline-block; min-width:26px; }
 
   /* ---------- bottom deck ---------- */
-  .deck{ display:flex; gap:6px; padding:6px; background:var(--ink); flex:none; align-items:stretch; }
-  .cluster{ flex:1; min-width:0; padding:6px 8px; display:flex; flex-direction:column; gap:5px; }
+  .deck{ display:flex; gap:5px; padding:5px; background:var(--ink); flex:none; align-items:stretch; }
+  .cluster{ flex:1; min-width:0; padding:5px 7px; display:flex; flex-direction:column; gap:3px; }
   .cl-top{ display:flex; align-items:center; gap:7px; }
-  .cl-port{ width:30px; height:34px; flex:none; border:1.5px solid var(--ink); }
+  .cl-port{ width:26px; height:30px; flex:none; border:1.5px solid var(--ink); }
   .cl-id{ flex:1; min-width:0; }
   .cl-name{ font-family:var(--font-body); font-weight:700; font-size:.74rem; line-height:1.1; }
   .cl-job{ font-size:.46rem; letter-spacing:.2em; }
@@ -198,16 +199,18 @@
   .cl-bar .lab{ font-size:.5rem; letter-spacing:.12em; width:38px; flex:none; font-weight:700; }
   .cl-stats{ display:flex; gap:8px; font-size:.5rem; letter-spacing:.06em; }
   .cl-stats b{ font-size:.62rem; }
-  .cl-hint{ font-size:.48rem; letter-spacing:.06em; font-family:var(--font-body); }
+  .cl-hint{ font-size:.46rem; letter-spacing:.04em; font-family:var(--font-body); line-height:1.3; }
 
-  .cmd{ width:104px; flex:none; padding:5px; display:flex; flex-direction:column; gap:3px; }
+  .cmd{ width:96px; flex:none; padding:4px; display:flex; flex-direction:column; gap:2px; }
   .cmd .cmd-h{ display:flex; align-items:center; justify-content:space-between; font-size:.48rem;
     letter-spacing:.18em; font-weight:700; margin-bottom:1px; }
 
-  .turnbox{ width:60px; flex:none; padding:5px 4px; display:flex; flex-direction:column;
+  .turnbox{ width:52px; flex:none; padding:4px 3px; display:flex; flex-direction:column;
     align-items:center; justify-content:center; gap:2px; }
-  .turnbox .big-num{ font-size:1.6rem; }
-  .turnbox .micro{ font-size:.44rem; }
+  .turnbox .big-num{ font-size:1.4rem; }
+  .turnbox .micro{ font-size:.42rem; }
+  .turnbox .hairline{ width:70%; height:1px; background:var(--ink); opacity:.5; margin:2px 0 1px; }
+  .turnbox .hold{ font-size:.68rem; font-weight:700; letter-spacing:.08em; }
 
   /* ---------- result ---------- */
   #screen-result{ align-items:center; justify-content:center; gap:14px; padding:26px 20px;
@@ -222,13 +225,12 @@
 
   @media (orientation:landscape) and (max-height:560px){
     #screen-battle{ display:grid;
-      grid-template-columns:minmax(0,1fr) 240px;
-      grid-template-rows:auto auto minmax(0,1fr);
-      grid-template-areas:"rail cam" "board cam2" "board deck"; }
-    .rail{ grid-area:rail; } .cam-row{ grid-area:cam; border-left:1.5px solid var(--ink); }
-    .board-wrap{ grid-area:board; }
+      grid-template-columns:minmax(0,1fr) 232px;
+      grid-template-rows:auto minmax(0,1fr);
+      grid-template-areas:"rail rail" "board deck" "board deck"; }
+    .rail{ grid-area:rail; }
+    .board-wrap{ grid-area:board; max-height:none; }
     .deck{ grid-area:deck; flex-direction:column; }
-    .cam-row .hint{ display:none; }
     .cmd{ width:auto; } .turnbox{ width:auto; flex-direction:row; gap:8px; }
     #screen-title{ gap:10px; padding:14px; }
     #screen-title h1{ font-size:1.5rem; }
@@ -254,9 +256,11 @@
     <div class="title-plate">
       <div class="row"><span class="n">01</span><span>スマホ1台を渡し合う<b>手動タクティクス</b>。全3ステージのランで先に2勝</span></div>
       <div class="row"><span class="n">02</span><span>コマンドは<b>MOVE / ATK / SKILL / WAIT</b>。1体ずつ動かして相手に渡す</span></div>
-      <div class="row"><span class="n">03</span><span><b>高所+30% / 側面+25% / 背後+50%</b>。行動後は最寄りの敵を向く</span></div>
-      <div class="row"><span class="n">04</span><span>段差は<b>跳躍力</b>まで。ダイスの出目で威力が振れ、6は<b>会心</b></span></div>
-      <div class="row"><span class="n">05</span><span>特技は<b>MP</b>を消費。倒れた仲間は<b>傷</b>を負って復帰</span></div>
+      <div class="row"><span class="n">03</span><span>高さ差<b>1段ごとに+10%</b>（低いと-5%）。<b>側面+25% / 背後+50%</b></span></div>
+      <div class="row"><span class="n">04</span><span>狙う敵に隣接する味方1人ごとに<b>連携+10%</b>。挟むほど痛い</span></div>
+      <div class="row"><span class="n">05</span><span><b>▲</b>は敵の射程。踏めば次のフェーズに殴られる</span></div>
+      <div class="row"><span class="n">06</span><span>ラウンド終了時、中央の<b>拠点</b>に立つ数だけスコア加算</span></div>
+      <div class="row"><span class="n">07</span><span>段差は<b>跳躍力</b>まで。特技は<b>MP</b>消費、6の出目で<b>会心</b></span></div>
     </div>
     <button class="btn" id="titleStartBtn">Start Run</button>
   </div>
@@ -294,15 +298,12 @@
       <span class="name" id="actName">A01 / PALE CITADEL</span>
       <span class="fill"></span>
       <span class="grid" id="gridLabel">GRID 08×08</span>
-      <span class="glyph"></span>
-    </div>
-    <div class="cam-row">
-      <span class="hint">DRAG · PINCH · ROTATE</span>
       <button class="cam-btn" id="rotLBtn" aria-label="左に回転">&#8634;</button>
       <button class="cam-btn" id="rotRBtn" aria-label="右に回転">&#8635;</button>
       <button class="cam-btn" id="zoomOutBtn" aria-label="ズームアウト">&minus;</button>
       <button class="cam-btn" id="zoomInBtn" aria-label="ズームイン">+</button>
       <button class="cam-btn" id="camHomeBtn" aria-label="全体表示">&#10530;</button>
+      <button class="cam-btn" id="threatBtn" aria-label="敵の射程表示">&#9650;</button>
     </div>
     <div class="board-wrap" id="boardWrap">
       <div class="board-stage" id="boardStage">
@@ -317,9 +318,9 @@
         <h3>PHASE</h3>
         <p id="veilSub">スマホを渡してから始めてください</p>
         <div class="legend">
-          <span><b>&#9650;</b> 高所 +30%</span><span><b>SIDE</b> 側面 +25%</span>
-          <span><b>BACK</b> 背後 +50%</span><span><b>&#9670;</b> 補給 HP+</span>
-          <span><b>&#9633;</b> 物資 ATK+2</span><span><b>&#9587;</b> 罠 HP-6</span>
+          <span><b>&#9650;</b> 敵の射程</span><span><b>&#9671;</b> 拠点 スコア</span>
+          <span><b>+10%</b> 高さ1段</span><span><b>+10%</b> 連携1人</span>
+          <span><b>+25%</b> 側面</span><span><b>+50%</b> 背後</span>
         </div>
         <button class="btn" id="veilStartBtn">Begin Phase</button>
       </div>
@@ -351,7 +352,9 @@
         <span class="screws"><i></i><i></i><i></i><i></i></span>
         <span class="big-num" id="turnNum">01</span>
         <span class="micro">TURN</span>
-        <span class="ticks" id="turnTicks"></span>
+        <span class="hairline"></span>
+        <span class="hold" id="holdNum">0:0</span>
+        <span class="micro">HOLD</span>
       </div>
     </div>
   </div>
@@ -395,7 +398,10 @@
 
   var GRID = 8, TW = 32, TH = 16, EH = 12;   // exact 2:1 dimetric
   var STAGES = 3, WINS_NEEDED = 2, MAX_ROUNDS = 3;
-  var HIGH_BONUS = 0.30, FLANK_SIDE = 0.25, FLANK_BACK = 0.50, COUNTER_RATE = 0.65;
+  var HIGH_PER_LEVEL = 0.10, LOW_PER_LEVEL = 0.05;   // +10% per level above, -5% per level below
+  var COMBO_PER_ALLY = 0.10;                          // each extra ally beside the target
+  var FLANK_SIDE = 0.25, FLANK_BACK = 0.50, COUNTER_RATE = 0.65;
+  var KEEP_POINT = 10;                                // a held keep is worth this much of the stage score
   var SCAR_HP = 5, MIN_HP = 8;
   var DIE = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
   var ACTS = ['PALE CITADEL','BROKEN SPAN','ASH TERRACE'];
@@ -472,7 +478,7 @@
     return cx+','+(cy-h)+' '+(cx+w)+','+cy+' '+cx+','+(cy+h)+' '+(cx-w)+','+cy;
   }
 
-  var MAX_ELEV = 2, MIN_ZOOM = 0.65, MAX_ZOOM = 3.4;
+  var MAX_ELEV = 2, MIN_ZOOM = 0.8, MAX_ZOOM = 4;
   var BOARD = (function(){
     var pad = 14;
     var x1 = (GRID-1)*TW/2 + TW/2;
@@ -487,7 +493,8 @@
   function sizeBoardBox(){
     var wrap = $('boardWrap');
     var w = wrap.parentNode.clientWidth || window.innerWidth;
-    wrap.style.setProperty('--boardMax', Math.round(w * BOARD.h / BOARD.w) + 'px');
+    // a touch taller than the board's own ratio, so a moderate zoom has room
+    wrap.style.setProperty('--boardMax', Math.round(w * BOARD.h / BOARD.w * 1.25) + 'px');
   }
 
   function applyCam(){
@@ -509,10 +516,23 @@
     var baseW = Math.max(BOARD.w, BOARD.h / (ratio || 1));
     return Math.max(1, (baseW * ratio) / BOARD.h);
   }
-  function camTo(x, y){
+  var camTween = null;
+  function camTo(x, y, snap){
     var t = tileAt(x,y);
     var c = iso(x, y, t ? t.e : 0);
-    CAM.cx = c.cx; CAM.cy = c.cy; applyCam();
+    if(snap){ CAM.cx = c.cx; CAM.cy = c.cy; applyCam(); return; }
+    camGlide(c.cx, c.cy);
+  }
+  function camGlide(tx, ty){
+    if(camTween) cancelAnimationFrame(camTween);
+    var sx = CAM.cx, sy = CAM.cy, t0 = performance.now(), dur = 220;
+    (function step(now){
+      var k = Math.min(1, (now - t0) / dur);
+      var e = 1 - Math.pow(1 - k, 3);
+      CAM.cx = sx + (tx - sx) * e; CAM.cy = sy + (ty - sy) * e;
+      applyCam();
+      if(k < 1) camTween = requestAnimationFrame(step); else camTween = null;
+    })(performance.now());
   }
   function camReveal(x, y){
     var vb = svg.viewBox.baseVal;
@@ -643,6 +663,11 @@
       }
     }
     // a few plates carry their grid reference, like a real instrument face
+    if(t.keep){
+      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .86), fill:'none',
+        stroke:INK, 'stroke-width':1.4, 'stroke-dasharray':'4 2.5' }));
+      g.appendChild(el('rect', { x:c.cx - 2, y:c.cy - 2, width:4, height:4, fill:INK }));
+    }
     if(t.label){
       var tx = el('text', { x:c.cx, y:c.cy + 4.6, class:'tile-tag' });
       tx.textContent = COL[t.x] + (t.y + 1);
@@ -888,7 +913,11 @@
       var t = tileAt(o.x, o.y);
       var c = iso(o.x, o.y, t ? t.e : 0);
       var g = el('g', { 'data-ov':o.cls, 'data-x':o.x, 'data-y':o.y });
-      if(o.cls === 'move'){
+      if(o.cls === 'threat'){
+        // a notch at the tile's far corner: readable under a figure, quiet in bulk
+        g.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy - TH/2) + ' l6 3 l-6 3 l-6 -3 z',
+          fill:INK }));
+      } else if(o.cls === 'move'){
         g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .84), fill:'none',
           stroke:INK, 'stroke-width':1, 'stroke-dasharray':'3 2' }));
         g.appendChild(el('rect', { x:c.cx - 1.6, y:c.cy - 1.6, width:3.2, height:3.2, fill:INK }));
@@ -907,7 +936,7 @@
             fill:'none', stroke:INK, 'stroke-width':2 }));
         });
       }
-      return { k:sortKey(o.x, o.y, 2), n:g };
+      return { k:sortKey(o.x, o.y, o.cls === 'threat' ? 1.5 : 2), n:g };
     });
   }
 
@@ -926,7 +955,9 @@
     };
 
     var m = GRID/2;
-    [[m-1,m-1],[m,m-1],[m-1,m],[m,m]].forEach(function(p){ at(p[0],p[1]).e = 2; });
+    [[m-1,m-1],[m,m-1],[m-1,m],[m,m]].forEach(function(p){
+      var t = at(p[0],p[1]); t.e = 2; t.keep = true;
+    });
     at(m-1,m).fx = 'spring'; at(m,m-1).fx = 'spring';
     [[m-2,m-1],[m-2,m],[m+1,m-1],[m+1,m],[m-1,m-2],[m,m-2],[m-1,m+1],[m,m+1]]
       .forEach(function(p){ var t = at(p[0],p[1]); if(t) t.e = 1; });
@@ -1039,18 +1070,29 @@
     faceToward(u, near.x, near.y);
   }
 
+  // How many other friendlies are already pressing this target: attacking a unit
+  // that is surrounded pays, which is what makes pincers worth setting up.
+  function comboAllies(att, def){
+    return B.units.filter(function(o){
+      return o.hp > 0 && o !== att && o.side === att.side && manh(o, def) <= 1;
+    }).length;
+  }
+
   function strike(att, def, opt){
     opt = opt || {};
     var p = G.players[att.side], dp = G.players[def.side];
     var at = tileAt(att.x, att.y), dt = tileAt(def.x, def.y);
-    var high = !!(at && dt && at.e > dt.e) && !opt.ignoreHigh;
+    var lvDiff = (at && dt && !opt.ignoreHigh) ? (at.e - dt.e) : 0;
     var fl = opt.noFlank ? { mult:0, label:'' } : flankOf(att, def);
+    var allies = opt.noFlank ? 0 : comboAllies(att, def);
     var die = roll();
     var eff = Math.min(6, die + p.dice);
     var crit = opt.forceCrit || eff >= 6;
     var mult = 1;
-    if(high) mult += HIGH_BONUS + p.high;
+    if(lvDiff > 0) mult += lvDiff * (HIGH_PER_LEVEL + p.high * 0.3);
+    else if(lvDiff < 0) mult += lvDiff * LOW_PER_LEVEL;
     if(fl.mult) mult += fl.mult + p.flank;
+    if(allies) mult += allies * COMBO_PER_ALLY;
     if(crit) mult *= 1.5;
     if(opt.counter) mult *= COUNTER_RATE;
     if(opt.scale) mult *= opt.scale;
@@ -1061,14 +1103,16 @@
 
     var tags = [];
     if(opt.counter) tags.push('反撃');
-    if(high) tags.push('高所');
+    if(lvDiff > 0) tags.push('高所+' + Math.round(lvDiff * HIGH_PER_LEVEL * 100) + '%');
+    else if(lvDiff < 0) tags.push('低所' + Math.round(lvDiff * LOW_PER_LEVEL * 100) + '%');
     if(fl.label) tags.push(fl.label);
+    if(allies) tags.push('連携×' + (allies + 1));
     if(crit) tags.push('会心');
     showRoll(eff, att.atk, tags);
     hitFigure(def, crit);
     popText(def, '-' + dmg, crit ? 'crit' : 'hurt');
     refreshFigure(def);
-    if(crit) shake();
+    if(crit){ shake(); hitStop(90); } else if(dmg >= 14) hitStop(55);
     return dmg;
   }
 
@@ -1101,6 +1145,12 @@
   function shake(){
     var w = $('boardWrap');
     w.classList.remove('shake'); void w.offsetWidth; w.classList.add('shake');
+  }
+  // hit-stop: a beat of stillness sells the blow far better than a long animation
+  function hitStop(ms){
+    var st = stage;
+    st.style.animationPlayState = 'paused';
+    setTimeout(function(){ st.style.animationPlayState = ''; }, ms || 70);
   }
   function hitFigure(u, crit){
     var g = figureNodes[u.uid];
@@ -1150,15 +1200,15 @@
       var ft = tileAt(from.x, from.y), tt = tileAt(to.x, to.y);
       var a = iso(from.x, from.y, ft.e), b = iso(to.x, to.y, tt.e);
       var g = figureNodes[u.uid];
-      var t0 = performance.now(), dur = 150;
+      var t0 = performance.now(), dur = tt.e !== ft.e ? 130 : 105;
       u.x = to.x; u.y = to.y;
       placeFigure(u, true);
       compose();
       g = figureNodes[u.uid];
       function frame(now){
         var k = Math.min(1, (now - t0) / dur);
-        var e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2;
-        var hop = Math.sin(k * Math.PI) * (tt.e !== ft.e ? 4 : 1.6);
+        var e = 1 - Math.pow(1 - k, 3);            // quick out, settles smoothly
+        var hop = Math.sin(k * Math.PI) * (tt.e !== ft.e ? 4.5 : 2);
         g.setAttribute('transform', 'translate(' + (a.cx + (b.cx-a.cx)*e) + ',' +
           (a.cy + (b.cy-a.cy)*e - hop) + ')');
         if(k < 1) requestAnimationFrame(frame);
@@ -1208,7 +1258,12 @@
     var ovs = [];
     if(u){
       ovs.push({ x:u.x, y:u.y, cls:'sel' });
-      if(m === 'move') reachable(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'move' }); });
+      if(m === 'move'){
+        if(B.showThreat){
+          threatTiles(u.side).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'threat' }); });
+        }
+        reachable(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'move' }); });
+      }
       if(m === 'attack') targetsFor(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'target' }); });
       if(m === 'skill') skillTargets(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'target' }); });
     }
@@ -1221,6 +1276,31 @@
     var sk = JOBS[u.job].skill;
     return u.mp >= sk.cost;
   }
+  // The other side is a person, not a script, so their intent cannot be shown —
+  // but their reach can. Marking every tile they could strike next phase turns a
+  // move from a guess into a decision.
+  function threatTiles(side){
+    var seen = {}, out = [];
+    B.units.forEach(function(e){
+      if(e.hp <= 0 || e.side === side) return;
+      var spots = reachable(e).concat([{ x:e.x, y:e.y }]);
+      var rng = Math.max(e.range, JOBS[e.job].skill.rng || 0);
+      spots.forEach(function(sp){
+        for(var dy = -rng; dy <= rng; dy++){
+          for(var dx = -rng; dx <= rng; dx++){
+            if(Math.abs(dx) + Math.abs(dy) > rng) continue;
+            var tx = sp.x + dx, ty = sp.y + dy;
+            if(!tileAt(tx, ty)) continue;
+            var k = tx + ',' + ty;
+            if(seen[k]) continue;
+            seen[k] = 1; out.push({ x:tx, y:ty });
+          }
+        }
+      });
+    });
+    return out;
+  }
+
   function skillTargets(u){
     var sk = JOBS[u.job].skill;
     if(!canSkill(u)) return [];
@@ -1251,7 +1331,7 @@
     clearSel();
     var next = B.units.filter(function(o){ return o.side === B.phase && o.hp > 0 && !o.done; })[0];
     if(next) camReveal(next.x, next.y);
-    setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 200);
+    setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 150);
   }
 
   function onTap(x, y){
@@ -1297,7 +1377,7 @@
           if(u.hp <= 0){ killIfDead(u); B.busy = false; clearSel();
             setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 420); return; }
           B.busy = false; setMode('menu');
-        }, 520);
+        }, 420);
         return;
       }
       B.busy = false;
@@ -1315,16 +1395,19 @@
     var reach = Math.min(7, len * .34);
     faceToward(att, def.x, def.y);
     placeFigure(att, true);
-    var t0 = performance.now(), dur = 260;
+    var t0 = performance.now(), dur = 230, hold = 60;
     function frame(now){
       var k = Math.min(1, (now - t0) / dur);
-      var p = k < .35 ? (k/.35) : (1 - (k-.35)/.65);
+      // snap out, hang for a beat at full reach, then ease back with weight
+      var p = k < .3 ? 1 - Math.pow(1 - k/.3, 3)
+            : k < .48 ? 1
+            : 1 - Math.pow((k - .48) / .52, 2);
       g.setAttribute('transform', 'translate(' + (a.cx + dx/len*reach*p) + ',' + (a.cy + dy/len*reach*p) + ')');
       if(k < 1) requestAnimationFrame(frame);
       else { g.setAttribute('transform', 'translate(' + a.cx + ',' + a.cy + ')'); }
     }
     requestAnimationFrame(frame);
-    setTimeout(then, 150);   // hit lands at the top of the lunge
+    setTimeout(then, dur * .3 + hold);   // the blow lands at the top of the lunge
   }
 
   function doAttack(att, def){
@@ -1342,11 +1425,11 @@
               setTimeout(function(){
                 killIfDead(att, def);
                 finishAction(att);
-              }, 340);
+              }, 260);
             });
-          }, 190);
-        } else setTimeout(function(){ finishAction(att); }, 300);
-      }, 300);
+          }, 150);
+        } else setTimeout(function(){ finishAction(att); }, 230);
+      }, 240);
     });
   }
 
@@ -1371,10 +1454,10 @@
             if(f.hp <= 0) return;
             faceToward(u, f.x, f.y); placeFigure(u, true);
             strike(u, f, { scale:.8, noFlank:true });
-            setTimeout(function(){ killIfDead(f, u); }, 320);
-          }, i * 240);
+            setTimeout(function(){ killIfDead(f, u); }, 260);
+          }, i * 190);
         });
-        setTimeout(function(){ finishAction(u); }, foes.length * 240 + 620);
+        setTimeout(function(){ finishAction(u); }, foes.length * 190 + 500);
       });
     } else if(sk.kind === 'blast'){
       var area = B.units.filter(function(o){
@@ -1388,20 +1471,20 @@
           strike(u, f, { scale:f === target ? .95 : .6, noFlank:true, ignoreHigh:true });
           killIfDead(f, u);
         });
-        setTimeout(function(){ finishAction(u); }, 520);
+        setTimeout(function(){ finishAction(u); }, 420);
       }, 420);
     } else if(sk.kind === 'snipe'){
       faceToward(u, target.x, target.y); placeFigure(u, true);
       arrowFx(u, target);
       setTimeout(function(){
         strike(u, target, { ignoreHigh:true, forceCrit:true, scale:.85 });
-        setTimeout(function(){ killIfDead(target, u); finishAction(u); }, 420);
+        setTimeout(function(){ killIfDead(target, u); finishAction(u); }, 340);
       }, 300);
     } else {
       u.extraMove = true;
       lunge(u, target, function(){
         strike(u, target, { scale:.9 });
-        setTimeout(function(){ killIfDead(target, u); finishAction(u); }, 420);
+        setTimeout(function(){ killIfDead(target, u); finishAction(u); }, 340);
       });
     }
   }
@@ -1447,11 +1530,7 @@
     $('actName').textContent = 'A0' + G.stage + ' / ' + ACTS[Math.min(ACTS.length-1, G.stage-1)];
     $('gridLabel').textContent = 'GRID ' + pad2(GRID) + '\u00d7' + pad2(GRID);
     $('turnNum').textContent = pad2(B.turn);
-    var tt = $('turnTicks');
-    if(tt.childElementCount !== MAX_ROUNDS * 2){
-      tt.innerHTML = '';
-      for(var q = 0; q < MAX_ROUNDS * 2; q++) tt.appendChild(document.createElement('i'));
-    }
+    $('holdNum').textContent = B.hold[1] + ':' + B.hold[2];
 
     var u = B.sel || B.inspect;
     if(u && u.hp > 0){
@@ -1659,6 +1738,11 @@
     $('zoomInBtn').onclick = function(){ CAM.zoom = Math.min(MAX_ZOOM, CAM.zoom*1.35); applyCam(); };
     $('zoomOutBtn').onclick = function(){ CAM.zoom = Math.max(MIN_ZOOM, CAM.zoom/1.35); applyCam(); };
     $('camHomeBtn').onclick = function(){ CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy; applyCam(); };
+    $('threatBtn').onclick = function(){
+      B.showThreat = !B.showThreat;
+      $('threatBtn').classList.toggle('off', !B.showThreat);
+      setMode(B.mode);
+    };
     $('rotLBtn').onclick = function(){ rotate(-1); };
     $('rotRBtn').onclick = function(){ rotate(1); };
     window.addEventListener('resize', function(){ sizeBoardBox(); applyCam(); });
@@ -1688,7 +1772,8 @@
 
   function startStage(){
     B = { tiles:buildBoard(G.stage), units:[], round:1, turn:1, phase:1, sel:null, inspect:null,
-          mode:'idle', moved:false, busy:false, veil:false, origin:null, dmg:{1:0,2:0} };
+          mode:'idle', moved:false, busy:false, veil:false, origin:null,
+          dmg:{1:0,2:0}, hold:{1:0,2:0}, showThreat:true };
     B.units = makeUnits(1, P1_START).concat(makeUnits(2, P2_START));
     show('battle');
     ROT = 0;
@@ -1719,7 +1804,9 @@
       cx += (mid.cx - cx) * .25; cy += (mid.cy - cy) * .25;
       // fill the frame rather than fit every unit: the camera follows the flow
       // from here, and the side strip already shows the whole force
-      CAM.zoom = Math.min(MAX_ZOOM, Math.max(1, fillZoom()));
+      // close enough that plates are comfortable to hit, wide enough that the
+      // shape of the fight still reads; the overview key covers the rest
+      CAM.zoom = 1.35;
       CAM.cx = cx; CAM.cy = cy; applyCam();
     }
     $('veilEyebrow').textContent = 'ROUND ' + B.round + ' / ' + MAX_ROUNDS;
@@ -1746,9 +1833,24 @@
     if(left.length) return;
     B.turn += 1;
     if(B.phase === 1){ B.phase = 2; openVeil(); return; }
+    scoreKeep();
     B.phase = 1; B.round += 1;
     if(B.round > MAX_ROUNDS){ finishStage('rounds'); return; }
     openVeil();
+  }
+
+  // Holding the keep at the close of a round is worth as much as a body: it gives
+  // both sides a reason to come forward instead of trading from range.
+  function scoreKeep(){
+    B.units.forEach(function(u){
+      if(u.hp <= 0) return;
+      var t = tileAt(u.x, u.y);
+      if(t && t.keep){
+        B.hold[u.side] += 1;
+        popText(u, 'HOLD +1', 'info');
+      }
+    });
+    updateHud();
   }
 
   function checkEnd(){
@@ -1759,7 +1861,7 @@
   }
 
   function finishStage(reason){
-    var h1 = teamHp(1), h2 = teamHp(2);
+    var h1 = teamHp(1) + B.hold[1] * KEEP_POINT, h2 = teamHp(2) + B.hold[2] * KEEP_POINT;
     var winner = 0, tie = '';
     if(h1 !== h2) winner = h1 > h2 ? 1 : 2;
     else if(aliveCount(1) !== aliveCount(2)){ winner = aliveCount(1) > aliveCount(2) ? 1 : 2; tie = '生存数'; }
@@ -1789,7 +1891,8 @@
       $('resultEyebrow').textContent = 'STAGE ' + G.stage + ' / ' + STAGES;
       title.textContent = winner === 0 ? 'STAGE DRAW' : 'P' + winner + ' CAPTURED';
       $('resultSub').innerHTML = (reason === 'wipe' ? '全滅' : 'ラウンド終了') +
-        (tie ? '（' + tie + 'で判定）' : '') + ' — 残HP P1:' + h1 + ' / P2:' + h2 +
+        (tie ? '（' + tie + 'で判定）' : '') + '<br>スコア P1:' + h1 + ' / P2:' + h2 +
+        '（拠点 ' + B.hold[1] + ':' + B.hold[2] + '）' +
         '<br>倒れた仲間は傷を負って次ステージへ';
       $('resultBtn').textContent = 'Next Stage';
       $('resultBtn').onclick = function(){
