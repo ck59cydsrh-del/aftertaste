@@ -6,272 +6,238 @@
 <title>ALTITUDE 01</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
 <style>
-  /* One committed look: a dark theatre around a lit battlefield, the way tactics
-     games frame their boards. Light falls from the upper left, everywhere. */
+  /* One ink on one substrate. Every tone below is dithering, never a grey. */
   :root{
-    --void:#0e1013; --frame:#232a33; --frame-hi:#39434f;
-    --ink:#ece7da; --ink-dim:#9aa3ae; --ink-faint:#626b77;
-
-    --p1:#5b9bd5; --p1-hi:#cfe4f7;
-    --p2:#c9564b; --p2-hi:#f3bdb2;
-    --gold:#e0a33f; --gold-hi:#f7dc9a;
-    --blood:#e2504a; --heal:#6fbf85;
-
-    --font-display:'Cinzel','Hiragino Mincho ProN',serif;
+    --paper:#FAFAF7; --ink:#30343A;
     --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',monospace;
     --font-body:'Noto Sans JP','Hiragino Sans',sans-serif;
-    --jelly:cubic-bezier(.34,1.56,.64,1);
-    --ease:cubic-bezier(.22,.61,.36,1);
+    --rail:22px;
   }
-
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{
-    height:100%; margin:0; overflow:hidden; background:var(--void); color:var(--ink);
-    font-family:var(--font-body); touch-action:manipulation;
+    height:100%; margin:0; overflow:hidden; background:var(--ink); color:var(--ink);
+    font-family:var(--font-mono); touch-action:manipulation;
     -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; overscroll-behavior:none;
+    font-variant-numeric:tabular-nums;
   }
-  #app{ position:fixed; inset:0; background:radial-gradient(125% 85% at 50% 4%, #1c222b 0%, #0e1013 68%); }
+  #app{ position:fixed; inset:0; background:var(--ink); }
   .screen{ position:fixed; inset:0; display:flex; flex-direction:column; overflow-y:auto; scrollbar-width:none; }
   .screen::-webkit-scrollbar{ display:none; }
   .hidden{ display:none !important; }
   button{ font-family:inherit; -webkit-appearance:none; appearance:none; color:inherit; }
 
-  .eyebrow{ font-family:var(--font-mono); font-size:.58rem; letter-spacing:.22em;
-    color:var(--ink-faint); text-transform:uppercase; }
-  .plate{ position:relative; background:linear-gradient(180deg,#1b212a,#12171d);
-    border:1px solid var(--frame-hi); border-radius:3px;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 6px 18px rgba(0,0,0,.55); }
-  .btn{ background:linear-gradient(180deg,#2c3541,#1a2028); border:1px solid var(--frame-hi);
-    border-radius:3px; padding:13px 26px; font-family:var(--font-mono); font-weight:700;
-    font-size:.8rem; letter-spacing:.14em; text-transform:uppercase;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 3px 0 #0b0e12; }
-  .btn:active{ transform:translateY(2px); box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 1px 0 #0b0e12; }
-  .btn.gold{ background:linear-gradient(180deg,#d0982f,#8a5f1c); border-color:var(--gold-hi);
-    color:#1a1206; text-shadow:0 1px 0 rgba(255,255,255,.3); }
-  .btn:disabled{ opacity:.35; }
+  /* ---------- instrument grammar ---------- */
+  .mod{ background:var(--paper); border:1.5px solid var(--ink); position:relative; }
+  .mod.clip{ clip-path:polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px)); }
+  .screws{ position:absolute; inset:3px; pointer-events:none; }
+  .screws i{ position:absolute; width:3px; height:3px; background:var(--ink); }
+  .screws i:nth-child(1){ left:0; top:0; } .screws i:nth-child(2){ right:0; top:0; }
+  .screws i:nth-child(3){ left:0; bottom:0; } .screws i:nth-child(4){ right:0; bottom:0; }
+  .micro{ font-size:.5rem; letter-spacing:.22em; text-transform:uppercase; }
+  .hair{ height:1px; background:var(--ink); opacity:.55; }
+  .ticks{ display:flex; gap:2px; }
+  .ticks i{ width:1px; height:4px; background:var(--ink); }
+  .ticks i:nth-child(5n+1){ height:7px; }
+
+  .key{ display:flex; align-items:center; gap:6px; padding:0 8px; height:26px; width:100%;
+    background:var(--paper); border:1.5px solid var(--ink); font-size:.66rem; font-weight:700;
+    letter-spacing:.14em; text-align:left; }
+  .key .cur{ width:7px; opacity:0; }
+  .key.on{ background:var(--ink); color:var(--paper); }
+  .key.on .cur{ opacity:1; }
+  .key:disabled{ opacity:.28; }
+  .key:not(:disabled):active{ background:var(--ink); color:var(--paper); }
+
+  .seg{ display:flex; gap:2px; height:9px; flex:1; }
+  .seg i{ flex:1; border:1px solid var(--ink); background:var(--paper); }
+  .seg i.f{ background:var(--ink); }
+  .lamps{ display:flex; gap:4px; }
+  .lamps i{ width:9px; height:9px; border:1.5px solid var(--ink); background:var(--paper); }
+  .lamps i.on{ background:var(--ink); box-shadow:inset 0 0 0 2px var(--paper); }
+  .lamps i.dead{ opacity:.25; }
+
+  .big-num{ font-family:var(--font-mono); font-weight:700; font-size:2.1rem; line-height:.9;
+    letter-spacing:.02em; }
+
+  .btn{ background:var(--paper); border:1.5px solid var(--ink); color:var(--ink);
+    padding:12px 26px; font-weight:700; font-size:.76rem; letter-spacing:.2em; text-transform:uppercase; }
+  .btn:active{ background:var(--ink); color:var(--paper); }
+  .btn.solid{ background:var(--ink); color:var(--paper); }
+  .btn.solid:active{ background:var(--paper); color:var(--ink); }
+
+  /* ---------- header rail ---------- */
+  .rail{ display:flex; align-items:center; gap:8px; height:var(--rail); padding:0 6px;
+    background:var(--paper); border-bottom:1.5px solid var(--ink); flex:none; }
+  .rail .glyph{ width:13px; height:13px; border:1.5px solid var(--ink); flex:none; position:relative; }
+  .rail .glyph::after{ content:''; position:absolute; inset:2.5px; background:var(--ink); }
+  .rail .name{ font-size:.6rem; font-weight:700; letter-spacing:.18em; white-space:nowrap; }
+  .rail .fill{ flex:1; height:1px; background:var(--ink); opacity:.5; position:relative; }
+  .rail .fill::before, .rail .fill::after{ content:''; position:absolute; top:-3px; width:1px; height:7px; background:var(--ink); }
+  .rail .fill::before{ left:33%; } .rail .fill::after{ left:66%; }
+  .rail .grid{ font-size:.55rem; letter-spacing:.16em; white-space:nowrap; }
 
   /* ---------- title ---------- */
-  #screen-title{ align-items:center; justify-content:center; gap:20px; padding:30px 22px; text-align:center; }
-  .crest{ width:74px; height:74px; }
-  #screen-title h1{ font-family:var(--font-display); font-weight:700; font-size:2rem;
-    letter-spacing:.16em; margin:0; color:var(--gold-hi);
-    text-shadow:0 2px 0 #6b4a12, 0 0 26px rgba(224,163,63,.3); }
-  .subtitle{ font-family:var(--font-mono); font-size:.6rem; letter-spacing:.28em;
-    color:var(--ink-faint); text-transform:uppercase; }
-  .rules{ font-size:.76rem; line-height:2; color:var(--ink-dim); max-width:330px;
-    padding:15px 17px; text-align:left; }
-  .rules b{ color:var(--gold-hi); font-weight:700; }
-  .rules .row{ display:flex; gap:9px; }
-  .rules .row + .row{ margin-top:5px; }
-  .rules .bullet{ color:var(--gold); flex:none; }
+  #screen-title{ align-items:center; justify-content:center; gap:16px; padding:26px 18px;
+    text-align:center; background:var(--ink); color:var(--paper); }
+  #screen-title h1{ font-weight:700; font-size:2rem; letter-spacing:.42em; margin:0 0 0 .42em; }
+  #screen-title .sub{ font-size:.52rem; letter-spacing:.34em; opacity:.7; }
+  .title-plate{ background:var(--paper); color:var(--ink); border:1.5px solid var(--paper);
+    padding:14px 15px; max-width:340px; text-align:left; }
+  .title-plate .row{ display:flex; gap:8px; font-size:.62rem; line-height:1.75;
+    font-family:var(--font-body); letter-spacing:0; }
+  .title-plate .row + .row{ margin-top:7px; padding-top:7px; border-top:1px solid var(--ink); }
+  .title-plate .n{ font-family:var(--font-mono); font-weight:700; font-size:.58rem; flex:none; }
+  .title-plate b{ font-weight:700; }
 
   /* ---------- handoff ---------- */
-  #screen-handoff{ align-items:center; justify-content:center; gap:18px; padding:26px; text-align:center; }
-  .seal{ width:120px; height:120px; }
-  #screen-handoff h2{ font-family:var(--font-display); font-size:1.5rem; margin:0; letter-spacing:.1em; }
-  #screen-handoff p{ color:var(--ink-dim); margin:0; font-size:.8rem; line-height:1.8; }
+  #screen-handoff{ align-items:center; justify-content:center; gap:16px; padding:24px;
+    text-align:center; background:var(--ink); color:var(--paper); }
+  #screen-handoff h2{ font-size:1.2rem; margin:0; letter-spacing:.24em; }
+  #screen-handoff p{ font-size:.64rem; letter-spacing:.1em; opacity:.75; margin:0; line-height:2;
+    font-family:var(--font-body); }
+  .seal{ width:132px; height:132px; }
 
   /* ---------- upgrade ---------- */
-  #screen-upgrade{ padding:16px 14px 20px; gap:12px; justify-content:center; }
-  .topbar{ display:flex; align-items:baseline; justify-content:space-between; gap:10px;
-    padding-bottom:9px; border-bottom:1px solid var(--frame); }
-  .turn-label{ font-family:var(--font-display); font-weight:700; font-size:1.08rem; letter-spacing:.05em; }
-  .roster-row{ display:flex; gap:6px; }
-  .roster-card{ flex:1; min-width:0; padding:8px 4px 7px; text-align:center; }
-  .roster-card.gone{ opacity:.32; }
-  .roster-card .rc-art{ height:40px; }
-  .roster-card .u-name{ font-weight:700; font-size:.68rem; margin-top:2px; }
-  .roster-card .u-stats{ font-family:var(--font-mono); font-size:.54rem; color:var(--ink-dim); line-height:1.5; }
-  .roster-card .scar{ color:var(--blood); font-size:.52rem; font-family:var(--font-mono); }
-  .upgrade-list{ display:flex; flex-direction:column; gap:9px; }
-  .upgrade-card{ padding:13px 14px; display:flex; align-items:center; gap:12px; text-align:left; width:100%; }
-  .upgrade-card .uc-icon{ width:30px; height:30px; flex:none; }
-  .upgrade-card > span{ flex:1; min-width:0; }
-  .upgrade-card .u-title{ display:block; font-weight:700; font-size:.9rem; }
-  .upgrade-card .u-desc{ display:block; font-family:var(--font-mono); font-size:.64rem;
-    color:var(--ink-dim); margin-top:3px; }
-  .upgrade-card:active{ border-color:var(--gold); background:linear-gradient(180deg,#2a2417,#1a1610); }
+  #screen-upgrade{ background:var(--ink); color:var(--paper); padding:0; gap:0; }
+  .up-body{ flex:1; display:flex; flex-direction:column; gap:9px; padding:11px 10px 16px; justify-content:center; }
+  .roster-row{ display:flex; gap:5px; }
+  .roster-card{ flex:1; min-width:0; padding:6px 3px 5px; text-align:center; }
+  .roster-card.gone .rc-art{ opacity:.25; }
+  .roster-card .rc-art{ height:38px; }
+  .roster-card .u-name{ font-family:var(--font-body); font-weight:700; font-size:.62rem; margin-top:1px; }
+  .roster-card .u-stats{ font-size:.48rem; letter-spacing:.02em; line-height:1.5; }
+  .roster-card .scar{ font-size:.46rem; letter-spacing:.08em; }
+  .upgrade-list{ display:flex; flex-direction:column; gap:7px; }
+  .upgrade-card{ display:flex; align-items:center; gap:10px; padding:10px 11px; width:100%; text-align:left; }
+  .upgrade-card .uc-icon{ width:26px; height:26px; flex:none; }
+  .upgrade-card .u-title{ display:block; font-family:var(--font-body); font-weight:700; font-size:.82rem; }
+  .upgrade-card .u-desc{ display:block; font-size:.56rem; letter-spacing:.04em; margin-top:3px; }
+  .upgrade-card:active{ background:var(--ink); color:var(--paper); }
 
   /* ---------- battle ---------- */
-  #screen-battle{ padding:0; gap:0; }
-  .act-banner{ position:relative; padding:7px 12px 6px; text-align:center;
-    background:linear-gradient(180deg,#1c222b,#12161c); border-bottom:1px solid var(--frame); }
-  .act-banner .act-name{ font-family:var(--font-display); font-weight:700; font-size:.86rem;
-    letter-spacing:.14em; color:var(--gold-hi); }
-  .act-banner .act-sub{ font-family:var(--font-mono); font-size:.55rem; letter-spacing:.18em; color:var(--ink-faint); }
-  .side-strip{ display:flex; gap:6px; padding:6px 8px; background:#101419; border-bottom:1px solid var(--frame); }
-  .side-block{ flex:1; display:flex; align-items:center; gap:6px; padding:4px 7px;
-    border:1px solid var(--frame); border-radius:3px; background:#161b22; min-width:0; }
-  .side-block.act{ border-color:var(--gold); box-shadow:0 0 0 1px rgba(224,163,63,.35), inset 0 0 12px rgba(224,163,63,.12); }
-  .side-block .sb-name{ font-family:var(--font-mono); font-weight:700; font-size:.6rem; flex:none; }
-  .side-block.p1 .sb-name{ color:var(--p1-hi); }
-  .side-block.p2 .sb-name{ color:var(--p2-hi); }
-  .sb-pips{ display:flex; gap:3px; flex:1; }
-  .sb-pip{ flex:1; height:9px; border:1px solid var(--frame-hi); border-radius:1px; background:#0d1116; position:relative; overflow:hidden; }
-  .sb-pip i{ position:absolute; inset:0; display:block; transform-origin:left center; }
-  .side-block.p1 .sb-pip i{ background:linear-gradient(180deg,var(--p1-hi),var(--p1)); }
-  .side-block.p2 .sb-pip i{ background:linear-gradient(180deg,var(--p2-hi),var(--p2)); }
-  .sb-pip.dead{ opacity:.3; }
-  .sb-wins{ font-family:var(--font-mono); font-size:.58rem; color:var(--gold); flex:none; }
-
-  .board-wrap{ position:relative; flex:1 1 auto; min-height:0; overflow:hidden;
-    background:radial-gradient(80% 60% at 50% 38%, #222932 0%, #0d1013 78%); }
+  #screen-battle{ padding:0; gap:0; background:var(--ink); }
+  .board-wrap{ position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:var(--ink); }
   .board-stage{ position:absolute; inset:0; touch-action:none; }
-  .board-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none; }
-  .board-wrap.shake .board-stage{ animation:shake .3s var(--ease); }
-  @keyframes shake{
-    0%{ transform:translate(0,0); } 20%{ transform:translate(-5px,3px); }
-    40%{ transform:translate(4px,-3px); } 60%{ transform:translate(-3px,-2px); }
-    80%{ transform:translate(2px,2px); } 100%{ transform:translate(0,0); } }
+  .board-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none;
+    shape-rendering:crispEdges; }
+  .board-svg .tile-tag{ font-family:var(--font-mono); font-size:6px; font-weight:700;
+    letter-spacing:.08em; fill:var(--ink); text-anchor:middle; opacity:.75; }
+  .board-wrap.shake .board-stage{ animation:shake .26s steps(4,end); }
+  @keyframes shake{ 0%{ transform:translate(0,0);} 25%{ transform:translate(-4px,3px);}
+    50%{ transform:translate(4px,-2px);} 75%{ transform:translate(-2px,-3px);} 100%{ transform:translate(0,0);} }
 
-  /* scene animation */
-  .fig{ transition:opacity .25s linear; }
-  .ghost polygon{ animation:pul 1.4s ease-in-out infinite; }
+  .fig.hit .fig-in{ animation:jhit .3s steps(3,end); }
+  .fig.crithit .fig-in{ animation:jcrit .38s steps(4,end); }
+  .fig.dying{ animation:die .4s steps(4,end) forwards; transform-box:fill-box; transform-origin:50% 100%; }
+  .fig.sel .fig-in{ animation:bob .8s steps(2,end) infinite; }
   .fig-in{ transform-box:fill-box; transform-origin:50% 100%; }
-  .fig.hit .fig-in{ animation:jhit .34s var(--jelly); }
-  .fig.crithit .fig-in{ animation:jcrit .42s var(--jelly); }
-  .fig.dying{ animation:die .42s ease-in forwards; transform-box:fill-box; transform-origin:50% 100%; }
-  .fig.sel .fig-in{ animation:bob 1.1s ease-in-out infinite; }
-  @keyframes jhit{ 0%{ transform:scale(1,1); } 30%{ transform:scale(1.3,.72) translateY(2px); }
-    62%{ transform:scale(.86,1.16); } 100%{ transform:scale(1,1); } }
-  @keyframes jcrit{ 0%{ transform:scale(1,1); filter:brightness(4); }
-    26%{ transform:scale(1.45,.62) translateY(3px); filter:brightness(3); }
-    60%{ transform:scale(.8,1.24); filter:brightness(1); } 100%{ transform:scale(1,1); } }
-  @keyframes die{ to{ opacity:0; transform:scale(.7) translateY(8px) rotate(-12deg); } }
-  @keyframes bob{ 0%,100%{ transform:translateY(0) scale(1,1); } 50%{ transform:translateY(-2.2px) scale(.98,1.02); } }
-  .ov .ring, .board-svg .ring{ animation:spin 7s linear infinite; }
-  @keyframes spin{ to{ stroke-dashoffset:-40; } }
-  .board-svg .pulse{ animation:pul 1s ease-in-out infinite; }
-  @keyframes pul{ 0%,100%{ opacity:1; } 50%{ opacity:.28; } }
-  .flame{ transform-box:fill-box; transform-origin:50% 100%; animation:flick .42s steps(2,end) infinite alternate; }
-  @keyframes flick{ from{ transform:scale(1,1); } to{ transform:scale(.84,1.14) translateX(.4px); } }
-  .blast circle{ animation:blast .6s var(--ease) forwards; transform-box:fill-box; transform-origin:50% 50%; }
-  @keyframes blast{ from{ transform:scale(.2); opacity:1; } to{ transform:scale(1.5); opacity:0; } }
-  .arrow{ animation:arrow .35s linear forwards; }
-  @keyframes arrow{ from{ opacity:1; stroke-dasharray:6 200; stroke-dashoffset:200; } to{ opacity:.15; stroke-dashoffset:0; } }
+  @keyframes jhit{ 0%{ transform:scale(1,1);} 34%{ transform:scale(1.24,.78) translateY(2px);}
+    67%{ transform:scale(.9,1.12);} 100%{ transform:scale(1,1);} }
+  @keyframes jcrit{ 0%{ transform:scale(1,1);} 25%{ transform:scale(1.4,.66) translateY(3px);}
+    60%{ transform:scale(.84,1.2);} 100%{ transform:scale(1,1);} }
+  @keyframes die{ to{ opacity:0; transform:scale(.6) translateY(6px); } }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-2px);} }
+  .board-svg .pulse{ animation:pul .7s steps(2,end) infinite; }
+  @keyframes pul{ 0%,100%{ opacity:1;} 50%{ opacity:.15;} }
+  .board-svg .ring{ animation:march 1.6s linear infinite; }
+  @keyframes march{ to{ stroke-dashoffset:-16; } }
+  .path-dot{ animation:dotin .3s steps(2,end) backwards; }
+  @keyframes dotin{ from{ opacity:0; } }
 
-  /* camera controls */
-  .tool-row{ display:flex; align-items:center; gap:5px; padding:4px 8px;
-    background:#0d1116; border-bottom:1px solid var(--frame); }
-  .tool-hint{ flex:1; font-family:var(--font-mono); font-size:.5rem; letter-spacing:.06em; color:var(--ink-faint); }
-  .cam-btn{ width:30px; height:26px; display:flex; align-items:center; justify-content:center; flex:none;
-    border:1px solid var(--frame-hi); border-radius:3px; background:#1a2028;
-    font-family:var(--font-mono); font-weight:700; font-size:.78rem; }
-  .cam-btn:active{ background:var(--gold); color:#16100a; }
+  .cam-row{ display:flex; align-items:center; gap:4px; padding:3px 6px; background:var(--paper);
+    border-bottom:1.5px solid var(--ink); flex:none; }
+  .cam-row .hint{ flex:1; font-size:.46rem; letter-spacing:.1em; opacity:.7; }
+  .cam-btn{ width:29px; height:20px; display:flex; align-items:center; justify-content:center; flex:none;
+    border:1.5px solid var(--ink); background:var(--paper); font-size:.68rem; font-weight:700; }
+  .cam-btn:active{ background:var(--ink); color:var(--paper); }
 
-  /* floating labels over the board */
-  .dmg-pop{ position:absolute; transform:translate(-50%,-100%); font-family:var(--font-display);
-    font-weight:700; font-size:1.05rem; z-index:7; pointer-events:none; white-space:nowrap;
-    text-shadow:0 2px 0 #000, 0 0 12px rgba(0,0,0,.9); animation:dmgfly 1s var(--jelly) forwards; }
-  .dmg-pop.heal{ color:var(--heal); } .dmg-pop.hurt{ color:var(--blood); }
-  .dmg-pop.crit{ color:var(--gold-hi); font-size:1.35rem; }
-  .dmg-pop.info{ color:var(--ink); font-family:var(--font-body); font-size:.76rem; font-weight:700; }
-  @keyframes dmgfly{ 0%{ opacity:0; transform:translate(-50%,-90%) scale(.5); }
-    22%{ opacity:1; transform:translate(-50%,-150%) scale(1.18); }
-    38%{ transform:translate(-50%,-140%) scale(1); }
-    100%{ opacity:0; transform:translate(-50%,-215%) scale(.95); } }
+  /* floating readouts over the board */
+  .dmg-pop{ position:absolute; transform:translate(-50%,-100%); z-index:7; pointer-events:none;
+    font-weight:700; font-size:1rem; letter-spacing:.04em; white-space:nowrap;
+    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:1px 5px;
+    animation:dmgfly .95s steps(6,end) forwards; }
+  .dmg-pop.crit{ background:var(--ink); color:var(--paper); font-size:1.15rem; }
+  .dmg-pop.info{ font-size:.6rem; font-family:var(--font-body); }
+  @keyframes dmgfly{ 0%{ opacity:0; transform:translate(-50%,-88%);} 20%{ opacity:1; transform:translate(-50%,-150%);}
+    100%{ opacity:0; transform:translate(-50%,-210%);} }
 
-  .roll-pop{ position:absolute; left:50%; top:10%; transform:translateX(-50%); z-index:9;
-    pointer-events:none; display:flex; align-items:center; gap:8px; padding:6px 13px;
-    background:rgba(10,13,17,.92); border:1px solid var(--gold); border-radius:3px;
-    font-family:var(--font-mono); font-size:.62rem; letter-spacing:.06em; white-space:nowrap;
-    animation:rollin .3s var(--jelly); }
-  .roll-pop .die{ font-size:1.25rem; line-height:1; color:var(--gold-hi); }
-  @keyframes rollin{ from{ opacity:0; transform:translateX(-50%) translateY(-9px) scale(.8); } }
+  .roll-pop{ position:absolute; left:50%; top:8px; transform:translateX(-50%); z-index:9;
+    pointer-events:none; display:flex; align-items:stretch; background:var(--paper);
+    border:1.5px solid var(--ink); font-size:.56rem; letter-spacing:.1em; white-space:nowrap; }
+  .roll-pop .die{ display:flex; align-items:center; padding:3px 6px; background:var(--ink);
+    color:var(--paper); font-size:.8rem; font-weight:700; }
+  .roll-pop .txt{ display:flex; align-items:center; padding:3px 8px; }
 
-  .kill-banner{ position:absolute; left:50%; top:26%; transform:translateX(-50%); z-index:9;
-    pointer-events:none; padding:7px 20px; background:rgba(10,13,17,.94);
-    border-top:1px solid var(--blood); border-bottom:1px solid var(--blood);
-    font-family:var(--font-display); font-weight:700; font-size:.9rem; letter-spacing:.12em;
-    white-space:nowrap; animation:killpop 1.5s var(--ease) forwards; }
-  @keyframes killpop{ 0%{ opacity:0; transform:translateX(-50%) scaleX(.5); }
-    14%{ opacity:1; transform:translateX(-50%) scaleX(1); }
-    80%{ opacity:1; } 100%{ opacity:0; } }
-
-  /* ---------- bottom command deck ---------- */
-  .deck{ display:flex; gap:7px; padding:7px 8px 9px; background:linear-gradient(180deg,#141920,#0e1218);
-    border-top:1px solid var(--frame); align-items:stretch; min-height:92px; }
-  .unit-card{ flex:1; display:flex; gap:9px; padding:7px 9px; min-width:0; }
-  .unit-card .uc-portrait{ width:44px; height:52px; flex:none; border:1px solid var(--frame-hi);
-    border-radius:2px; background:#0d1116; }
-  .unit-card .uc-body{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; justify-content:center; }
-  .uc-top{ display:flex; align-items:baseline; gap:6px; }
-  .uc-name{ font-weight:700; font-size:.82rem; }
-  .uc-job{ font-family:var(--font-mono); font-size:.55rem; color:var(--ink-faint); letter-spacing:.1em; }
-  .uc-bar{ height:8px; border:1px solid var(--frame-hi); border-radius:1px; background:#0d1116;
-    overflow:hidden; position:relative; }
-  .uc-bar i{ display:block; height:100%; background:linear-gradient(180deg,#8fd6a2,var(--heal));
-    transition:width .35s var(--ease); }
-  .uc-bar.low i{ background:linear-gradient(180deg,#f0958e,var(--blood)); }
-  .uc-nums{ display:flex; gap:8px; font-family:var(--font-mono); font-size:.54rem;
-    color:var(--ink-faint); white-space:nowrap; overflow:hidden; }
-  .uc-nums span{ display:flex; align-items:baseline; gap:3px; }
-  .uc-nums b{ color:var(--ink); font-size:.68rem; }
-  .uc-hint{ font-family:var(--font-mono); font-size:.56rem; color:var(--gold); letter-spacing:.04em; }
-
-  .cmd{ width:104px; flex:none; display:flex; flex-direction:column; padding:4px; gap:2px; }
-  .cmd button{ flex:1; display:flex; align-items:center; gap:5px; padding:0 7px;
-    background:linear-gradient(180deg,rgba(255,255,255,.045),transparent);
-    border:none; border-bottom:1px solid rgba(255,255,255,.05); border-radius:2px;
-    font-family:var(--font-body); font-weight:700; font-size:.74rem; letter-spacing:.06em; text-align:left; }
-  .cmd button:last-child{ border-bottom:none; }
-  .cmd button .ck{ width:12px; opacity:0; color:var(--gold); }
-  .cmd button:not(:disabled):active{ background:var(--gold); color:#16100a; }
-  .cmd button:not(:disabled):active .ck{ opacity:1; color:#16100a; }
-  .cmd button:disabled{ color:var(--ink-faint); }
-  .cmd button.on{ background:rgba(224,163,63,.16); color:var(--gold-hi); }
-  .cmd button.on .ck{ opacity:1; }
+  .kill-banner{ position:absolute; left:50%; top:24%; transform:translateX(-50%); z-index:9;
+    pointer-events:none; padding:4px 16px; background:var(--ink); color:var(--paper);
+    font-weight:700; font-size:.72rem; letter-spacing:.2em; white-space:nowrap;
+    animation:killpop 1.4s steps(8,end) forwards; }
+  @keyframes killpop{ 0%{ opacity:0; } 10%{ opacity:1; } 82%{ opacity:1; } 100%{ opacity:0; } }
 
   .phase-veil{ position:absolute; inset:0; z-index:12; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:14px; text-align:center; padding:22px;
-    background:rgba(8,10,13,.93); backdrop-filter:blur(3px); }
-  .phase-veil h3{ font-family:var(--font-display); font-size:1.4rem; margin:0; letter-spacing:.08em; }
-  .phase-veil h3.p1{ color:var(--p1-hi); } .phase-veil h3.p2{ color:var(--p2-hi); }
-  .phase-veil p{ margin:0; font-size:.76rem; color:var(--ink-dim); line-height:1.8; }
-  .legend{ display:flex; flex-wrap:wrap; gap:5px 11px; justify-content:center;
-    font-family:var(--font-mono); font-size:.56rem; color:var(--ink-faint); max-width:310px; }
-  .legend b{ color:var(--gold); }
+    align-items:center; justify-content:center; gap:13px; text-align:center; padding:20px;
+    background:var(--ink); color:var(--paper); }
+  .phase-veil h3{ font-size:1.1rem; margin:0; letter-spacing:.3em; }
+  .phase-veil .who{ display:inline-block; padding:3px 14px; background:var(--paper); color:var(--ink);
+    font-weight:700; letter-spacing:.24em; font-size:.7rem; }
+  .phase-veil p{ margin:0; font-size:.6rem; letter-spacing:.08em; opacity:.75; font-family:var(--font-body); }
+  .legend{ display:grid; grid-template-columns:repeat(2,auto); gap:4px 14px; justify-content:center;
+    font-size:.5rem; letter-spacing:.06em; opacity:.85; }
+  .legend b{ display:inline-block; min-width:26px; }
+
+  /* ---------- bottom deck ---------- */
+  .deck{ display:flex; gap:6px; padding:6px; background:var(--ink); flex:none; align-items:stretch; }
+  .cluster{ flex:1; min-width:0; padding:6px 8px; display:flex; flex-direction:column; gap:5px; }
+  .cl-top{ display:flex; align-items:center; gap:7px; }
+  .cl-port{ width:30px; height:34px; flex:none; border:1.5px solid var(--ink); }
+  .cl-id{ flex:1; min-width:0; }
+  .cl-name{ font-family:var(--font-body); font-weight:700; font-size:.74rem; line-height:1.1; }
+  .cl-job{ font-size:.46rem; letter-spacing:.2em; }
+  .cl-lv{ font-size:.5rem; letter-spacing:.14em; font-weight:700; flex:none; }
+  .cl-bar{ display:flex; align-items:center; gap:6px; }
+  .cl-bar .lab{ font-size:.5rem; letter-spacing:.12em; width:38px; flex:none; font-weight:700; }
+  .cl-stats{ display:flex; gap:8px; font-size:.5rem; letter-spacing:.06em; }
+  .cl-stats b{ font-size:.62rem; }
+  .cl-hint{ font-size:.48rem; letter-spacing:.06em; font-family:var(--font-body); }
+
+  .cmd{ width:104px; flex:none; padding:5px; display:flex; flex-direction:column; gap:3px; }
+  .cmd .cmd-h{ display:flex; align-items:center; justify-content:space-between; font-size:.48rem;
+    letter-spacing:.18em; font-weight:700; margin-bottom:1px; }
+
+  .turnbox{ width:60px; flex:none; padding:5px 4px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:2px; }
+  .turnbox .big-num{ font-size:1.6rem; }
+  .turnbox .micro{ font-size:.44rem; }
 
   /* ---------- result ---------- */
-  #screen-result{ align-items:center; justify-content:center; gap:15px; padding:28px 22px; text-align:center; }
-  .result-title{ font-family:var(--font-display); font-weight:700; font-size:1.5rem; letter-spacing:.06em;
-    padding:11px 20px; border-top:2px solid currentColor; border-bottom:2px solid currentColor;
-    word-break:keep-all; line-break:strict; text-wrap:balance; }
-  .result-title.p1{ color:var(--p1-hi); } .result-title.p2{ color:var(--p2-hi); }
-  .result-title.draw{ color:var(--ink-dim); }
-  .result-sub{ font-family:var(--font-mono); font-size:.68rem; color:var(--ink-dim); line-height:2; }
-  .tally{ display:flex; gap:22px; font-family:var(--font-mono); }
+  #screen-result{ align-items:center; justify-content:center; gap:14px; padding:26px 20px;
+    text-align:center; background:var(--ink); color:var(--paper); }
+  .result-title{ background:var(--paper); color:var(--ink); padding:9px 20px; font-weight:700;
+    font-size:1.15rem; letter-spacing:.22em; }
+  .tally{ display:flex; align-items:center; gap:16px; }
   .tally .t-col{ text-align:center; }
-  .tally .t-n{ font-family:var(--font-display); font-size:1.7rem; font-weight:700; }
-  .tally .t-col.p1 .t-n{ color:var(--p1-hi); } .tally .t-col.p2 .t-n{ color:var(--p2-hi); }
+  .tally .t-n{ font-size:1.9rem; font-weight:700; line-height:1; }
+  .tally .t-sep{ font-size:.6rem; opacity:.6; letter-spacing:.2em; }
+  .result-sub{ font-size:.58rem; letter-spacing:.08em; line-height:2.1; font-family:var(--font-body); }
 
-  /* Held sideways there is almost no height to spare, so the panels move beside
-     the board and it takes the full column. */
   @media (orientation:landscape) and (max-height:560px){
     #screen-battle{ display:grid;
-      grid-template-columns:minmax(0,1fr) 238px;
+      grid-template-columns:minmax(0,1fr) 240px;
       grid-template-rows:auto auto minmax(0,1fr);
-      grid-template-areas:"banner strip" "board tools" "board deck"; }
-    .act-banner{ grid-area:banner; padding:4px 10px 3px; }
-    .act-banner .act-name{ font-size:.72rem; }
-    .side-strip{ grid-area:strip; border-left:1px solid var(--frame); }
-    .tool-row{ grid-area:tools; border-left:1px solid var(--frame); }
-    .tool-hint{ display:none; }
+      grid-template-areas:"rail cam" "board cam2" "board deck"; }
+    .rail{ grid-area:rail; } .cam-row{ grid-area:cam; border-left:1.5px solid var(--ink); }
     .board-wrap{ grid-area:board; }
-    .deck{ grid-area:deck; flex-direction:column; min-height:0; border-left:1px solid var(--frame);
-      border-top:none; }
-    .unit-card{ flex:0 0 auto; }
-    .unit-card .uc-portrait{ width:38px; height:46px; }
-    .cmd{ width:auto; flex:1 1 auto; min-height:112px; }
-    #screen-title{ gap:12px; padding:16px; }
+    .deck{ grid-area:deck; flex-direction:column; }
+    .cam-row .hint{ display:none; }
+    .cmd{ width:auto; } .turnbox{ width:auto; flex-direction:row; gap:8px; }
+    #screen-title{ gap:10px; padding:14px; }
     #screen-title h1{ font-size:1.5rem; }
-    .rules{ max-width:470px; font-size:.68rem; line-height:1.7; }
-    .rules .row + .row{ margin-top:2px; }
-    #screen-handoff{ gap:10px; }
-    .seal{ width:80px; height:80px; }
-    #screen-upgrade{ padding:10px 16px; gap:8px; max-width:660px; margin:0 auto; }
-    .roster-card .rc-art{ height:32px; }
-    .upgrade-card{ padding:9px 12px; }
+    .title-plate{ max-width:520px; }
+    .title-plate .row{ font-size:.58rem; line-height:1.5; }
+    .title-plate .row + .row{ margin-top:4px; padding-top:4px; }
+    .seal{ width:78px; height:78px; }
+    .up-body{ max-width:620px; margin:0 auto; }
+    .roster-card .rc-art{ height:30px; }
   }
 </style>
 </head>
@@ -280,123 +246,129 @@
 
   <!-- TITLE -->
   <div id="screen-title" class="screen">
-    <svg class="crest" viewBox="0 0 64 64" aria-hidden="true">
-      <path d="M32 4 L56 14 L56 34 Q56 52 32 60 Q8 52 8 34 L8 14 Z" fill="#161c24" stroke="#e0a33f" stroke-width="2"/>
-      <path d="M32 10 L50 18 L50 34 Q50 47 32 54 Q14 47 14 34 L14 18 Z" fill="none" stroke="#8a5f1c" stroke-width="1"/>
-      <path d="M18 40 L28 26 L34 34 L40 22 L48 40 Z" fill="#5b9bd5"/>
-      <path d="M18 40 L28 26 L32 31 L32 40 Z" fill="#c9564b"/>
-      <circle cx="32" cy="19" r="3" fill="#f7dc9a"/>
-    </svg>
+    <svg class="seal" viewBox="0 0 100 100" aria-hidden="true" id="titleMark"></svg>
     <div>
       <h1>ALTITUDE</h1>
-      <div class="subtitle">Two Players · One Device · Five Minutes</div>
+      <div class="sub">TACTICAL SKIRMISH · 2P · 1 DEVICE</div>
     </div>
-    <div class="rules plate">
-      <div class="row"><span class="bullet">◆</span><span>スマホ1台を渡し合う<b>手動タクティクス</b>。全3ステージのランで先に2勝</span></div>
-      <div class="row"><span class="bullet">◆</span><span>コマンドは<b>移動 / 攻撃 / 特技 / 待機</b>。1体ずつ動かして相手に渡す</span></div>
-      <div class="row"><span class="bullet">◆</span><span><b>高所</b>から殴ると強い。<b>側面+25% / 背後+50%</b>の不意打ちも狙える</span></div>
-      <div class="row"><span class="bullet">◆</span><span>段差は<b>跳躍力</b>まで。ダイスの出目で威力が振れ、6は<b>会心</b></span></div>
-      <div class="row"><span class="bullet">◆</span><span>倒れた仲間は<b>傷</b>を負って復帰。ステージ前に強化を1つ選ぶ</span></div>
+    <div class="title-plate">
+      <div class="row"><span class="n">01</span><span>スマホ1台を渡し合う<b>手動タクティクス</b>。全3ステージのランで先に2勝</span></div>
+      <div class="row"><span class="n">02</span><span>コマンドは<b>MOVE / ATK / SKILL / WAIT</b>。1体ずつ動かして相手に渡す</span></div>
+      <div class="row"><span class="n">03</span><span><b>高所+30% / 側面+25% / 背後+50%</b>。行動後は最寄りの敵を向く</span></div>
+      <div class="row"><span class="n">04</span><span>段差は<b>跳躍力</b>まで。ダイスの出目で威力が振れ、6は<b>会心</b></span></div>
+      <div class="row"><span class="n">05</span><span>特技は<b>MP</b>を消費。倒れた仲間は<b>傷</b>を負って復帰</span></div>
     </div>
-    <button class="btn gold" id="titleStartBtn">Start Run</button>
+    <button class="btn" id="titleStartBtn">Start Run</button>
   </div>
 
   <!-- HANDOFF -->
   <div id="screen-handoff" class="screen hidden">
-    <div class="eyebrow" id="handoffEyebrow">Pass the device</div>
+    <div class="micro" id="handoffEyebrow">PASS THE DEVICE</div>
     <svg class="seal" id="handoffSeal" viewBox="0 0 100 100" aria-hidden="true"></svg>
-    <h2 id="handoffTitle">プレイヤー1</h2>
+    <h2 id="handoffTitle">PLAYER 1</h2>
     <p id="handoffSub">相手に見られないように受け取ってください</p>
-    <button class="btn gold" id="handoffBtn">確認した</button>
+    <button class="btn" id="handoffBtn">Confirm</button>
   </div>
 
   <!-- UPGRADE -->
   <div id="screen-upgrade" class="screen hidden">
-    <div class="topbar">
-      <div class="turn-label" id="upgradeTurnLabel">プレイヤー1 の編成</div>
-      <div class="eyebrow" id="upgradeStage">Stage 1 / 3</div>
+    <div class="rail">
+      <span class="glyph"></span>
+      <span class="name" id="upgradeTurnLabel">P1 / OUTFIT</span>
+      <span class="fill"></span>
+      <span class="grid" id="upgradeStage">STAGE 1/3</span>
+      <span class="glyph"></span>
     </div>
-    <div class="eyebrow">Your Company</div>
-    <div class="roster-row" id="rosterRow"></div>
-    <div class="eyebrow">強化を1つ選ぶ</div>
-    <div class="upgrade-list" id="upgradeList"></div>
+    <div class="up-body">
+      <div class="micro">COMPANY</div>
+      <div class="roster-row" id="rosterRow"></div>
+      <div class="micro">SELECT ONE UPGRADE</div>
+      <div class="upgrade-list" id="upgradeList"></div>
+    </div>
   </div>
 
   <!-- BATTLE -->
   <div id="screen-battle" class="screen hidden">
-    <div class="act-banner">
-      <div class="act-name" id="actName">1ST ACT — THE HIGH KEEP</div>
-      <div class="act-sub" id="actSub">ROUND 1 / 3</div>
+    <div class="rail">
+      <span class="glyph"></span>
+      <span class="name" id="actName">A01 / PALE CITADEL</span>
+      <span class="fill"></span>
+      <span class="grid" id="gridLabel">GRID 08×08</span>
+      <span class="glyph"></span>
     </div>
-    <div class="side-strip">
-      <div class="side-block p1" id="sideP1"><span class="sb-name">P1</span><span class="sb-pips"></span><span class="sb-wins">0</span></div>
-      <div class="side-block p2" id="sideP2"><span class="sb-wins">0</span><span class="sb-pips"></span><span class="sb-name">P2</span></div>
-    </div>
-    <div class="tool-row">
-      <span class="tool-hint">ドラッグで視点移動 · ピンチで拡大</span>
-      <button class="cam-btn" id="rotLBtn" aria-label="左に回転">↺</button>
-      <button class="cam-btn" id="rotRBtn" aria-label="右に回転">↻</button>
-      <button class="cam-btn" id="zoomOutBtn" aria-label="ズームアウト">−</button>
+    <div class="cam-row">
+      <span class="hint">DRAG · PINCH · ROTATE</span>
+      <button class="cam-btn" id="rotLBtn" aria-label="左に回転">&#8634;</button>
+      <button class="cam-btn" id="rotRBtn" aria-label="右に回転">&#8635;</button>
+      <button class="cam-btn" id="zoomOutBtn" aria-label="ズームアウト">&minus;</button>
       <button class="cam-btn" id="zoomInBtn" aria-label="ズームイン">+</button>
-      <button class="cam-btn" id="camHomeBtn" aria-label="全体表示">⤢</button>
+      <button class="cam-btn" id="camHomeBtn" aria-label="全体表示">&#10530;</button>
     </div>
     <div class="board-wrap" id="boardWrap">
       <div class="board-stage" id="boardStage">
         <svg class="board-svg" id="boardSvg" preserveAspectRatio="xMidYMid slice">
-          <defs id="boardDefs">
-            <radialGradient id="stageGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#5d6d7d" stop-opacity=".34"/>
-              <stop offset="55%" stop-color="#33404d" stop-opacity=".16"/>
-              <stop offset="100%" stop-color="#0d1013" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
+          <defs id="boardDefs"></defs>
           <g id="sceneLayer"></g>
         </svg>
       </div>
       <div class="phase-veil hidden" id="phaseVeil">
-        <div class="eyebrow" id="veilEyebrow">Round 1</div>
-        <h3 id="veilTitle">プレイヤー1 のフェーズ</h3>
-        <p id="veilSub">スマホを渡してタップ</p>
+        <div class="micro" id="veilEyebrow">ROUND 1 / 3</div>
+        <div class="who" id="veilTitle">PLAYER 1</div>
+        <h3>PHASE</h3>
+        <p id="veilSub">スマホを渡してから始めてください</p>
         <div class="legend">
-          <span><b>宝</b> ATK+2</span><span><b>泉</b> HP回復</span><span><b>罠</b> ダメージ</span>
-          <span><b>▲</b> 高所 +30%</span><span>側面 +25%</span><span>背後 +50%</span>
+          <span><b>&#9650;</b> 高所 +30%</span><span><b>SIDE</b> 側面 +25%</span>
+          <span><b>BACK</b> 背後 +50%</span><span><b>&#9670;</b> 補給 HP+</span>
+          <span><b>&#9633;</b> 物資 ATK+2</span><span><b>&#9587;</b> 罠 HP-6</span>
         </div>
-        <button class="btn gold" id="veilStartBtn">Begin Phase</button>
+        <button class="btn" id="veilStartBtn">Begin Phase</button>
       </div>
     </div>
     <div class="deck">
-      <div class="unit-card plate" id="unitCard">
-        <svg class="uc-portrait" id="ucPortrait" viewBox="0 0 44 52"></svg>
-        <div class="uc-body">
-          <div class="uc-top"><span class="uc-name" id="ucName">ユニットを選択</span><span class="uc-job" id="ucJob"></span></div>
-          <div class="uc-bar" id="ucBar"><i style="width:100%"></i></div>
-          <div class="uc-nums" id="ucNums"></div>
-          <div class="uc-hint" id="ucHint">自軍をタップして選択</div>
+      <div class="cluster mod clip" id="unitCard">
+        <span class="screws"><i></i><i></i><i></i><i></i></span>
+        <div class="cl-top">
+          <svg class="cl-port" id="ucPortrait" viewBox="0 0 30 34"></svg>
+          <span class="cl-id">
+            <span class="cl-name" id="ucName">NO UNIT</span>
+            <span class="cl-job" id="ucJob">SELECT ONE</span>
+          </span>
+          <span class="cl-lv" id="ucLv">LV 01</span>
         </div>
+        <div class="cl-bar"><span class="lab">HP <span id="ucHpN">00</span></span><span class="seg" id="ucHp"></span></div>
+        <div class="cl-bar"><span class="lab">MP <span id="ucMpN">00</span></span><span class="seg" id="ucMp"></span></div>
+        <div class="cl-stats" id="ucNums"></div>
+        <div class="cl-hint" id="ucHint">自軍をタップして選択</div>
       </div>
-      <div class="cmd plate" id="cmdMenu">
-        <button id="cmdMove"><span class="ck">▸</span>移動</button>
-        <button id="cmdAttack"><span class="ck">▸</span>攻撃</button>
-        <button id="cmdSkill"><span class="ck">▸</span>特技</button>
-        <button id="cmdWait"><span class="ck">▸</span>待機</button>
+      <div class="cmd mod clip" id="cmdMenu">
+        <div class="cmd-h"><span id="cmdLabel">CMD 00</span><span class="lamps" id="cmdLamps"></span></div>
+        <button class="key" id="cmdMove"><span class="cur">&#9656;</span>1 MOVE</button>
+        <button class="key" id="cmdAttack"><span class="cur">&#9656;</span>2 ATK</button>
+        <button class="key" id="cmdSkill"><span class="cur">&#9656;</span>3 SKILL</button>
+        <button class="key" id="cmdWait"><span class="cur">&#9656;</span>4 WAIT</button>
+      </div>
+      <div class="turnbox mod clip">
+        <span class="screws"><i></i><i></i><i></i><i></i></span>
+        <span class="big-num" id="turnNum">01</span>
+        <span class="micro">TURN</span>
+        <span class="ticks" id="turnTicks"></span>
       </div>
     </div>
   </div>
 
   <!-- RESULT -->
   <div id="screen-result" class="screen hidden">
-    <div class="eyebrow" id="resultEyebrow">Stage Result</div>
-    <div class="result-title" id="resultTitle">プレイヤー1の勝利</div>
+    <div class="micro" id="resultEyebrow">STAGE RESULT</div>
+    <div class="result-title" id="resultTitle">P1 CAPTURED</div>
     <div class="tally">
-      <div class="t-col p1"><div class="eyebrow">Player 1</div><div class="t-n" id="tallyP1">0</div></div>
-      <div class="t-col"><div class="eyebrow">Stages</div><div class="t-n">—</div></div>
-      <div class="t-col p2"><div class="eyebrow">Player 2</div><div class="t-n" id="tallyP2">0</div></div>
+      <div class="t-col"><div class="micro">P1</div><div class="t-n" id="tallyP1">0</div></div>
+      <div class="t-col"><div class="t-sep">STAGES</div></div>
+      <div class="t-col"><div class="micro">P2</div><div class="t-n" id="tallyP2">0</div></div>
     </div>
     <div class="result-sub" id="resultSub"></div>
-    <button class="btn gold" id="resultBtn">つぎへ</button>
+    <button class="btn" id="resultBtn">Next</button>
   </div>
 </div>
-
 <script>
 (function(){
   'use strict';
@@ -410,23 +382,23 @@
 
   // ================= config =================
   var JOBS = {
-    knight:{ name:'重騎士', job:'KNIGHT', hp:30, atk:6, range:1, move:3, jump:2,
-      skill:{ name:'薙ぎ払い', desc:'隣接する敵すべてに攻撃', kind:'cleave' } },
-    mage:{ name:'魔術師', job:'MAGE', hp:18, atk:9, range:3, move:3, jump:1,
-      skill:{ name:'業火', desc:'着弾点と その隣接マスを焼く', kind:'blast', rng:3 } },
-    archer:{ name:'狙撃手', job:'ARCHER', hp:22, atk:6, range:4, move:3, jump:1,
-      skill:{ name:'頭上狙い', desc:'高所無視・射程+1で必ず会心', kind:'snipe', rng:5 } },
-    scout:{ name:'斥候', job:'SCOUT', hp:20, atk:6, range:1, move:5, jump:3,
-      skill:{ name:'影走り', desc:'攻撃後にもう一度動ける', kind:'dash' } }
+    knight:{ name:'重騎士', job:'KNIGHT', hp:30, mp:6, atk:6, range:1, move:3, jump:2,
+      skill:{ name:'薙ぎ払い', tag:'CLEAVE', cost:4, desc:'隣接する敵すべてに攻撃', kind:'cleave' } },
+    mage:{ name:'魔術師', job:'MAGE', hp:18, mp:10, atk:9, range:3, move:3, jump:1,
+      skill:{ name:'業火', tag:'BLAST', cost:5, desc:'着弾点とその隣接マスを焼く', kind:'blast', rng:3 } },
+    archer:{ name:'狙撃手', job:'ARCHER', hp:22, mp:8, atk:6, range:4, move:3, jump:1,
+      skill:{ name:'頭上狙い', tag:'SNIPE', cost:4, desc:'高所無視・射程+1で必ず会心', kind:'snipe', rng:5 } },
+    scout:{ name:'斥候', job:'SCOUT', hp:20, mp:8, atk:6, range:1, move:5, jump:3,
+      skill:{ name:'影走り', tag:'DASH', cost:3, desc:'攻撃後にもう一度動ける', kind:'dash' } }
   };
   var JOB_KEYS = ['knight','mage','archer','scout'];
 
-  var GRID = 8, TW = 34, TH = 19, EH = 13;   // 2:1-ish diamond, blocks a little shorter
+  var GRID = 8, TW = 32, TH = 16, EH = 12;   // exact 2:1 dimetric
   var STAGES = 3, WINS_NEEDED = 2, MAX_ROUNDS = 3;
   var HIGH_BONUS = 0.30, FLANK_SIDE = 0.25, FLANK_BACK = 0.50, COUNTER_RATE = 0.65;
   var SCAR_HP = 5, MIN_HP = 8;
   var DIE = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
-  var ACTS = ['1ST ACT — THE HIGH KEEP','2ND ACT — THE BROKEN SPAN','3RD ACT — ASHES AT DAWN'];
+  var ACTS = ['PALE CITADEL','BROKEN SPAN','ASH TERRACE'];
 
   var TILE_FX = {
     chest:{ mark:'宝', tone:'gold', apply:function(u){ u.atk += 2; return { text:'宝箱 ATK+2', cls:'info' }; } },
@@ -441,6 +413,7 @@
     { icon:'sword', title:'刃を研ぐ', desc:'全員 ATK +2', apply:function(p){ p.bonusAtk += 2; } },
     { icon:'boot', title:'軽装行軍', desc:'全員 移動 +1', apply:function(p){ p.bonusMove += 1; } },
     { icon:'die', title:'幸運の賽', desc:'ダイスの出目 +1', apply:function(p){ p.dice += 1; } },
+    { icon:'spark', title:'蓄気', desc:'全員 最大MP +4', apply:function(p){ p.bonusMp += 4; } },
     { icon:'peak', title:'高所の心得', desc:'高所ダメージ +25%', apply:function(p){ p.high += 0.25; } },
     { icon:'dagger', title:'背後の作法', desc:'側面・背後ダメージ +20%', apply:function(p){ p.flank += 0.20; } },
     { icon:'boot', title:'岩場の足場', desc:'全員 跳躍力 +1', apply:function(p){ p.bonusJump += 1; } },
@@ -469,8 +442,8 @@
   var uid = 1, G = null, B = null;
 
   function newPlayer(){
-    return { squad:JOB_KEYS.slice(), scars:{}, bonusHp:0, bonusAtk:0, bonusMove:0, bonusJump:0,
-             dice:0, high:0, flank:0, guard:0, wins:0, margin:0 };
+    return { squad:JOB_KEYS.slice(), scars:{}, levels:{}, bonusHp:0, bonusMp:0, bonusAtk:0,
+             bonusMove:0, bonusJump:0, dice:0, high:0, flank:0, guard:0, wins:0, margin:0 };
   }
   function maxHpFor(p, job){ return JOBS[job].hp + p.bonusHp - SCAR_HP * (p.scars[job] || 0); }
 
@@ -558,68 +531,122 @@
     return { left:s.x - r.left, top:s.y - r.top };
   }
 
-  // ================= palette =================
-  var PAL = {
-    top:'#bcc1ae', topAlt:'#b1b7a4', topHigh:'#c8cdb9', topMoss:'#8fa07a', topMossAlt:'#88996f',
-    left:'#79806f', right:'#545c58', lip:'#d8dcc9', ao:'#0b0e11',
-    steel:'#b9bfc7', steelDark:'#767e88', leather:'#6b5942', leatherDark:'#463a2c',
-    ivory:'#ded7c5', dark:'#171b20', gold:'#e0a33f', goldHi:'#f7dc9a',
-    water:'#4a7fa8', waterHi:'#9fd0e8', flame:'#f0a63c', flameHi:'#ffe6a8',
-    heal:'#6fbf85', blood:'#e2504a'
-  };
-  var SIDE_COL = {
-    1:{ main:'#5b9bd5', dark:'#2f5f8f', hi:'#cfe4f7' },
-    2:{ main:'#c9564b', dark:'#7d2e29', hi:'#f3bdb2' }
-  };
-  function hash(x, y){ var h = (x*374761393 + y*668265263) ^ 0x5bf03635; h = (h ^ (h>>13)) * 1274126177; return ((h ^ (h>>16)) >>> 0) / 4294967296; }
 
-  // ================= terrain art =================
-  // Light is fixed at the upper left: top face brightest, left face mid, right
-  // face darkest, with a bright lip along the lit edges to read the silhouette.
+  // ================= one-ink palette =================
+  // Two colours only. Every tone is a dither pattern, never a grey.
+  var PAPER = '#FAFAF7', INK = '#30343A';
+  var DITHER = [
+    { id:'d12', dots:[[0,0],[2,2]] },
+    { id:'d25', dots:[[0,0],[2,2],[2,0],[0,2]] },
+    { id:'d50', dots:[[0,0],[1,1],[2,2],[3,3],[2,0],[3,1],[0,2],[1,3]] },
+    { id:'d75', dots:[[0,0],[1,0],[2,0],[0,1],[1,1],[3,1],[0,2],[2,2],[3,2],[1,3],[2,3],[3,3]] }
+  ];
+  function buildDefs(){
+    var defs = $('boardDefs');
+    defs.innerHTML = '';
+    DITHER.forEach(function(d){
+      var p = el('pattern', { id:d.id, width:4, height:4, patternUnits:'userSpaceOnUse' });
+      p.appendChild(el('rect', { width:4, height:4, fill:PAPER }));
+      d.dots.forEach(function(c){
+        p.appendChild(el('rect', { x:c[0], y:c[1], width:1, height:1, fill:INK }));
+      });
+      defs.appendChild(p);
+    });
+    var hz = el('pattern', { id:'hatch', width:4, height:4, patternUnits:'userSpaceOnUse' });
+    hz.appendChild(el('rect', { width:4, height:4, fill:PAPER }));
+    hz.appendChild(el('path', { d:'M0 4 L4 0 M-1 1 L1 -1 M3 5 L5 3', stroke:INK, 'stroke-width':1 }));
+    defs.appendChild(hz);
+  }
+  // a stable per-tile seed, so the plate detailing is the same every render
+  function hash(x, y){
+    var h = (x*374761393 + y*668265263) ^ 0x5bf03635;
+    h = (h ^ (h >> 13)) * 1274126177;
+    return ((h ^ (h >> 16)) >>> 0) / 4294967296;
+  }
+  var COL = 'ABCDEFGH';
+
+  // ================= terrain =================
   function tileNode(t){
-    var g = el('g', { 'data-tile':t.x + ',' + t.y });
+    var g = el('g', {});
     var c = iso(t.x, t.y, t.e), h = t.e * EH;
-    var checker = ((t.x + t.y) % 2) === 1;
+    var lit = ((t.x + t.y) % 2) === 0;
 
     if(h > 0){
       var b = iso(t.x, t.y, 0);
-      g.appendChild(el('ellipse', { cx:b.cx, cy:b.cy + TH/2 - 1, rx:TW/2 * .92, ry:TH/2 * .8,
-        fill:PAL.ao, opacity:.34 }));
+      // left face catches the light, right face turns away: dither, never grey
       g.appendChild(el('polygon', { points:
         (c.cx-TW/2)+','+c.cy + ' ' + c.cx+','+(c.cy+TH/2) + ' ' +
         b.cx+','+(b.cy+TH/2) + ' ' + (b.cx-TW/2)+','+b.cy,
-        fill:PAL.left }));
+        fill:'url(#d12)', stroke:INK, 'stroke-width':1 }));
       g.appendChild(el('polygon', { points:
         c.cx+','+(c.cy+TH/2) + ' ' + (c.cx+TW/2)+','+c.cy + ' ' +
         (b.cx+TW/2)+','+b.cy + ' ' + b.cx+','+(b.cy+TH/2),
-        fill:PAL.right }));
-      // a stone course line so tall blocks do not read as flat slabs
-      for(var s = EH; s < h - 2; s += EH){
+        fill:'url(#d25)', stroke:INK, 'stroke-width':1 }));
+      for(var s = EH; s < h - 1; s += EH){
         g.appendChild(el('path', { d:'M' + (c.cx-TW/2) + ' ' + (c.cy+s) + ' L' + c.cx + ' ' + (c.cy+TH/2+s) +
-          ' L' + (c.cx+TW/2) + ' ' + (c.cy+s), fill:'none', stroke:PAL.ao, 'stroke-width':.6, opacity:.4 }));
+          ' L' + (c.cx+TW/2) + ' ' + (c.cy+s), fill:'none', stroke:INK, 'stroke-width':1 }));
+      }
+      // access-panel seam on the lit face
+      if(hash(t.x*2, t.y*3) > .55){
+        g.appendChild(el('rect', { x:c.cx - TW/2 + 4, y:c.cy + 5, width:6, height:h - 8,
+          fill:'none', stroke:INK, 'stroke-width':1 }));
       }
     }
 
-    var fill = t.e > 0 ? (checker ? PAL.topHigh : PAL.top)
-             : (t.moss ? (checker ? PAL.topMoss : PAL.topMossAlt) : (checker ? PAL.top : PAL.topAlt));
-    g.appendChild(el('polygon', { points:diamond(c.cx, c.cy), fill:fill,
-      stroke:PAL.ao, 'stroke-width':.35, 'stroke-opacity':.5 }));
-    g.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy-TH/2) + ' L' + (c.cx-TW/2) + ' ' + c.cy,
-      stroke:PAL.lip, 'stroke-width':.9, fill:'none', opacity:.75 }));
+    g.appendChild(el('polygon', { points:diamond(c.cx, c.cy), fill:PAPER,
+      stroke:INK, 'stroke-width':1 }));
 
-    // speckles and cracks, seeded per tile so the ground is never uniform
-    var r = hash(t.x, t.y), n = Math.floor(r * 4);
-    for(var i = 0; i < n; i++){
-      var a = hash(t.x + i*7, t.y - i*3), b2 = hash(t.x - i*5, t.y + i*11);
-      var ox = (a - .5) * TW * .55, oy = (b2 - .5) * TH * .5;
-      if(Math.abs(ox)/(TW/2) + Math.abs(oy)/(TH/2) > .78) continue;
-      g.appendChild(el('rect', { x:c.cx + ox, y:c.cy + oy, width:1.4, height:1,
-        fill:PAL.ao, opacity:.2 + a * .18 }));
+    // The citadel is a slab floating in a chasm: where the board simply ends,
+    // show its thickness and let the stone weep down into the black.
+    var vme = view(t.x, t.y);
+    [[1,0],[0,1],[-1,0],[0,-1]].forEach(function(d){
+      var nx = t.x + d[0], ny = t.y + d[1];
+      if(nx >= 0 && nx < GRID && ny >= 0 && ny < GRID) return;
+      var vn = view(nx, ny);
+      var right = (vn.x === vme.x + 1 && vn.y === vme.y);
+      var left = (vn.y === vme.y + 1 && vn.x === vme.x);
+      if(!right && !left) return;
+      var b = { cx:c.cx, cy:c.cy + h };
+      var depthPx = 15;
+      if(left){
+        g.appendChild(el('polygon', { points:
+          (b.cx-TW/2)+','+b.cy + ' ' + b.cx+','+(b.cy+TH/2) + ' ' +
+          b.cx+','+(b.cy+TH/2+depthPx) + ' ' + (b.cx-TW/2)+','+(b.cy+depthPx),
+          fill:'url(#d12)', stroke:INK, 'stroke-width':1 }));
+      } else {
+        g.appendChild(el('polygon', { points:
+          b.cx+','+(b.cy+TH/2) + ' ' + (b.cx+TW/2)+','+b.cy + ' ' +
+          (b.cx+TW/2)+','+(b.cy+depthPx) + ' ' + b.cx+','+(b.cy+TH/2+depthPx),
+          fill:'url(#d50)', stroke:INK, 'stroke-width':1 }));
+      }
+      for(var k = 0; k < 6; k++){
+        var f = (k + .5) / 6;
+        var dx = left ? (-TW/2 + f*TW/2) : (f*TW/2);
+        var dy = left ? (f*TH/2) : (TH/2 - f*TH/2);
+        var len = 3 + hash(t.x*13 + k, t.y*17 + d[0]) * 12;
+        g.appendChild(el('rect', { x:b.cx + dx, y:b.cy + dy + depthPx - 1,
+          width:1.4, height:len, fill:INK }));
+      }
+    });
+
+    var r = hash(t.x, t.y);
+    // screw heads at the plate corners
+    if(r > .34){
+      [[-TW/2 + 4, 0], [TW/2 - 4, 0]].forEach(function(o){
+        g.appendChild(el('rect', { x:c.cx + o[0] - 1, y:c.cy + o[1] - 1, width:2, height:2, fill:INK }));
+      });
     }
-    if(r > .82){
-      g.appendChild(el('path', { d:'M' + (c.cx - TW*.22) + ' ' + (c.cy + TH*.08) +
-        ' l' + (TW*.16) + ' ' + (-TH*.12) + ' l' + (TW*.14) + ' ' + (TH*.14),
-        fill:'none', stroke:PAL.ao, 'stroke-width':.5, opacity:.3 }));
+    // calibration ticks and slot vents, sparse enough to stay a floor
+    if(r > .78){
+      for(var i = 0; i < 4; i++){
+        g.appendChild(el('rect', { x:c.cx - 7 + i*3.4, y:c.cy - 4, width:1.4, height:3, fill:INK }));
+      }
+    }
+    // a few plates carry their grid reference, like a real instrument face
+    if(t.label){
+      var tx = el('text', { x:c.cx, y:c.cy + 4.6, class:'tile-tag' });
+      tx.textContent = COL[t.x] + (t.y + 1);
+      g.appendChild(tx);
     }
     return g;
   }
@@ -628,110 +655,121 @@
     var c = iso(t.x, t.y, t.e);
     var g = el('g', {});
     if(t.fx === 'chest'){
-      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy + 1.5, rx:7, ry:3, fill:PAL.ao, opacity:.4 }));
-      g.appendChild(el('path', { d:'M' + (c.cx-7) + ' ' + (c.cy-1) + ' l7 -3.6 l7 3.6 l-7 3.6 z', fill:PAL.leather }));
-      g.appendChild(el('path', { d:'M' + (c.cx-7) + ' ' + (c.cy-1) + ' l0 -4 l7 -3.6 l0 4 z', fill:'#7d6a4f' }));
-      g.appendChild(el('path', { d:'M' + (c.cx) + ' ' + (c.cy-4.6) + ' l7 -3.6 l0 4 l-7 3.6 z', fill:PAL.leatherDark }));
-      g.appendChild(el('path', { d:'M' + (c.cx-3.4) + ' ' + (c.cy-6.7) + ' l7 -3.6 l0 4 l-7 3.6 z', fill:PAL.gold, opacity:.9 }));
+      // supply crate as a squared access module
+      g.appendChild(el('path', { d:'M' + (c.cx-8) + ' ' + (c.cy-1) + ' l8 -4 l8 4 l-8 4 z',
+        fill:PAPER, stroke:INK, 'stroke-width':1 }));
+      g.appendChild(el('path', { d:'M' + (c.cx-8) + ' ' + (c.cy-1) + ' l0 -5 l8 -4 l0 5 z',
+        fill:PAPER, stroke:INK, 'stroke-width':1 }));
+      g.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy-5) + ' l8 -4 l0 5 l-8 4 z',
+        fill:'url(#d50)', stroke:INK, 'stroke-width':1 }));
+      g.appendChild(el('rect', { x:c.cx-5.6, y:c.cy-7.4, width:3, height:3, fill:INK }));
     } else if(t.fx === 'spring'){
-      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy, rx:TW*.3, ry:TH*.3, fill:PAL.water }));
-      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy - .6, rx:TW*.19, ry:TH*.19, fill:'none',
-        stroke:PAL.waterHi, 'stroke-width':.9, opacity:.85 }));
-      g.appendChild(el('ellipse', { cx:c.cx - 2, cy:c.cy - 1.6, rx:2.4, ry:1.1, fill:PAL.waterHi, opacity:.7 }));
-    } else if(t.fx === 'trap'){
-      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .62), fill:'#14100f' }));
-      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .62), fill:'none',
-        stroke:'#8d3b36', 'stroke-width':.9 }));
-      for(var i = 0; i < 4; i++){
-        var ax = c.cx + (i - 1.5) * 3.6, ay = c.cy + ((i % 2) ? 1.6 : -1.2);
-        g.appendChild(el('path', { d:'M' + (ax-1.5) + ' ' + (ay+1.4) + ' l1.5 -5 l1.5 5 z',
-          fill:PAL.steel }));
-        g.appendChild(el('path', { d:'M' + ax + ' ' + (ay-3.6) + ' l1.5 5 l-1.5 0 z', fill:PAL.steelDark }));
+      // the dry fountain, rebuilt as a circular grille
+      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy, rx:TW*.34, ry:TH*.34,
+        fill:PAPER, stroke:INK, 'stroke-width':1 }));
+      for(var ry = -2; ry <= 2; ry++){
+        for(var rx = -3; rx <= 3; rx++){
+          var px = c.cx + rx*3, py = c.cy + ry*2.2;
+          if(Math.pow((px-c.cx)/(TW*.28),2) + Math.pow((py-c.cy)/(TH*.28),2) > 1) continue;
+          g.appendChild(el('rect', { x:px-.8, y:py-.8, width:1.6, height:1.6, fill:INK }));
+        }
       }
-    } else if(t.prop === 'torch'){
-      g.appendChild(el('rect', { x:c.cx-1, y:c.cy-13, width:2, height:13, fill:PAL.leatherDark }));
-      var fl = el('g', { class:'flame' });
-      fl.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy-22) + ' q4.6 4 0 8.4 q-4.6 -4.4 0 -8.4 z', fill:PAL.flame }));
-      fl.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy-19.4) + ' q2.2 2.2 0 4.6 q-2.2 -2.4 0 -4.6 z', fill:PAL.flameHi }));
-      g.appendChild(fl);
-      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy - 15, rx:11, ry:8, fill:PAL.flame, opacity:.14 }));
-    } else if(t.prop === 'rock'){
-      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy + 1, rx:5.5, ry:2.4, fill:PAL.ao, opacity:.35 }));
-      g.appendChild(el('path', { d:'M' + (c.cx-5) + ' ' + c.cy + ' l2.2 -4.4 l4 -1.4 l3.6 2.4 l-1.4 3.4 z', fill:'#8a9186' }));
-      g.appendChild(el('path', { d:'M' + (c.cx-5) + ' ' + c.cy + ' l2.2 -4.4 l2.4 1 l-.8 3.4 z', fill:'#a6ac9f' }));
-    } else if(t.prop === 'grass'){
-      for(var k = 0; k < 3; k++){
-        var gx = c.cx + (k-1) * 3.2, gy = c.cy + (hash(t.x+k, t.y) - .5) * 3;
-        g.appendChild(el('path', { d:'M' + gx + ' ' + gy + ' q.6 -3.4 2.2 -4.6', fill:'none',
-          stroke:'#6f8256', 'stroke-width':.9, 'stroke-linecap':'round' }));
+    } else if(t.fx === 'trap'){
+      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .74), fill:'url(#hatch)',
+        stroke:INK, 'stroke-width':1 }));
+      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .38), fill:INK }));
+    } else if(t.prop === 'tower'){
+      // encoder-like tower: a clean cylinder with a single index notch
+      var top = c.cy - 26;
+      g.appendChild(el('path', { d:'M' + (c.cx-5) + ' ' + (c.cy-3) + ' L' + (c.cx-5) + ' ' + top +
+        ' L' + (c.cx+5) + ' ' + top + ' L' + (c.cx+5) + ' ' + (c.cy-3),
+        fill:PAPER, stroke:INK, 'stroke-width':1 }));
+      g.appendChild(el('path', { d:'M' + (c.cx+1) + ' ' + (c.cy-3) + ' L' + (c.cx+1) + ' ' + top +
+        ' L' + (c.cx+5) + ' ' + top + ' L' + (c.cx+5) + ' ' + (c.cy-3) + ' z',
+        fill:'url(#d25)', stroke:'none' }));
+      g.appendChild(el('ellipse', { cx:c.cx, cy:top, rx:5, ry:2.2, fill:PAPER, stroke:INK, 'stroke-width':1 }));
+      g.appendChild(el('rect', { x:c.cx-.8, y:top-3.4, width:1.6, height:4, fill:INK }));
+      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy-3, rx:5, ry:2.2, fill:PAPER, stroke:INK, 'stroke-width':1 }));
+      g.appendChild(el('rect', { x:c.cx-5, y:c.cy-13, width:10, height:1.4, fill:INK }));
+    } else if(t.prop === 'plate'){
+      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .58), fill:'url(#d25)',
+        stroke:INK, 'stroke-width':1 }));
+    } else if(t.prop === 'vent'){
+      for(var v = 0; v < 3; v++){
+        g.appendChild(el('rect', { x:c.cx-6, y:c.cy-3 + v*2.6, width:12, height:1.4, fill:INK }));
       }
     }
     return g;
   }
 
-  // ================= character figures =================
-  // Each job gets a distinct silhouette — the thing that reads first at small
-  // sizes — plus two tones of its side colour so the volume survives zooming out.
+  // ================= figures =================
+  // One ink, so the sides are separated by inversion: P1 reads as a white plate
+  // with ink linework, P2 as a solid ink silhouette with white linework.
   function figureArt(job, side){
-    var C = SIDE_COL[side], g = el('g', {});
-    function add(tag, a){ g.appendChild(el(tag, a)); return g; }
-    add('ellipse', { cx:0, cy:0, rx:8.5, ry:3.4, fill:PAL.ao, opacity:.42 });
+    var root = el('g', {});
+    var body = side === 1 ? PAPER : INK;
+    var line = side === 1 ? INK : PAPER;
+
+    // base plate sits flat on the tile and never scales with the figure
+    root.appendChild(el('polygon', { points:diamond(0, 0, .84), fill:PAPER, stroke:'none' }));
+    root.appendChild(el('polygon', { points:diamond(0, 0, .72), fill:INK, stroke:'none' }));
+    if(side === 2) root.appendChild(el('polygon', { points:diamond(0, 0, .52), fill:'none',
+      stroke:PAPER, 'stroke-width':1 }));
+
+    var g = el('g', { transform:'scale(1.22)' });
+    root.appendChild(g);
+    function add(tag, a){ a.stroke = a.stroke === undefined ? line : a.stroke;
+      if(a.fill === undefined) a.fill = body;
+      a['stroke-width'] = a['stroke-width'] || 1.4;
+      a['stroke-linejoin'] = 'round';
+      g.appendChild(el(tag, a)); return g; }
 
     if(job === 'knight'){
-      add('path', { d:'M-4 0 l1.4 -7 h5.2 l1.4 7 z', fill:PAL.steelDark });
-      add('path', { d:'M-6.4 -6.6 q0 -9.6 6.4 -9.6 q6.4 0 6.4 9.6 z', fill:C.main });
-      add('path', { d:'M0 -16.2 q6.4 0 6.4 9.6 l-6.4 0 z', fill:C.dark });
-      add('path', { d:'M-8.6 -12.4 q2.4 -3.4 4.4 -3.4 l0 4.6 q-2.6 .4 -4.4 -1.2 z', fill:PAL.steel });
-      add('path', { d:'M8.6 -12.4 q-2.4 -3.4 -4.4 -3.4 l0 4.6 q2.6 .4 4.4 -1.2 z', fill:PAL.steelDark });
-      add('path', { d:'M-4.4 -16.4 q0 -5.4 4.4 -5.4 q4.4 0 4.4 5.4 q0 2.6 -4.4 2.6 q-4.4 0 -4.4 -2.6 z', fill:PAL.steel });
-      add('path', { d:'M0 -21.8 q4.4 0 4.4 5.4 q0 2.6 -4.4 2.6 z', fill:PAL.steelDark });
-      add('rect', { class:'face', x:-4, y:-18.4, width:6.4, height:1.9, fill:PAL.dark, rx:.6 });
-      add('path', { d:'M0 -21.6 q1.6 -4.4 4.4 -5.2 q-.6 3.6 -2.6 5.6 z', fill:C.hi });
-      add('path', { class:'wep', d:'M9.4 -14.6 l2.2 0 l0 11.4 l-1.1 1.6 l-1.1 -1.6 z', fill:PAL.steel });
-      add('rect', { class:'wep', x:8.2, y:-15.6, width:4.6, height:1.5, fill:PAL.gold, rx:.4 });
+      add('path', { d:'M-4.4 -1 l1 -6.4 h6.8 l1 6.4 z' });
+      add('path', { d:'M-6.6 -7 q0 -9.4 6.6 -9.4 q6.6 0 6.6 9.4 z' });
+      add('path', { d:'M-4.6 -16.6 q0 -5 4.6 -5 q4.6 0 4.6 5 q0 2.6 -4.6 2.6 q-4.6 0 -4.6 -2.6 z' });
+      add('rect', { x:-4.2, y:-18.6, width:6.6, height:2, fill:line, stroke:'none', class:'face' });
+      add('path', { d:'M0 -21.6 l0 -4.4 l2.6 1.6 l-2.6 1.6', fill:line, stroke:'none' });
+      add('path', { d:'M6 -14.4 q5.4 0 5.4 5.4 q0 5.4 -5.4 5.4 z' });   // shield
+      add('path', { d:'M-8.4 -13.2 l-2.2 0 l0 11.4 l1.1 1.8 l1.1 -1.8 z' });  // blade
+      add('rect', { x:-11.4, y:-14.2, width:5, height:1.6 });
     } else if(job === 'mage'){
-      add('path', { d:'M-7.4 0 q1 -13.6 7.4 -13.6 q6.4 0 7.4 13.6 z', fill:C.main });
-      add('path', { d:'M0 -13.6 q6.4 0 7.4 13.6 l-7.4 0 z', fill:C.dark });
-      add('path', { d:'M-3.2 0 l.8 -9 l1.4 0 l-.6 9 z', fill:C.hi, opacity:.5 });
-      add('ellipse', { cx:0, cy:-15.6, rx:3.8, ry:4.1, fill:'#e8cba8' });
-      add('path', { class:'face', d:'M-2.6 -16.4 q2.6 1.6 5.2 0 q-.4 3.6 -2.6 3.6 q-2.2 0 -2.6 -3.6 z', fill:PAL.dark, opacity:.55 });
-      add('path', { d:'M-6.6 -17.6 q6.6 -4.2 13.2 0 q-6.6 2.6 -13.2 0 z', fill:C.dark });
-      add('path', { d:'M-4.6 -18.6 q4.6 -12.4 9 -1.2 q-4.4 2.6 -9 1.2 z', fill:C.main });
-      add('path', { d:'M0 -26.4 q3 4.6 4.4 6.8 q-2.2 1 -4.4 1 z', fill:C.dark });
-      add('path', { class:'wep', d:'M9.2 -19 l0 18.4', stroke:PAL.leather, 'stroke-width':1.6, fill:'none' });
-      add('circle', { class:'wep', cx:9.2, cy:-20.6, r:2.8, fill:PAL.gold });
-      add('circle', { class:'wep', cx:8.4, cy:-21.4, r:1.1, fill:PAL.goldHi });
+      add('path', { d:'M-7.6 -1 q1 -13.4 7.6 -13.4 q6.6 0 7.6 13.4 z' });
+      add('path', { d:'M-2.6 -1 l.8 -9.4 l1.6 0 l-.6 9.4 z', fill:line, stroke:'none' });
+      add('circle', { cx:0, cy:-16.4, r:3.8 });
+      add('rect', { x:-2.4, y:-17.4, width:4.8, height:1.6, fill:line, stroke:'none', class:'face' });
+      add('path', { d:'M-6.8 -18.4 q6.8 -3.4 13.6 0 q-6.8 2.4 -13.6 0 z' });
+      add('path', { d:'M-4.4 -19.4 q4.4 -12.6 8.8 -1 q-4.4 2.4 -8.8 1 z' });
+      add('path', { d:'M9.4 -20 l0 19' });
+      add('circle', { cx:9.4, cy:-21.8, r:2.8 });
+      add('rect', { x:8.6, y:-22.6, width:1.6, height:1.6, fill:line, stroke:'none' });
     } else if(job === 'archer'){
-      add('path', { d:'M-3.6 0 l1 -7.4 h5.2 l1 7.4 z', fill:PAL.leatherDark });
-      add('path', { d:'M-5.8 -7 q0 -9 5.8 -9 q5.8 0 5.8 9 z', fill:C.main });
-      add('path', { d:'M0 -16 q5.8 0 5.8 9 l-5.8 0 z', fill:C.dark });
-      add('path', { d:'M-6.2 -14.6 q6.2 -4.6 12.4 0 l-1.6 4 q-4.6 -2.6 -9.2 0 z', fill:PAL.leather });
-      add('ellipse', { cx:0, cy:-19, rx:3.6, ry:3.9, fill:'#e8cba8' });
-      add('path', { d:'M-4.6 -19.4 q0 -6 4.6 -6 q4.6 0 4.6 6 q-2.4 -2.6 -4.6 -2.6 q-2.2 0 -4.6 2.6 z', fill:C.dark });
-      add('path', { class:'face', d:'M-2.2 -19.6 q2.2 1 4.4 0 q-.6 2.6 -2.2 2.6 q-1.6 0 -2.2 -2.6 z', fill:PAL.dark, opacity:.5 });
-      add('path', { class:'wep', d:'M10 -22 q5 8.4 0 17', fill:'none', stroke:PAL.leather, 'stroke-width':1.5 });
-      add('path', { class:'wep', d:'M10 -22 L10 -5', stroke:PAL.ivory, 'stroke-width':.6, opacity:.85, fill:'none' });
+      add('path', { d:'M-3.8 -1 l1 -7 h5.6 l1 7 z' });
+      add('path', { d:'M-5.8 -7.6 q0 -8.8 5.8 -8.8 q5.8 0 5.8 8.8 z' });
+      add('path', { d:'M-6.4 -15 q6.4 -4.4 12.8 0 l-1.6 3.8 q-4.8 -2.4 -9.6 0 z' });
+      add('circle', { cx:0, cy:-19.4, r:3.6 });
+      add('path', { d:'M-4.6 -19.8 q0 -5.8 4.6 -5.8 q4.6 0 4.6 5.8 q-2.4 -2.4 -4.6 -2.4 q-2.2 0 -4.6 2.4 z' });
+      add('rect', { x:-2.4, y:-20.4, width:4.8, height:1.6, fill:line, stroke:'none', class:'face' });
+      add('path', { d:'M10 -23 q5.2 8.6 0 17.2', fill:'none' });
+      add('path', { d:'M10 -23 L10 -5.8', fill:'none' });
     } else {
-      add('path', { d:'M-3.4 0 l.8 -7 h4.8 l.8 7 z', fill:PAL.dark });
-      add('path', { d:'M-2.4 -14.4 q-7.6 4.4 -8.4 13.4 q4.4 -3.4 8.4 -4.6 z', fill:C.dark });
-      add('path', { d:'M-5 -7.4 q0 -8 5 -8 q5 0 5 8 z', fill:C.main });
-      add('path', { d:'M0 -15.4 q5 0 5 8 l-5 0 z', fill:C.dark });
-      add('path', { d:'M-5.2 -12.6 q5.2 -2.6 10.4 0 l0 2 q-5.2 -2 -10.4 0 z', fill:PAL.leather });
-      add('ellipse', { cx:0, cy:-18.4, rx:3.4, ry:3.7, fill:'#e8cba8' });
-      add('path', { d:'M-4.2 -19.2 q0 -5.2 4.2 -5.2 q4.2 0 4.2 5.2 z', fill:C.dark });
-      add('rect', { class:'face', x:-3.6, y:-19.4, width:7.2, height:1.8, fill:PAL.dark, rx:.6 });
-      add('path', { class:'wep', d:'M8 -12.4 l1.4 0 l0 7 l-.7 1.2 l-.7 -1.2 z', fill:PAL.steel });
+      add('path', { d:'M-3.4 -1 l.8 -6.6 h4.8 l.8 6.6 z' });
+      add('path', { d:'M-2.6 -14.6 q-8 4.6 -8.8 13.6 q4.6 -3.4 8.8 -4.6 z' });
+      add('path', { d:'M-5 -7.6 q0 -8 5 -8 q5 0 5 8 z' });
+      add('path', { d:'M-5.2 -12.8 q5.2 -2.4 10.4 0 l0 2 q-5.2 -2 -10.4 0 z' });
+      add('circle', { cx:0, cy:-18.6, r:3.4 });
+      add('path', { d:'M-4.2 -19.4 q0 -5 4.2 -5 q4.2 0 4.2 5 z' });
+      add('rect', { x:-3.6, y:-19.6, width:7.2, height:1.8, fill:line, stroke:'none', class:'face' });
+      add('path', { d:'M8.2 -12.6 l1.6 0 l0 7.2 l-.8 1.4 l-.8 -1.4 z' });
     }
-    return g;
+    return root;
   }
 
   function jobIcon(job, side, size){
-    var s = el('svg', { viewBox:'-16 -30 32 34', width:size, height:size });
-    var g = figureArt(job, side || 1);
-    s.appendChild(g);
+    var s = el('svg', { viewBox:'-17 -34 34 38', width:size, height:size });
+    s.appendChild(figureArt(job, side || 1));
     return s;
   }
-
   // ================= scene graph =================
   // One depth-sorted layer so a figure standing behind a block is hidden by it,
   // the way a real isometric scene resolves. Terrain nodes are built once per
@@ -779,10 +817,10 @@
       var c = iso(u.x, u.y, t ? t.e : 0);
       var g = el('g', { class:'fig ghost', 'data-uid':u.uid,
         transform:'translate(' + c.cx + ',' + c.cy + ')' });
-      g.appendChild(el('polygon', { points:diamond(0, 0, .82), fill:'none',
-        stroke:SIDE_COL[u.side].hi, 'stroke-width':1, 'stroke-dasharray':'3 2' }));
+      g.appendChild(el('polygon', { points:diamond(0, 0, .86), fill:PAPER,
+        stroke:INK, 'stroke-width':1, 'stroke-dasharray':'3 2' }));
       var art = figureArt(u.job, u.side);
-      art.setAttribute('opacity', '.42');
+      art.setAttribute('opacity', '.55');
       g.appendChild(art);
       frag.appendChild(g);
     });
@@ -810,9 +848,8 @@
       inner.appendChild(figureArt(u.job, u.side));
       g.appendChild(inner);
       var bar = el('g', { class:'fig-hp' });
-      bar.appendChild(el('rect', { x:-6, y:-31.4, width:12, height:2.2, fill:'#0b0e11',
-        opacity:.72, rx:.6 }));
-      bar.appendChild(el('rect', { class:'hpfill', x:-5.6, y:-31, width:11.2, height:1.4, fill:PAL.heal, rx:.3 }));
+      bar.appendChild(el('rect', { x:-7, y:-31.6, width:14, height:3, fill:PAPER, stroke:INK, 'stroke-width':1 }));
+      bar.appendChild(el('rect', { class:'hpfill', x:-6, y:-30.9, width:12, height:1.6, fill:INK }));
       g.appendChild(bar);
       figureNodes[u.uid] = g;
       placeFigure(u, true);
@@ -840,8 +877,7 @@
     if(!g) return;
     var pct = Math.max(0, u.hp / u.maxHp);
     var fill = g.querySelector('.hpfill');
-    fill.setAttribute('width', 11.2 * pct);
-    fill.setAttribute('fill', pct > .5 ? PAL.heal : (pct > .25 ? PAL.gold : PAL.blood));
+    fill.setAttribute('width', 12 * pct);
     g.querySelector('.fig-hp').setAttribute('opacity', pct >= 1 && B.sel !== u ? 0 : 1);
     g.setAttribute('opacity', (u.done && u.side === B.phase) ? .45 : 1);
     g.classList.toggle('sel', B.sel === u);
@@ -853,16 +889,23 @@
       var c = iso(o.x, o.y, t ? t.e : 0);
       var g = el('g', { 'data-ov':o.cls, 'data-x':o.x, 'data-y':o.y });
       if(o.cls === 'move'){
-        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .96), fill:'#7fd8ff', opacity:.2 }));
-        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .96), fill:'none',
-          stroke:'#9fe4ff', 'stroke-width':.9, opacity:.85 }));
+        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .84), fill:'none',
+          stroke:INK, 'stroke-width':1, 'stroke-dasharray':'3 2' }));
+        g.appendChild(el('rect', { x:c.cx - 1.6, y:c.cy - 1.6, width:3.2, height:3.2, fill:INK }));
       } else if(o.cls === 'target'){
-        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .96), fill:'#ff6b5e', opacity:.26 }));
-        g.appendChild(el('polygon', { class:'pulse', points:diamond(c.cx, c.cy, .96), fill:'none',
-          stroke:'#ffb0a5', 'stroke-width':1.4 }));
+        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .84), fill:'url(#hatch)',
+          stroke:INK, 'stroke-width':1.4 }));
+        g.appendChild(el('polygon', { class:'pulse', points:diamond(c.cx, c.cy, .42),
+          fill:INK, stroke:'none' }));
       } else if(o.cls === 'sel'){
-        g.appendChild(el('polygon', { class:'ring', points:diamond(c.cx, c.cy, 1), fill:'none',
-          stroke:PAL.goldHi, 'stroke-width':1.4, 'stroke-dasharray':'4 2.6' }));
+        // four corner brackets, the way an instrument marks its active channel
+        var w = TW/2, hh = TH/2, k = 5;
+        [[-w,0,1,0,0,-1],[0,-hh,1,0,0,1],[w,0,-1,0,0,1],[0,hh,-1,0,0,-1]].forEach(function(m){
+          g.appendChild(el('path', { d:'M' + (c.cx + m[0] + m[2]*k*2) + ' ' + (c.cy + m[1] + m[3]*k) +
+            ' L' + (c.cx + m[0]) + ' ' + (c.cy + m[1]) +
+            ' L' + (c.cx + m[0] + m[4]*k*2) + ' ' + (c.cy + m[1] + m[5]*k),
+            fill:'none', stroke:INK, 'stroke-width':2 }));
+        });
       }
       return { k:sortKey(o.x, o.y, 2), n:g };
     });
@@ -887,7 +930,7 @@
     at(m-1,m).fx = 'spring'; at(m,m-1).fx = 'spring';
     [[m-2,m-1],[m-2,m],[m+1,m-1],[m+1,m],[m-1,m-2],[m,m-2],[m-1,m+1],[m,m+1]]
       .forEach(function(p){ var t = at(p[0],p[1]); if(t) t.e = 1; });
-    at(m-2,m-1).prop = 'torch'; at(m+1,m).prop = 'torch';   // mirrored, and off the centre column
+    at(m-2,m-1).prop = 'tower'; at(m+1,m).prop = 'tower';   // mirrored, and off the centre column
 
     var pool = tiles.filter(function(t){
       // x === y sits on the screen's centre column, where a mirrored pair would
@@ -903,17 +946,20 @@
         pool.splice(k,1); fn(t); fn(mm); return;
       }
     };
-    take(function(t){ t.e = 2; t.prop = 'torch'; });
-    take(function(t){ t.e = 1; });
-    take(function(t){ t.e = 1; });
+    take(function(t){ t.e = 2; t.prop = 'tower'; });
     if(stageNo >= 2) take(function(t){ t.e = 1; });
     take(function(t){ t.fx = 'chest'; });
     take(function(t){ t.fx = 'chest'; });
     take(function(t){ t.fx = 'trap'; });
     take(function(t){ t.fx = 'trap'; });
-    take(function(t){ t.prop = 'rock'; });
-    take(function(t){ t.prop = 'grass'; });
-    take(function(t){ t.prop = 'grass'; });
+    take(function(t){ t.prop = 'vent'; });
+    take(function(t){ t.prop = 'plate'; });
+    take(function(t){ t.prop = 'plate'; });
+    // a few plates carry their grid reference
+    var labelled = tiles.filter(function(t){ return !t.fx && !t.prop; });
+    for(var k = 0; k < labelled.length; k++){
+      if(hash(labelled[k].x * 11, labelled[k].y * 7) > .80) labelled[k].label = true;
+    }
     return tiles;
   }
 
@@ -922,8 +968,10 @@
     return p.squad.map(function(job, i){
       var d = JOBS[job];
       var hp = maxHpFor(p, job);
+      var lv = 1 + (p.levels[job] || 0);
       return { uid:uid++, side:pn, job:job, name:d.name, hp:hp, maxHp:hp,
-        atk:d.atk + p.bonusAtk, range:d.range, move:d.move + p.bonusMove,
+        mp:d.mp + p.bonusMp, maxMp:d.mp + p.bonusMp, lv:lv,
+        atk:d.atk + p.bonusAtk + (lv - 1) * 2, range:d.range, move:d.move + p.bonusMove,
         jump:d.jump + p.bonusJump, x:starts[i].x, y:starts[i].y,
         face:(pn === 1 ? 0 : 2), done:false, acted:false, extraMove:false };
     });
@@ -1024,9 +1072,15 @@
     return dmg;
   }
 
-  function killIfDead(u){
+  function killIfDead(u, killer){
     if(u.hp > 0) return false;
     u.hp = 0;
+    if(killer && killer.hp > 0 && killer.side !== u.side){
+      var kp = G.players[killer.side];
+      kp.levels[killer.job] = (kp.levels[killer.job] || 0) + 1;
+      killer.lv += 1; killer.atk += 2;
+      popText(killer, 'LV ' + killer.lv, 'info');
+    }
     var g = figureNodes[u.uid];
     if(g){
       g.classList.add('dying');
@@ -1071,7 +1125,7 @@
     if(old) old.remove();
     var d = document.createElement('div');
     d.className = 'roll-pop';
-    d.innerHTML = '<span class="die">' + DIE[eff] + '</span><span>ATK ' + atk + ' + ' + eff +
+    d.innerHTML = '<span class="die">' + eff + '</span><span class="txt">ATK ' + atk + '+' + eff +
       (tags.length ? '　' + tags.join(' · ') : '') + '</span>';
     stage.appendChild(d);
     setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1500);
@@ -1079,8 +1133,7 @@
   function killBanner(u){
     var d = document.createElement('div');
     d.className = 'kill-banner';
-    d.style.color = u.side === 1 ? SIDE_COL[2].hi : SIDE_COL[1].hi;
-    d.textContent = 'P' + u.side + ' ' + u.name + ' 撃破';
+    d.textContent = 'P' + u.side + ' ' + JOBS[u.job].job + ' DOWN';
     stage.appendChild(d);
     setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1550);
   }
@@ -1164,8 +1217,13 @@
     updateHud();
   }
 
+  function canSkill(u){
+    var sk = JOBS[u.job].skill;
+    return u.mp >= sk.cost;
+  }
   function skillTargets(u){
     var sk = JOBS[u.job].skill;
+    if(!canSkill(u)) return [];
     if(sk.kind === 'cleave') return targetsFor(u, 1);
     if(sk.kind === 'dash') return targetsFor(u, u.range);
     return targetsFor(u, sk.rng);
@@ -1275,14 +1333,14 @@
     lunge(att, def, function(){
       strike(att, def);
       setTimeout(function(){
-        var died = killIfDead(def);
+        var died = killIfDead(def, att);
         var canCounter = !died && def.hp > 0 && manh(att, def) <= def.range && att.hp > 0;
         if(canCounter){
           setTimeout(function(){
             lunge(def, att, function(){
               strike(def, att, { counter:true });
               setTimeout(function(){
-                killIfDead(att);
+                killIfDead(att, def);
                 finishAction(att);
               }, 340);
             });
@@ -1303,6 +1361,8 @@
     B.busy = true; setOverlays([]); compose(); updateHud();
     u.acted = true;
     var sk = JOBS[u.job].skill;
+    u.mp = Math.max(0, u.mp - sk.cost);
+    popText(u, '-' + sk.cost + ' MP', 'info');
     if(sk.kind === 'cleave'){
       var foes = targetsFor(u, 1);
       lunge(u, target, function(){
@@ -1311,7 +1371,7 @@
             if(f.hp <= 0) return;
             faceToward(u, f.x, f.y); placeFigure(u, true);
             strike(u, f, { scale:.8, noFlank:true });
-            setTimeout(function(){ killIfDead(f); }, 320);
+            setTimeout(function(){ killIfDead(f, u); }, 320);
           }, i * 240);
         });
         setTimeout(function(){ finishAction(u); }, foes.length * 240 + 620);
@@ -1326,7 +1386,7 @@
         area.forEach(function(f){
           if(f.hp <= 0) return;
           strike(u, f, { scale:f === target ? .95 : .6, noFlank:true, ignoreHigh:true });
-          killIfDead(f);
+          killIfDead(f, u);
         });
         setTimeout(function(){ finishAction(u); }, 520);
       }, 420);
@@ -1335,13 +1395,13 @@
       arrowFx(u, target);
       setTimeout(function(){
         strike(u, target, { ignoreHigh:true, forceCrit:true, scale:.85 });
-        setTimeout(function(){ killIfDead(target); finishAction(u); }, 420);
+        setTimeout(function(){ killIfDead(target, u); finishAction(u); }, 420);
       }, 300);
     } else {
       u.extraMove = true;
       lunge(u, target, function(){
         strike(u, target, { scale:.9 });
-        setTimeout(function(){ killIfDead(target); finishAction(u); }, 420);
+        setTimeout(function(){ killIfDead(target, u); finishAction(u); }, 420);
       });
     }
   }
@@ -1352,7 +1412,7 @@
     var g = el('g', { class:'blast' });
     for(var i = 0; i < 3; i++){
       g.appendChild(el('circle', { cx:c.cx, cy:c.cy - 6, r:4 + i*5,
-        fill:'none', stroke:i ? PAL.flame : PAL.flameHi, 'stroke-width':2 - i*.4, opacity:.9 }));
+        fill:'none', stroke:INK, 'stroke-width':2 - i*.4 }));
     }
     scene.appendChild(g);
     setTimeout(function(){ if(g.parentNode) g.parentNode.removeChild(g); }, 620);
@@ -1361,7 +1421,7 @@
   function arrowFx(u, target){
     var a = iso(u.x, u.y, tileAt(u.x,u.y).e), b = iso(target.x, target.y, tileAt(target.x,target.y).e);
     var l = el('line', { class:'arrow', x1:a.cx, y1:a.cy - 16, x2:b.cx, y2:b.cy - 14,
-      stroke:PAL.goldHi, 'stroke-width':1.4 });
+      stroke:INK, 'stroke-width':1.4 });
     scene.appendChild(l);
     setTimeout(function(){ if(l.parentNode) l.parentNode.removeChild(l); }, 420);
   }
@@ -1372,68 +1432,84 @@
   }
 
   // ================= HUD =================
+  function segBar(host, cur, max, cells){
+    cells = cells || 10;
+    if(host.childElementCount !== cells){
+      host.innerHTML = '';
+      for(var i = 0; i < cells; i++) host.appendChild(document.createElement('i'));
+    }
+    var lit = max > 0 ? Math.ceil(Math.max(0, cur) / max * cells) : 0;
+    for(var j = 0; j < cells; j++) host.children[j].classList.toggle('f', j < lit);
+  }
+  function pad2(n){ return (n < 10 ? '0' : '') + n; }
+
   function updateHud(){
-    $('actName').textContent = ACTS[Math.min(ACTS.length-1, G.stage-1)];
-    $('actSub').textContent = 'ROUND ' + B.round + ' / ' + MAX_ROUNDS;
-    [1,2].forEach(function(s){
-      var blk = $('sideP' + s);
-      blk.classList.toggle('act', B.phase === s && !B.veil);
-      blk.querySelector('.sb-wins').textContent = G.players[s].wins;
-      var pips = blk.querySelector('.sb-pips');
-      var mine = B.units.filter(function(u){ return u.side === s; });
-      if(pips.childElementCount !== mine.length){
-        pips.innerHTML = '';
-        mine.forEach(function(){ var d = document.createElement('span'); d.className = 'sb-pip';
-          d.appendChild(document.createElement('i')); pips.appendChild(d); });
-      }
-      mine.forEach(function(u, i){
-        var pip = pips.children[i];
-        pip.classList.toggle('dead', u.hp <= 0);
-        pip.firstChild.style.transform = 'scaleX(' + Math.max(0, u.hp / u.maxHp) + ')';
-      });
-    });
+    $('actName').textContent = 'A0' + G.stage + ' / ' + ACTS[Math.min(ACTS.length-1, G.stage-1)];
+    $('gridLabel').textContent = 'GRID ' + pad2(GRID) + '\u00d7' + pad2(GRID);
+    $('turnNum').textContent = pad2(B.turn);
+    var tt = $('turnTicks');
+    if(tt.childElementCount !== MAX_ROUNDS * 2){
+      tt.innerHTML = '';
+      for(var q = 0; q < MAX_ROUNDS * 2; q++) tt.appendChild(document.createElement('i'));
+    }
 
     var u = B.sel || B.inspect;
-    var card = $('unitCard');
     if(u && u.hp > 0){
       var d = JOBS[u.job];
       $('ucName').textContent = u.name;
-      $('ucJob').textContent = d.job + ' · P' + u.side;
-      var pct = Math.max(0, u.hp / u.maxHp);
-      $('ucBar').classList.toggle('low', pct <= .35);
-      $('ucBar').firstElementChild.style.width = (pct*100) + '%';
+      $('ucJob').textContent = d.job + ' \u00b7 P' + u.side + (u.side === B.phase ? '' : ' \u00b7 ENEMY');
+      $('ucLv').textContent = 'LV ' + pad2(u.lv);
+      $('ucHpN').textContent = pad2(Math.max(0, u.hp));
+      $('ucMpN').textContent = pad2(Math.max(0, u.mp));
+      segBar($('ucHp'), u.hp, u.maxHp);
+      segBar($('ucMp'), u.mp, u.maxMp);
       $('ucNums').innerHTML =
-        '<span>HP<b>' + Math.max(0,u.hp) + '</b>/' + u.maxHp + '</span>' +
-        '<span>攻<b>' + u.atk + '</b></span><span>射<b>' + u.range + '</b></span>' +
-        '<span>移<b>' + u.move + '</b></span><span>跳<b>' + u.jump + '</b></span>';
+        '<span>ATK <b>' + u.atk + '</b></span><span>RNG <b>' + u.range + '</b></span>' +
+        '<span>MOV <b>' + u.move + '</b></span><span>JMP <b>' + u.jump + '</b></span>';
       var port = $('ucPortrait');
       if(port.dataset.k !== u.job + u.side){
         port.dataset.k = u.job + u.side;
         port.innerHTML = '';
-        port.setAttribute('viewBox', '-16 -30 32 33');
+        port.setAttribute('viewBox', '-17 -34 34 38');
         port.appendChild(figureArt(u.job, u.side));
       }
       $('ucHint').textContent = B.sel === u
         ? (B.mode === 'move' ? '移動先をタップ' : B.mode === 'attack' ? '敵をタップして攻撃'
           : B.mode === 'skill' ? d.skill.name + ' の対象をタップ' : 'コマンドを選ぶ')
         : '相手ユニットの情報';
-      card.style.opacity = 1;
     } else {
-      $('ucName').textContent = 'ユニットを選択';
-      $('ucJob').textContent = ''; $('ucNums').innerHTML = '';
-      $('ucBar').firstElementChild.style.width = '0%';
+      $('ucName').textContent = 'NO UNIT';
+      $('ucJob').textContent = 'SELECT ONE';
+      $('ucLv').textContent = 'LV --';
+      $('ucHpN').textContent = '00'; $('ucMpN').textContent = '00';
+      segBar($('ucHp'), 0, 1); segBar($('ucMp'), 0, 1);
+      $('ucNums').innerHTML = '';
+      $('ucPortrait').innerHTML = ''; $('ucPortrait').dataset.k = '';
       var remain = B.units.filter(function(o){ return o.side===B.phase && o.hp>0 && !o.done; }).length;
       $('ucHint').textContent = '自軍をタップ（のこり ' + remain + '）';
-      $('ucPortrait').innerHTML = ''; $('ucPortrait').dataset.k = '';
-      card.style.opacity = .8;
     }
+
+    // the command module is labelled by how many of this side still have a turn
+    var mine = B.units.filter(function(o){ return o.side === B.phase; });
+    var left = mine.filter(function(o){ return o.hp > 0 && !o.done; }).length;
+    $('cmdLabel').textContent = 'CMD ' + pad2(left);
+    var lamps = $('cmdLamps');
+    if(lamps.childElementCount !== mine.length){
+      lamps.innerHTML = '';
+      mine.forEach(function(){ lamps.appendChild(document.createElement('i')); });
+    }
+    mine.forEach(function(o, i){
+      var lamp = lamps.children[i];
+      lamp.classList.toggle('dead', o.hp <= 0);
+      lamp.classList.toggle('on', o.hp > 0 && !o.done);
+    });
 
     var s = B.sel, live = s && s.hp > 0 && !B.busy && !B.veil;
     setCmd('cmdMove', live && !s.moved, B.mode === 'move');
     setCmd('cmdAttack', live && !s.acted && targetsFor(s).length > 0, B.mode === 'attack');
     setCmd('cmdSkill', live && !s.acted && skillTargets(s).length > 0, B.mode === 'skill');
     setCmd('cmdWait', live, false);
-    $('cmdSkill').lastChild.textContent = s ? JOBS[s.job].skill.name : '特技';
+    $('cmdSkill').lastChild.textContent = s ? ('3 ' + JOBS[s.job].skill.tag) : '3 SKILL';
   }
   function setCmd(id, enabled, on){
     var b = $(id);
@@ -1489,8 +1565,9 @@
   // Hit-testing works in board coordinates rather than through the DOM: a
   // figure's own shadow, its HP bar, or a neighbouring tile's ambient shadow
   // would otherwise intercept the tap depending on paint order.
-  var BODY = { x0:-10, x1:12, y0:-27, y1:3 };
+  var BODY = { x0:-13, x1:15, y0:-33, y1:4 };
   function figureFromPoint(px, py){
+    var picking = (B.mode === 'idle' || B.mode === 'menu');
     var hit = null, best = -Infinity;
     B.units.forEach(function(u){
       if(u.hp <= 0) return;
@@ -1498,8 +1575,11 @@
       var c = iso(u.x, u.y, t ? t.e : 0);
       var lx = px - c.cx, ly = py - c.cy;
       if(lx < BODY.x0 || lx > BODY.x1 || ly < BODY.y0 || ly > BODY.y1) return;
-      // a ghosted unit is painted over everything, so it always wins its point
-      var k = depth(u.x, u.y) + (coveredBy(u.x, u.y, 11) ? 100 : 0);
+      var k = depth(u.x, u.y);
+      if(coveredBy(u.x, u.y, 11)) k += 100;   // ghosts are painted over everything
+      // bodies overlap in an isometric view, so break ties toward what the tap
+      // is most likely meant for: one of yours while picking, an enemy while aiming
+      if(picking ? (u.side === B.phase && !u.done) : (u.side !== B.phase)) k += 40;
       if(k >= best){ best = k; hit = u; }
     });
     return hit;
@@ -1521,20 +1601,21 @@
     if(t && onTap(t.x, t.y)) return;
     if(!figFirst && fu && onTap(fu.x, fu.y)) return;
 
-    var occupant = t ? unitAt(t.x, t.y) : null;
-    if(occupant){ inspect(occupant); return; }
-    if(fu){ inspect(fu); return; }
-    // a near miss on one of your own still counts, the way a finger deserves
+    // a near miss on one of your own still counts, the way a finger deserves —
+    // and it must be tried before settling for merely showing an info card
     if(B.mode === 'idle' || B.mode === 'menu'){
-      var near = null, nd = 15;
+      var near = null, nd = 20;
       B.units.forEach(function(u){
         if(u.hp <= 0 || u.side !== B.phase || u.done) return;
         var tt = tileAt(u.x, u.y), c = iso(u.x, u.y, tt ? tt.e : 0);
-        var d = Math.hypot(loc.x - c.cx, loc.y - (c.cy - 12));
+        var d = Math.hypot(loc.x - c.cx, loc.y - (c.cy - 14));
         if(d < nd){ nd = d; near = u; }
       });
-      if(near) onTap(near.x, near.y);
+      if(near && onTap(near.x, near.y)) return;
     }
+    var occupant = t ? unitAt(t.x, t.y) : null;
+    if(occupant) inspect(occupant);
+    else if(fu) inspect(fu);
   }
   function resetGesture(){ ptrs = {}; drag = null; pinch = null; movedGesture = false; }
   function ptrArr(){ return Object.keys(ptrs).map(function(k){ return ptrs[k]; }); }
@@ -1606,12 +1687,13 @@
   function aliveCount(s){ return B.units.filter(function(u){ return u.side===s && u.hp>0; }).length; }
 
   function startStage(){
-    B = { tiles:buildBoard(G.stage), units:[], round:1, phase:1, sel:null, inspect:null,
+    B = { tiles:buildBoard(G.stage), units:[], round:1, turn:1, phase:1, sel:null, inspect:null,
           mode:'idle', moved:false, busy:false, veil:false, origin:null, dmg:{1:0,2:0} };
     B.units = makeUnits(1, P1_START).concat(makeUnits(2, P2_START));
     show('battle');
     ROT = 0;
     sizeBoardBox();
+    buildDefs();
     buildTerrain();
     buildFigures();
     CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy;
@@ -1640,10 +1722,8 @@
       CAM.zoom = Math.min(MAX_ZOOM, Math.max(1, fillZoom()));
       CAM.cx = cx; CAM.cy = cy; applyCam();
     }
-    $('veilEyebrow').textContent = 'Round ' + B.round + ' / ' + MAX_ROUNDS;
-    var h = $('veilTitle');
-    h.textContent = 'プレイヤー' + B.phase + ' のフェーズ';
-    h.className = 'p' + B.phase;
+    $('veilEyebrow').textContent = 'ROUND ' + B.round + ' / ' + MAX_ROUNDS;
+    $('veilTitle').textContent = 'PLAYER ' + B.phase;
     $('veilSub').textContent = 'スマホを渡してから始めてください';
     $('phaseVeil').classList.remove('hidden');
     updateHud();
@@ -1655,6 +1735,7 @@
     B.units.forEach(function(u){
       if(u.side !== B.phase) return;
       u.done = false; u.moved = false; u.acted = false; u.extraMove = false; u.usedExtra = false;
+      u.mp = Math.min(u.maxMp, u.mp + 2);      // a little comes back each phase
     });
     B.inspect = null;
     clearSel();
@@ -1663,6 +1744,7 @@
   function checkPhaseDone(){
     var left = B.units.filter(function(u){ return u.side===B.phase && u.hp>0 && !u.done; });
     if(left.length) return;
+    B.turn += 1;
     if(B.phase === 1){ B.phase = 2; openVeil(); return; }
     B.phase = 1; B.round += 1;
     if(B.round > MAX_ROUNDS){ finishStage('rounds'); return; }
@@ -1696,22 +1778,20 @@
       var champ = wiped ? ((!s1 && !s2) ? 0 : (s1 ? 1 : 2))
         : (w1 !== w2 ? (w1 > w2 ? 1 : 2)
         : (G.players[1].margin === G.players[2].margin ? 0 : (G.players[1].margin > G.players[2].margin ? 1 : 2)));
-      $('resultEyebrow').textContent = 'Run Complete';
-      title.textContent = champ === 0 ? 'ランは引き分け' : 'P' + champ + ' ラン勝利';
-      title.className = 'result-title ' + (champ ? 'p'+champ : 'draw');
+      $('resultEyebrow').textContent = 'RUN COMPLETE';
+      title.textContent = champ === 0 ? 'DRAW' : 'P' + champ + ' WINS THE RUN';
       $('resultSub').innerHTML = (wiped ? '部隊が全滅しました<br>' : '') +
         (w1 === w2 && !wiped ? 'HP差による決着<br>' : '') +
         '残存 P1 ' + s1 + '人 / P2 ' + s2 + '人';
-      $('resultBtn').textContent = 'タイトルへ';
+      $('resultBtn').textContent = 'Title';
       $('resultBtn').onclick = function(){ show('title'); };
     } else {
-      $('resultEyebrow').textContent = 'Stage ' + G.stage + ' / ' + STAGES;
-      title.textContent = winner === 0 ? 'ステージ引き分け' : 'P' + winner + ' ステージ制圧';
-      title.className = 'result-title ' + (winner ? 'p'+winner : 'draw');
+      $('resultEyebrow').textContent = 'STAGE ' + G.stage + ' / ' + STAGES;
+      title.textContent = winner === 0 ? 'STAGE DRAW' : 'P' + winner + ' CAPTURED';
       $('resultSub').innerHTML = (reason === 'wipe' ? '全滅' : 'ラウンド終了') +
         (tie ? '（' + tie + 'で判定）' : '') + ' — 残HP P1:' + h1 + ' / P2:' + h2 +
         '<br>倒れた仲間は傷を負って次ステージへ';
-      $('resultBtn').textContent = 'つぎのステージへ';
+      $('resultBtn').textContent = 'Next Stage';
       $('resultBtn').onclick = function(){
         G.stage += 1;
         goHandoff(1, function(){ startUpgrade(1); });
@@ -1721,17 +1801,26 @@
   }
 
   // ================= handoff / upgrade =================
+  // A plate, not a crest: squared frame, index notch, screw heads, big numeral.
   function sealArt(pn){
-    var C = SIDE_COL[pn];
-    return '<circle cx="50" cy="50" r="44" fill="#12171d" stroke="' + C.main + '" stroke-width="2"/>' +
-      '<circle cx="50" cy="50" r="36" fill="none" stroke="' + C.dark + '" stroke-width="1"/>' +
-      '<path d="M50 22 L70 34 L70 58 Q70 74 50 82 Q30 74 30 58 L30 34 Z" fill="' + C.main + '" opacity=".22"/>' +
-      '<path d="M50 22 L70 34 L70 58 Q70 74 50 82 Q30 74 30 58 L30 34 Z" fill="none" stroke="' + C.hi + '" stroke-width="1.6"/>' +
-      '<text x="50" y="60" text-anchor="middle" font-family="Cinzel,serif" font-size="26" font-weight="700" fill="' + C.hi + '">' + pn + '</text>';
+    var inv = pn === 2;
+    var bg = inv ? INK : PAPER, fg = inv ? PAPER : INK;
+    var o = '<rect x="6" y="6" width="88" height="88" fill="' + bg + '" stroke="' + fg + '" stroke-width="2"/>' +
+      '<rect x="13" y="13" width="74" height="74" fill="none" stroke="' + fg + '" stroke-width="1"/>' +
+      '<rect x="44" y="6" width="12" height="7" fill="' + fg + '"/>';
+    [[20,20],[80,20],[20,80],[80,80]].forEach(function(p){
+      o += '<rect x="' + (p[0]-2) + '" y="' + (p[1]-2) + '" width="4" height="4" fill="' + fg + '"/>';
+    });
+    for(var i = 0; i < 9; i++){
+      o += '<rect x="' + (24 + i*6.4) + '" y="80" width="1.6" height="' + (i % 3 ? 4 : 7) + '" fill="' + fg + '"/>';
+    }
+    o += '<text x="50" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" ' +
+      'font-size="40" font-weight="700" fill="' + fg + '">' + pn + '</text>';
+    return o;
   }
   function goHandoff(pn, cb){
-    $('handoffEyebrow').textContent = 'Stage ' + G.stage + ' — Pass the device';
-    $('handoffTitle').textContent = 'プレイヤー' + pn;
+    $('handoffEyebrow').textContent = 'STAGE ' + G.stage + ' \u00b7 PASS THE DEVICE';
+    $('handoffTitle').textContent = 'PLAYER ' + pn;
     $('handoffSub').textContent = '相手に選択を見られないように受け取ってください';
     $('handoffSeal').innerHTML = sealArt(pn);
     $('handoffBtn').onclick = function(){ cb(); };
@@ -1739,19 +1828,20 @@
   }
 
   var UP_ICONS = {
-    heart:'<path d="M15 26 C4 18 4 9 10 7 C13 6 15 9 15 9 C15 9 17 6 20 7 C26 9 26 18 15 26 Z" fill="#c9564b"/>',
-    sword:'<path d="M15 3 L18 8 L18 22 L15 26 L12 22 L12 8 Z" fill="#b9bfc7"/><rect x="9" y="20" width="12" height="2.6" fill="#e0a33f"/>',
-    boot:'<path d="M9 5 L15 5 L16 17 L23 20 L23 25 L9 25 Z" fill="#6b5942"/><rect x="9" y="21" width="14" height="4" fill="#463a2c"/>',
-    die:'<rect x="6" y="6" width="18" height="18" rx="3" fill="#ded7c5"/><circle cx="12" cy="12" r="2" fill="#171b20"/><circle cx="18" cy="18" r="2" fill="#171b20"/><circle cx="15" cy="15" r="2" fill="#171b20"/>',
-    peak:'<path d="M4 24 L13 8 L18 16 L21 12 L27 24 Z" fill="#79806f"/><path d="M13 8 L18 16 L15 18 L10 14 Z" fill="#ded7c5"/>',
-    dagger:'<path d="M16 3 L19 9 L19 18 L16 21 L13 18 L13 9 Z" fill="#b9bfc7"/><path d="M11 19 L21 19 L21 21 L11 21 Z" fill="#463a2c"/>',
-    shield:'<path d="M15 4 L25 8 L25 17 Q25 25 15 28 Q5 25 5 17 L5 8 Z" fill="#5b9bd5"/><path d="M15 4 L25 8 L25 17 Q25 25 15 28 Z" fill="#2f5f8f"/>'
+    heart:'<path d="M15 25 C5 18 5 9 10 8 C13 7.4 15 10 15 10 C15 10 17 7.4 20 8 C25 9 25 18 15 25 Z" fill="none" stroke="#30343A" stroke-width="2"/>',
+    sword:'<path d="M15 3 L18 8 L18 21 L15 25 L12 21 L12 8 Z" fill="none" stroke="#30343A" stroke-width="2"/><rect x="9" y="19" width="12" height="2.4" fill="#30343A"/>',
+    boot:'<path d="M9 5 L15 5 L16 16 L23 19 L23 25 L9 25 Z" fill="none" stroke="#30343A" stroke-width="2"/><rect x="9" y="21" width="14" height="4" fill="#30343A"/>',
+    die:'<rect x="5" y="5" width="20" height="20" fill="none" stroke="#30343A" stroke-width="2"/><rect x="10" y="10" width="3" height="3" fill="#30343A"/><rect x="17" y="17" width="3" height="3" fill="#30343A"/><rect x="13.5" y="13.5" width="3" height="3" fill="#30343A"/>',
+    peak:'<path d="M3 24 L12 7 L18 16 L21 11 L27 24 Z" fill="none" stroke="#30343A" stroke-width="2"/>',
+    dagger:'<path d="M15 3 L18 9 L18 18 L15 21 L12 18 L12 9 Z" fill="none" stroke="#30343A" stroke-width="2"/><rect x="10" y="19" width="10" height="2.4" fill="#30343A"/>',
+    shield:'<path d="M15 4 L25 8 L25 17 Q25 25 15 28 Q5 25 5 17 L5 8 Z" fill="none" stroke="#30343A" stroke-width="2"/><path d="M15 9 L20 11 L20 17 Q20 21 15 23 Z" fill="#30343A"/>',
+    spark:'<path d="M16 3 L9 16 L14 16 L12 27 L21 13 L16 13 Z" fill="#30343A"/>'
   };
 
   function startUpgrade(pn){
     var p = G.players[pn];
-    $('upgradeTurnLabel').textContent = 'プレイヤー' + pn + ' の編成';
-    $('upgradeStage').textContent = 'Stage ' + G.stage + ' / ' + STAGES;
+    $('upgradeTurnLabel').textContent = 'P' + pn + ' / OUTFIT';
+    $('upgradeStage').textContent = 'STAGE ' + G.stage + '/' + STAGES;
 
     var rr = $('rosterRow');
     rr.innerHTML = '';
@@ -1810,6 +1900,7 @@
 
   stage = $('boardStage'); svg = $('boardSvg'); scene = $('sceneLayer');
   bindInput();
+  $('titleMark').innerHTML = sealArt(1);
   $('titleStartBtn').onclick = startRun;
   $('veilStartBtn').onclick = beginPhase;
   show('title');
