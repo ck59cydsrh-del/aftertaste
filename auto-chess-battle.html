@@ -10,7 +10,7 @@
     --panel:#ffffff; --panel-raised:#f4f3ee; --line:#cfcabd;
     --ink:#141414; --muted:#77726a;
     --p1:#0d0d0d; --p2:#8f8a7d;
-    --warrior:#181818; --mage:#6b675e; --archer:#a49f92;
+    --warrior:#181818; --mage:#6b675e; --archer:#a49f92; --scout:#4a463f;
     --tile-top:#f2f1ec; --tile-top-alt:#e6e4dc; --tile-side:#c2beb2; --tile-side-dark:#a9a599;
     --jelly:cubic-bezier(.34,1.56,.64,1);
     --font-display:'Space Grotesk','Hiragino Sans',sans-serif;
@@ -22,7 +22,7 @@
       --panel:#131313; --panel-raised:#1e1e1c; --line:#403d37;
       --ink:#f2f0ea; --muted:#a19c8f;
       --p1:#f5f3ee; --p2:#8f8a7d;
-      --warrior:#f0eee7; --mage:#a8a294; --archer:#68645a;
+      --warrior:#f0eee7; --mage:#a8a294; --archer:#68645a; --scout:#cfc9bb;
       --tile-top:#2b2b28; --tile-top-alt:#232320; --tile-side:#171716; --tile-side-dark:#0f0f0e;
     }
   }
@@ -30,7 +30,7 @@
     --panel:#131313; --panel-raised:#1e1e1c; --line:#403d37;
     --ink:#f2f0ea; --muted:#a19c8f;
     --p1:#f5f3ee; --p2:#8f8a7d;
-    --warrior:#f0eee7; --mage:#a8a294; --archer:#68645a;
+    --warrior:#f0eee7; --mage:#a8a294; --archer:#68645a; --scout:#cfc9bb;
     --tile-top:#2b2b28; --tile-top-alt:#232320; --tile-side:#171716; --tile-side-dark:#0f0f0e;
   }
 
@@ -116,7 +116,7 @@
   .tile-side{ fill:var(--tile-side); stroke:var(--line); stroke-width:.5; }
   .tile-side.dark{ fill:var(--tile-side-dark); }
   .tile-mark{ font-family:var(--font-mono); font-size:7px; font-weight:700; fill:var(--ink); text-anchor:middle; pointer-events:none; }
-  .ov-move{ fill:var(--ink); opacity:.15; stroke:var(--ink); stroke-width:1; pointer-events:none; }
+  .ov-move{ fill:var(--ink); opacity:.22; stroke:var(--ink); stroke-width:1.2; pointer-events:none; }
   .ov-target{ fill:none; stroke:var(--ink); stroke-width:2.4; pointer-events:none; animation:ovpulse 1s ease-in-out infinite; }
   .ov-sel{ fill:none; stroke:var(--ink); stroke-width:1.4; stroke-dasharray:5 3; pointer-events:none;
     animation:ovspin 6s linear infinite; }
@@ -125,7 +125,17 @@
   .ov-base.p2{ stroke-dasharray:3 2.4; }
   @keyframes ovpulse{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
 
-  .u-slot{ position:absolute; transform:translate(-50%,-74%); transition:left .32s var(--jelly), top .32s var(--jelly); z-index:3; pointer-events:none; }
+  .board-stage{ touch-action:none; }
+  .board-svg.cam-glide{ transition:none; }
+  .cam-pad{ position:absolute; right:7px; bottom:7px; z-index:8; display:flex; flex-direction:column; gap:5px; }
+  .cam-btn{ width:30px; height:30px; border:2px solid var(--line); border-radius:7px; background:var(--panel);
+    color:var(--ink); font-family:var(--font-mono); font-weight:700; font-size:.86rem; line-height:1;
+    display:flex; align-items:center; justify-content:center; }
+  .cam-btn:active{ background:var(--ink); color:var(--panel); transform:scale(.9); }
+
+  .u-slot{ position:absolute; transform-origin:50% 100%;
+    transform:translate(-50%,-74%) scale(var(--tok,1)); z-index:3; pointer-events:none;
+    transition:left .3s var(--jelly), top .3s var(--jelly); }
   .u-slot::after{ content:''; position:absolute; left:50%; bottom:-4px; width:17px; height:8px; border-radius:50%;
     background:var(--ink); opacity:.25; transform:translateX(-50%); }
   .u-card{ pointer-events:auto; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; padding:3px 4px 4px; width:34px;
@@ -160,6 +170,8 @@
   .cls-warrior .c-badge, .cls-warrior .u-badge{ background:var(--warrior); border-radius:2px; }
   .cls-mage .c-badge, .cls-mage .u-badge{ background:var(--mage); clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
   .cls-archer .c-badge, .cls-archer .u-badge{ background:var(--archer); border-radius:50%; color:var(--ink); }
+  .cls-scout .c-badge, .cls-scout .u-badge{ background:var(--scout); color:var(--panel);
+    clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%); }
 
   .squad-bar{ display:flex; align-items:center; gap:6px; font-family:var(--font-mono); }
   .squad-bar .sq-name{ font-size:.6rem; font-weight:700; width:20px; flex:none; }
@@ -269,11 +281,16 @@
     <div class="squad-bar side-p2" id="squadP2"><span class="sq-name">P2</span><span class="sq-list"></span></div>
     <div class="board-wrap" id="boardWrap">
       <div class="board-stage" id="boardStage">
-        <svg class="board-svg" id="boardSvg" viewBox="-80 -46 160 166" preserveAspectRatio="xMidYMid meet">
+        <svg class="board-svg" id="boardSvg" viewBox="-130 -60 260 280" preserveAspectRatio="xMidYMid slice">
           <g id="tileLayer"></g>
           <g id="overlayLayer"></g>
           <g id="markLayer"></g>
         </svg>
+      </div>
+      <div class="cam-pad">
+        <button class="cam-btn" id="zoomInBtn" aria-label="ズームイン">+</button>
+        <button class="cam-btn" id="zoomOutBtn" aria-label="ズームアウト">−</button>
+        <button class="cam-btn" id="camHomeBtn" aria-label="全体表示">⤢</button>
       </div>
       <div class="phase-overlay hidden" id="phaseOverlay">
         <h3 id="phaseTitle">プレイヤー1 のフェーズ</h3>
@@ -308,12 +325,13 @@
 
   // ---------- config ----------
   var CLASS_DEFS = {
-    warrior:{ name:'戦士', letter:'W', hp:30, atk:5, range:1, move:3 },
-    mage:{ name:'魔術士', letter:'M', hp:20, atk:8, range:2, move:2 },
-    archer:{ name:'弓兵', letter:'A', hp:24, atk:6, range:3, move:2 }
+    warrior:{ name:'戦士', letter:'W', hp:30, atk:5, range:1, move:4 },
+    mage:{ name:'魔術士', letter:'M', hp:20, atk:8, range:2, move:3 },
+    archer:{ name:'弓兵', letter:'A', hp:24, atk:6, range:3, move:3 },
+    scout:{ name:'斥候', letter:'S', hp:22, atk:5, range:1, move:6 }
   };
-  var CLASS_KEYS = ['warrior','mage','archer'];
-  var GRID = 5, TILE_W = 30, TILE_H = 26, ELEV_H = 15;
+  var CLASS_KEYS = ['warrior','mage','archer','scout'];
+  var GRID = 8, TILE_W = 30, TILE_H = 26, ELEV_H = 11;
   var STAGES = 3, WINS_NEEDED = 2, MAX_ROUNDS = 3;
   var HIGH_BONUS = 0.30, COUNTER_RATE = 0.7;
   var SCAR_HP = 5, MIN_HP = 8; // a fallen member returns weaker, and only so many times
@@ -349,8 +367,19 @@
       } }
   ];
 
-  var P1_START = [ {x:0,y:4}, {x:1,y:4}, {x:2,y:4} ];
-  var P2_START = [ {x:4,y:0}, {x:3,y:0}, {x:2,y:0} ];
+  var P1_START = [ {x:1,y:7}, {x:3,y:7}, {x:5,y:7}, {x:7,y:6} ];
+  var P2_START = [ {x:6,y:0}, {x:4,y:0}, {x:2,y:0}, {x:0,y:1} ];
+
+  // full extent of the board in its own coordinates, used as the camera's home
+  var MAX_ELEV = 2;
+  var BOARD = (function(){
+    var pad = 10;
+    var x1 = (GRID-1)*TILE_W/2 + TILE_W/2;
+    var y0 = -(MAX_ELEV*ELEV_H) - TILE_H/2;
+    var y1 = (GRID-1)*TILE_H + TILE_H/2;
+    return { cx:0, cy:(y0+y1)/2, w:x1*2 + pad*2, h:(y1-y0) + pad*2 };
+  })();
+  var MIN_ZOOM = 0.6, MAX_ZOOM = 3.2; // 1 = whole board on screen
 
   var uid = 1;
   var G = null, B = null;
@@ -361,7 +390,43 @@
 
   // ---------- iso helpers ----------
   function isoC(x,y,e){ return { cx:(x-y)*(TILE_W/2), cy:(x+y)*(TILE_H/2) - e*ELEV_H }; }
-  var VB = { minX:-80, minY:-46, w:160, h:166 };
+  var CAM = { cx:BOARD.cx, cy:BOARD.cy, zoom:1 };
+
+  function applyCam(){
+    var svg = $('boardSvg');
+    var box = stage.getBoundingClientRect();
+    var ratio = (box.width && box.height) ? box.height / box.width : 1;
+    // the home view fits the board's width, or its height when that binds harder
+    var baseW = Math.max(BOARD.w, BOARD.h / (ratio || 1));
+    var w = baseW / CAM.zoom, h = w * ratio;
+    CAM.cx = w >= BOARD.w ? BOARD.cx
+      : Math.max(BOARD.cx - BOARD.w/2 + w/2, Math.min(BOARD.cx + BOARD.w/2 - w/2, CAM.cx));
+    CAM.cy = h >= BOARD.h ? BOARD.cy
+      : Math.max(BOARD.cy - BOARD.h/2 + h/2, Math.min(BOARD.cy + BOARD.h/2 - h/2, CAM.cy));
+    svg.setAttribute('viewBox', (CAM.cx - w/2) + ' ' + (CAM.cy - h/2) + ' ' + w + ' ' + h);
+    // shrink the tokens as the camera pulls back so they stop covering each other
+    stage.style.setProperty('--tok', Math.max(0.62, Math.min(1.15, CAM.zoom * 0.86)).toFixed(3));
+    if(B) B.units.forEach(function(u){ if(u.hp > 0) positionSlot(slotOf(u), u); });
+  }
+
+  function camTo(x, y, animate){
+    var t = tileAt(x,y);
+    var c = isoC(x, y, t ? t.e : 0);
+    CAM.cx = c.cx; CAM.cy = c.cy;
+    if(animate) $('boardSvg').classList.add('cam-glide');
+    applyCam();
+  }
+
+  // keep a tile comfortably inside the view rather than snapping on every tap
+  function camReveal(x, y){
+    var svg = $('boardSvg');
+    var vb = svg.viewBox.baseVal;
+    var t = tileAt(x,y);
+    var c = isoC(x, y, t ? t.e : 0);
+    var padX = vb.width * 0.22, padY = vb.height * 0.22;
+    if(c.cx < vb.x + padX || c.cx > vb.x + vb.width - padX ||
+       c.cy < vb.y + padY || c.cy > vb.y + vb.height - padY) camTo(x, y, true);
+  }
   function toStagePx(cx,cy){
     var svg = $('boardSvg'), ctm = svg.getScreenCTM();
     if(!ctm) return { left:0, top:0 };
@@ -435,7 +500,7 @@
   var tileLayer = $('tileLayer'), overlayLayer = $('overlayLayer'), markLayer = $('markLayer'), stage = $('boardStage');
 
   // Both armies get the same board: every feature is placed in 180°-rotated
-  // pairs, so the only asymmetry is who reaches the hill first.
+  // pairs, so the only asymmetry is who reaches the middle first.
   function buildBoard(){
     var tiles = [];
     for(var y=0;y<GRID;y++) for(var x=0;x<GRID;x++) tiles.push({ x:x, y:y, e:0, fx:null });
@@ -445,12 +510,17 @@
       return P1_START.concat(P2_START).some(function(s){ return s.x===t.x && s.y===t.y; });
     };
 
-    // the contested centre: high ground plus the spring that heals whoever holds it
-    var hill = at(2,2);
-    hill.e = 2; hill.fx = 'spring';
-    [[2,1],[2,3],[1,2],[3,2]].forEach(function(p){ at(p[0],p[1]).e = 1; });
+    // the keep in the middle: a 2x2 plateau, a step around it, and the springs on top
+    var mid = GRID/2;
+    [[mid-1,mid-1],[mid,mid-1],[mid-1,mid],[mid,mid]].forEach(function(p){ at(p[0],p[1]).e = 2; });
+    at(mid-1,mid).fx = 'spring'; at(mid,mid-1).fx = 'spring';
+    // one step up on each face of the keep, so it can be climbed from any side
+    [[mid-2,mid-1],[mid-2,mid],[mid+1,mid-1],[mid+1,mid],
+     [mid-1,mid-2],[mid,mid-2],[mid-1,mid+1],[mid,mid+1]].forEach(function(p){
+      var t = at(p[0],p[1]);
+      if(t) t.e = 1;
+    });
 
-    // candidates for the random pairs: off-centre, off-spawn, and not their own mirror
     var pool = tiles.filter(function(t){
       return t.e === 0 && !t.fx && !isStart(t) && mirror(t) !== t &&
              !isStart(mirror(t)) && mirror(t).e === 0;
@@ -468,9 +538,13 @@
         return;
       }
     };
-    take(function(t){ t.e = 1; });                 // a pair of ledges
-    take(function(t){ t.fx = 'treasure'; });       // ATK for both sides to race for
-    take(function(t){ t.fx = 'trap'; });           // and a matching hazard
+    take(function(t){ t.e = 2; });                 // a pair of outcrops
+    take(function(t){ t.e = 1; });                 // and some low ledges
+    take(function(t){ t.e = 1; });
+    take(function(t){ t.fx = 'treasure'; });
+    take(function(t){ t.fx = 'treasure'; });
+    take(function(t){ t.fx = 'trap'; });
+    take(function(t){ t.fx = 'trap'; });
     return tiles;
   }
 
@@ -499,22 +573,130 @@
     return hit;
   }
 
-  function tapAtPointer(ev){
+  function boardPoint(clientX, clientY){
     var svg = $('boardSvg');
     var ctm = svg.getScreenCTM();
-    if(!ctm) return;
+    if(!ctm) return null;
     var pt = svg.createSVGPoint();
-    pt.x = ev.clientX; pt.y = ev.clientY;
-    var loc = pt.matrixTransform(ctm.inverse());
-    var t = tileFromPoint(loc.x, loc.y);
+    pt.x = clientX; pt.y = clientY;
+    return pt.matrixTransform(ctm.inverse());
+  }
+  function overlayFromPoint(px, py){
+    var els = overlayLayer.querySelectorAll('.ov-move, .ov-target');
+    for(var i = els.length - 1; i >= 0; i--){
+      var x = +els[i].getAttribute('data-x'), y = +els[i].getAttribute('data-y');
+      var t = tileAt(x, y);
+      if(!t) continue;
+      var c = isoC(x, y, t.e);
+      if(Math.abs(px - c.cx)/(TILE_W/2) + Math.abs(py - c.cy)/(TILE_H/2) <= 1) return t;
+    }
+    return null;
+  }
+  function tapAtPointer(ev){
+    var loc = boardPoint(ev.clientX, ev.clientY);
+    if(!loc) return;
+    var t = overlayFromPoint(loc.x, loc.y) || tileFromPoint(loc.x, loc.y);
     if(t) onTileTap(t.x, t.y);
   }
-  $('boardSvg').addEventListener('click', function(ev){ if(B) tapAtPointer(ev); });
 
-  window.addEventListener('resize', function(){
+  // Drag to look around, pinch to zoom. One handler on the whole board area
+  // owns every gesture, so a tap is resolved the same way whether it lands on a
+  // tile or on a character standing over one.
+  var TAP_SLOP = 10;
+  var ptrs = {}, drag = null, pinch = null, moved = false;
+
+  function svgUnitsPerPx(){
+    var vb = $('boardSvg').viewBox.baseVal;
+    var box = stage.getBoundingClientRect();
+    return box.width ? vb.width / box.width : 1;
+  }
+  function ptrList(){ return Object.keys(ptrs).map(function(k){ return ptrs[k]; }); }
+  function resetGesture(){ ptrs = {}; drag = null; pinch = null; moved = false; }
+
+  function resolveTap(ev){
     if(!B) return;
-    B.units.forEach(function(u){ if(u.hp > 0) positionSlot(slotOf(u), u); });
+    // a highlighted tile is the thing the player is aiming at, then a character
+    // they can act on, and only then whatever terrain is under the finger
+    var loc = boardPoint(ev.clientX, ev.clientY);
+    if(loc){
+      var ov = overlayFromPoint(loc.x, loc.y);
+      if(ov && onTileTap(ov.x, ov.y)) return;
+    }
+    var el = document.elementFromPoint(ev.clientX, ev.clientY);
+    var slot = el && el.closest ? el.closest('.u-slot') : null;
+    if(slot){
+      var uid = +slot.dataset.uid;
+      var u = null;
+      B.units.forEach(function(o){ if(o.uid === uid) u = o; });
+      if(u && onTileTap(u.x, u.y)) return;
+    }
+    if(loc){
+      var t = tileFromPoint(loc.x, loc.y);
+      if(t) onTileTap(t.x, t.y);
+    }
+  }
+
+  stage.addEventListener('pointerdown', function(ev){
+    ptrs[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
+    var list = ptrList();
+    if(list.length === 1){
+      moved = false;
+      drag = { x:ev.clientX, y:ev.clientY, cx:CAM.cx, cy:CAM.cy };
+    } else if(list.length === 2){
+      drag = null;
+      pinch = { dist:Math.hypot(list[0].x-list[1].x, list[0].y-list[1].y), zoom:CAM.zoom };
+      moved = true;
+    }
+    try{ stage.setPointerCapture(ev.pointerId); }catch(e){}
   });
+
+  stage.addEventListener('pointermove', function(ev){
+    if(!ptrs[ev.pointerId]) return;
+    ptrs[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
+    var list = ptrList();
+    if(pinch && list.length >= 2){
+      var d = Math.hypot(list[0].x-list[1].x, list[0].y-list[1].y);
+      if(pinch.dist > 0){
+        CAM.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinch.zoom * (d / pinch.dist)));
+        applyCam();
+      }
+      return;
+    }
+    if(!drag) return;
+    var dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+    if(!moved && Math.hypot(dx, dy) < TAP_SLOP) return;
+    moved = true;
+    var k = svgUnitsPerPx();
+    CAM.cx = drag.cx - dx * k;
+    CAM.cy = drag.cy - dy * k;
+    applyCam();
+  });
+
+  function endPointer(ev){
+    var had = !!ptrs[ev.pointerId];
+    delete ptrs[ev.pointerId];
+    var wasTap = had && drag && !moved;
+    if(!ptrList().length){
+      drag = null; pinch = null;
+      if(wasTap) resolveTap(ev);
+    } else {
+      drag = null; pinch = null;
+    }
+  }
+  stage.addEventListener('pointerup', endPointer);
+  stage.addEventListener('pointercancel', function(ev){ delete ptrs[ev.pointerId]; drag = null; pinch = null; });
+
+  $('zoomInBtn').addEventListener('click', function(){
+    CAM.zoom = Math.min(MAX_ZOOM, CAM.zoom * 1.35); applyCam();
+  });
+  $('zoomOutBtn').addEventListener('click', function(){
+    CAM.zoom = Math.max(MIN_ZOOM, CAM.zoom / 1.35); applyCam();
+  });
+  $('camHomeBtn').addEventListener('click', function(){
+    CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy; applyCam();
+  });
+
+  window.addEventListener('resize', applyCam);
   function unitAt(x,y){
     for(var i=0;i<B.units.length;i++){ var u=B.units[i]; if(u.hp>0 && u.x===x && u.y===y) return u; }
     return null;
@@ -581,12 +763,6 @@
       slot.dataset.uid = u.uid;
       slot.innerHTML = '<div class="u-card"><span class="c-badge">' + CLASS_DEFS[u.cls].letter + '</span>' +
         '<span class="hp-bar"><span class="hp-fill"></span></span></div>';
-      // the chip stands above its own tile, so it covers ground belonging to
-      // tiles further back: take the tap only when this character can act on
-      // it, otherwise pass it down to whatever tile is under the finger
-      slot.addEventListener('click', function(ev){
-        if(!onTileTap(u.x, u.y)) tapAtPointer(ev);
-      });
       stage.appendChild(slot);
       positionSlot(slot, u);
       refreshSlot(u);
@@ -697,6 +873,7 @@
   function selectUnit(u){
     B.sel = u; B.moved = false; B.origin = {x:u.x,y:u.y};
     B.moveTiles = reachableTiles(u); B.targets = [];
+    camReveal(u.x, u.y);
     drawState();
   }
 
@@ -862,12 +1039,22 @@
     show('battle');
     renderTiles();
     renderUnits();
+    CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy;
+    applyCam();
     drawState();
     openPhaseOverlay();
   }
 
   function openPhaseOverlay(){
     B.overlayOpen = true;
+    resetGesture();
+    var own = B.units.filter(function(u){ return u.side === B.phase && u.hp > 0; });
+    if(own.length){
+      var mx = own.reduce(function(s,u){ return s + u.x; }, 0) / own.length;
+      var my = own.reduce(function(s,u){ return s + u.y; }, 0) / own.length;
+      CAM.zoom = 1.45;
+      camTo(Math.round(mx), Math.round(my), true);
+    }
     $('phaseTitle').textContent = 'プレイヤー' + B.phase + ' のフェーズ';
     $('phaseSub').textContent = 'ステージ' + G.stage + ' ラウンド' + B.round + ' — スマホを渡してタップ';
     $('phaseOverlay').classList.remove('hidden');
@@ -933,7 +1120,7 @@
       $('resultTitle').textContent = winner===0 ? 'ステージ引き分け' : ('プレイヤー' + winner + 'がステージ制圧');
       $('resultSub').innerHTML = (reason==='wipe' ? '全滅' : 'ラウンド終了') + (tiebreak ? '（' + tiebreak + 'で判定）' : '') +
         ' — 残HP P1:' + h1 + ' / P2:' + h2 +
-        '<br>ステージ勝数 ' + w1 + ' : ' + w2 + '<br>倒れた仲間は次ステージも戻りません';
+        '<br>ステージ勝数 ' + w1 + ' : ' + w2 + '<br>倒れた仲間は傷を負って次ステージへ';
       $('resultBtn').textContent = 'つぎのステージへ';
       $('resultBtn').onclick = function(){
         G.stage += 1;
