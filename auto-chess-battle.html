@@ -4,14 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>ALTITUDE 01</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap">
 <style>
-  /* One ink on one substrate. Every tone below is dithering, never a grey. */
+  /* One ink on one substrate. Every tone is dithering, never a grey. */
   :root{
     --paper:#FAFAF7; --ink:#30343A;
     --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',monospace;
     --font-body:'Noto Sans JP','Hiragino Sans',sans-serif;
-    --rail:26px;
   }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   html,body{
@@ -26,7 +25,6 @@
   .hidden{ display:none !important; }
   button{ font-family:inherit; -webkit-appearance:none; appearance:none; color:inherit; }
 
-  /* ---------- instrument grammar ---------- */
   .mod{ background:var(--paper); border:1.5px solid var(--ink); position:relative; }
   .mod.clip{ clip-path:polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px)); }
   .screws{ position:absolute; inset:3px; pointer-events:none; }
@@ -34,10 +32,6 @@
   .screws i:nth-child(1){ left:0; top:0; } .screws i:nth-child(2){ right:0; top:0; }
   .screws i:nth-child(3){ left:0; bottom:0; } .screws i:nth-child(4){ right:0; bottom:0; }
   .micro{ font-size:.5rem; letter-spacing:.22em; text-transform:uppercase; }
-  .hair{ height:1px; background:var(--ink); opacity:.55; }
-  .ticks{ display:flex; gap:2px; }
-  .ticks i{ width:1px; height:4px; background:var(--ink); }
-  .ticks i:nth-child(5n+1){ height:7px; }
 
   .key{ display:flex; align-items:center; gap:5px; padding:0 6px; height:23px; width:100%;
     background:var(--paper); border:1.5px solid var(--ink); font-size:.66rem; font-weight:700;
@@ -51,22 +45,17 @@
   .seg{ display:flex; gap:2px; height:8px; flex:1; }
   .seg i{ flex:1; border:1px solid var(--ink); background:var(--paper); }
   .seg i.f{ background:var(--ink); }
-  .lamps{ display:flex; gap:4px; }
-  .lamps i{ width:9px; height:9px; border:1.5px solid var(--ink); background:var(--paper); }
+  .lamps{ display:flex; gap:3px; }
+  .lamps i{ width:8px; height:8px; border:1.5px solid var(--ink); background:var(--paper); }
   .lamps i.on{ background:var(--ink); box-shadow:inset 0 0 0 2px var(--paper); }
   .lamps i.dead{ opacity:.25; }
-
-  .big-num{ font-family:var(--font-mono); font-weight:700; font-size:2.1rem; line-height:.9;
-    letter-spacing:.02em; }
+  .big-num{ font-weight:700; font-size:1.4rem; line-height:.9; }
 
   .btn{ background:var(--paper); border:1.5px solid var(--ink); color:var(--ink);
     padding:12px 26px; font-weight:700; font-size:.76rem; letter-spacing:.2em; text-transform:uppercase; }
   .btn:active{ background:var(--ink); color:var(--paper); }
-  .btn.solid{ background:var(--ink); color:var(--paper); }
-  .btn.solid:active{ background:var(--paper); color:var(--ink); }
 
-  /* ---------- header rail ---------- */
-  .rail{ display:flex; align-items:center; gap:8px; height:var(--rail); padding:0 6px;
+  .rail{ display:flex; align-items:center; gap:6px; height:26px; padding:0 6px;
     background:var(--paper); border-bottom:1.5px solid var(--ink); flex:none; }
   .rail .glyph{ width:13px; height:13px; border:1.5px solid var(--ink); flex:none; position:relative; }
   .rail .glyph::after{ content:''; position:absolute; inset:2.5px; background:var(--ink); }
@@ -75,213 +64,166 @@
   .rail .fill::before, .rail .fill::after{ content:''; position:absolute; top:-3px; width:1px; height:7px; background:var(--ink); }
   .rail .fill::before{ left:33%; } .rail .fill::after{ left:66%; }
   .rail .grid{ font-size:.5rem; letter-spacing:.12em; white-space:nowrap; }
-
-  /* ---------- title ---------- */
-  #screen-title{ align-items:center; justify-content:center; gap:16px; padding:26px 18px;
-    text-align:center; background:var(--ink); color:var(--paper); }
-  #screen-title h1{ font-weight:700; font-size:2rem; letter-spacing:.42em; margin:0 0 0 .42em; }
-  #screen-title .sub{ font-size:.52rem; letter-spacing:.34em; opacity:.7; }
-  .title-plate{ background:var(--paper); color:var(--ink); border:1.5px solid var(--paper);
-    padding:14px 15px; max-width:340px; text-align:left; }
-  .title-plate .row{ display:flex; gap:8px; font-size:.62rem; line-height:1.75;
-    font-family:var(--font-body); letter-spacing:0; }
-  .title-plate .row + .row{ margin-top:7px; padding-top:7px; border-top:1px solid var(--ink); }
-  .title-plate .n{ font-family:var(--font-mono); font-weight:700; font-size:.58rem; flex:none; }
-  .title-plate b{ font-weight:700; }
-
-  /* ---------- handoff ---------- */
-  #screen-handoff{ align-items:center; justify-content:center; gap:16px; padding:24px;
-    text-align:center; background:var(--ink); color:var(--paper); }
-  #screen-handoff h2{ font-size:1.2rem; margin:0; letter-spacing:.24em; }
-  #screen-handoff p{ font-size:.64rem; letter-spacing:.1em; opacity:.75; margin:0; line-height:2;
-    font-family:var(--font-body); }
-  .seal{ width:132px; height:132px; }
-
-  /* ---------- upgrade ---------- */
-  #screen-upgrade{ background:var(--ink); color:var(--paper); padding:0; gap:0; }
-  .up-body{ flex:1; display:flex; flex-direction:column; gap:9px; padding:11px 10px 16px; justify-content:center; }
-  .roster-row{ display:flex; gap:5px; }
-  .roster-card{ flex:1; min-width:0; padding:6px 3px 5px; text-align:center; }
-  .roster-card.gone .rc-art{ opacity:.25; }
-  .roster-card .rc-art{ height:38px; }
-  .roster-card .u-name{ font-family:var(--font-body); font-weight:700; font-size:.62rem; margin-top:1px; }
-  .roster-card .u-stats{ font-size:.48rem; letter-spacing:.02em; line-height:1.5; }
-  .roster-card .scar{ font-size:.46rem; letter-spacing:.08em; }
-  .upgrade-list{ display:flex; flex-direction:column; gap:7px; }
-  .upgrade-card{ display:flex; align-items:center; gap:10px; padding:10px 11px; width:100%; text-align:left; }
-  .upgrade-card .uc-icon{ width:26px; height:26px; flex:none; }
-  .upgrade-card .u-title{ display:block; font-family:var(--font-body); font-weight:700; font-size:.82rem; }
-  .upgrade-card .u-desc{ display:block; font-size:.56rem; letter-spacing:.04em; margin-top:3px; }
-  .upgrade-card:active{ background:var(--ink); color:var(--paper); }
-
-  /* ---------- battle ---------- */
-  #screen-battle{ padding:0; gap:0; background:var(--ink); }
-  .board-wrap{ position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:var(--ink); }
-  .board-stage{ position:absolute; inset:0; touch-action:none; }
-  .board-svg{ position:absolute; inset:0; width:100%; height:100%; display:block; pointer-events:none;
-    shape-rendering:crispEdges; }
-  .board-svg .tile-tag{ font-family:var(--font-mono); font-size:6px; font-weight:700;
-    letter-spacing:.08em; fill:var(--ink); text-anchor:middle; opacity:.75; }
-  .board-wrap.shake .board-stage{ animation:shake .2s cubic-bezier(.3,.9,.4,1); }
-  @keyframes shake{ 0%{ transform:translate(0,0);} 22%{ transform:translate(-5px,3px);}
-    48%{ transform:translate(4px,-2px);} 74%{ transform:translate(-2px,-2px);} 100%{ transform:translate(0,0);} }
-
-  .fig.hit .fig-in{ animation:jhit .24s cubic-bezier(.2,.9,.3,1); }
-  .fig.crithit .fig-in{ animation:jcrit .3s cubic-bezier(.2,.9,.3,1); }
-  .fig.dying{ animation:die .3s cubic-bezier(.4,0,.7,.2) forwards;
-    transform-box:fill-box; transform-origin:50% 100%; }
-  .fig.sel .fig-in{ animation:bob 1.5s cubic-bezier(.45,0,.55,1) infinite; }
-  .fig-in{ transform-box:fill-box; transform-origin:50% 100%; }
-  @keyframes jhit{ 0%{ transform:scale(1,1);} 30%{ transform:scale(1.18,.84) translateY(1.5px);}
-    64%{ transform:scale(.94,1.07);} 100%{ transform:scale(1,1);} }
-  @keyframes jcrit{ 0%{ transform:scale(1,1);} 24%{ transform:scale(1.3,.74) translateY(2.5px);}
-    58%{ transform:scale(.9,1.12);} 100%{ transform:scale(1,1);} }
-  @keyframes die{ to{ opacity:0; transform:scale(.72) translateY(5px); } }
-  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-1.6px);} }
-  .board-svg .pulse{ animation:pul 1.1s cubic-bezier(.45,0,.55,1) infinite; }
-  @keyframes pul{ 0%,100%{ opacity:1;} 50%{ opacity:.28;} }
-  .board-svg .ring{ animation:march 2.2s linear infinite; }
-  @keyframes march{ to{ stroke-dashoffset:-16; } }
-  .path-dot{ animation:dotin .2s ease-out backwards; }
-  @keyframes dotin{ from{ opacity:0; } }
-
   .cam-btn{ width:26px; height:18px; display:flex; align-items:center; justify-content:center; flex:none;
     border:1.5px solid var(--ink); background:var(--paper); font-size:.62rem; font-weight:700; }
   .cam-btn:active{ background:var(--ink); color:var(--paper); }
   .cam-btn.off{ opacity:.35; }
 
-  /* floating readouts over the board */
+  /* ---------- title ---------- */
+  #screen-title{ align-items:center; justify-content:center; gap:15px; padding:24px 18px;
+    text-align:center; background:var(--ink); color:var(--paper); }
+  #screen-title h1{ font-weight:700; font-size:1.9rem; letter-spacing:.42em; margin:0 0 0 .42em; }
+  #screen-title .sub{ font-size:.5rem; letter-spacing:.32em; opacity:.7; }
+  .seal{ width:120px; height:120px; image-rendering:pixelated; }
+  .title-plate{ background:var(--paper); color:var(--ink); padding:13px 14px; max-width:344px; text-align:left; }
+  .title-plate .row{ display:flex; gap:8px; font-size:.6rem; line-height:1.7;
+    font-family:var(--font-body); letter-spacing:0; }
+  .title-plate .row + .row{ margin-top:6px; padding-top:6px; border-top:1px solid var(--ink); }
+  .title-plate .n{ font-family:var(--font-mono); font-weight:700; font-size:.56rem; flex:none; }
+  .title-plate b{ font-weight:700; }
+
+  #screen-handoff{ align-items:center; justify-content:center; gap:16px; padding:24px;
+    text-align:center; background:var(--ink); color:var(--paper); }
+  #screen-handoff h2{ font-size:1.2rem; margin:0; letter-spacing:.24em; }
+  #screen-handoff p{ font-size:.62rem; letter-spacing:.08em; opacity:.75; margin:0; line-height:2;
+    font-family:var(--font-body); }
+
+  #screen-upgrade{ background:var(--ink); color:var(--paper); padding:0; gap:0; }
+  .up-body{ flex:1; display:flex; flex-direction:column; gap:8px; padding:10px 10px 14px; justify-content:center; }
+  .roster-row{ display:flex; gap:5px; }
+  .roster-card{ flex:1; min-width:0; padding:5px 3px; text-align:center; }
+  .roster-card.gone canvas{ opacity:.22; }
+  .roster-card canvas{ image-rendering:pixelated; width:36px; height:36px; }
+  .roster-card .u-name{ font-family:var(--font-body); font-weight:700; font-size:.6rem; }
+  .roster-card .u-stats{ font-size:.46rem; line-height:1.5; }
+  .roster-card .scar{ font-size:.44rem; letter-spacing:.06em; }
+  .upgrade-list{ display:flex; flex-direction:column; gap:6px; }
+  .upgrade-card{ display:flex; align-items:center; gap:9px; padding:9px 10px; width:100%; text-align:left; }
+  .upgrade-card canvas{ image-rendering:pixelated; width:24px; height:24px; flex:none; }
+  .upgrade-card .u-title{ display:block; font-family:var(--font-body); font-weight:700; font-size:.8rem; }
+  .upgrade-card .u-desc{ display:block; font-size:.54rem; letter-spacing:.03em; margin-top:2px; }
+  .upgrade-card:active{ background:var(--ink); color:var(--paper); }
+
+  /* ---------- battle ---------- */
+  #screen-battle{ padding:0; gap:0; background:var(--ink); }
+  .board-wrap{ position:relative; flex:1 1 auto; min-height:0; overflow:hidden; background:var(--ink);
+    display:flex; align-items:center; justify-content:center; touch-action:none; }
+  #boardCanvas{ image-rendering:pixelated; image-rendering:crisp-edges; display:block; }
+  .board-wrap.shake{ animation:shake .2s cubic-bezier(.3,.9,.4,1); }
+  @keyframes shake{ 0%{ transform:translate(0,0);} 22%{ transform:translate(-5px,3px);}
+    48%{ transform:translate(4px,-2px);} 74%{ transform:translate(-2px,-2px);} 100%{ transform:translate(0,0);} }
+
   .dmg-pop{ position:absolute; transform:translate(-50%,-100%); z-index:7; pointer-events:none;
-    font-weight:700; font-size:1rem; letter-spacing:.04em; white-space:nowrap;
-    background:var(--paper); color:var(--ink); border:1.5px solid var(--ink); padding:1px 5px;
-    animation:dmgfly .8s cubic-bezier(.15,.85,.3,1) forwards; }
-  .dmg-pop.crit{ background:var(--ink); color:var(--paper); font-size:1.15rem; }
-  .dmg-pop.info{ font-size:.6rem; font-family:var(--font-body); }
-  @keyframes dmgfly{ 0%{ opacity:0; transform:translate(-50%,-88%) scale(.8);}
-    18%{ opacity:1; transform:translate(-50%,-152%) scale(1.06);}
-    32%{ transform:translate(-50%,-148%) scale(1);}
-    100%{ opacity:0; transform:translate(-50%,-205%) scale(1);} }
+    font-weight:700; font-size:.9rem; white-space:nowrap; background:var(--paper); color:var(--ink);
+    border:1.5px solid var(--ink); padding:0 4px; animation:dmgfly .8s cubic-bezier(.15,.85,.3,1) forwards; }
+  .dmg-pop.crit{ background:var(--ink); color:var(--paper); font-size:1.05rem; }
+  .dmg-pop.info{ font-size:.55rem; font-family:var(--font-body); }
+  @keyframes dmgfly{ 0%{ opacity:0; transform:translate(-50%,-70%) scale(.8);}
+    18%{ opacity:1; transform:translate(-50%,-135%) scale(1.06);}
+    32%{ transform:translate(-50%,-130%) scale(1);}
+    100%{ opacity:0; transform:translate(-50%,-185%) scale(1);} }
 
-  .roll-pop{ position:absolute; left:50%; top:8px; transform:translateX(-50%); z-index:9;
-    pointer-events:none; display:flex; align-items:stretch; background:var(--paper);
-    border:1.5px solid var(--ink); font-size:.56rem; letter-spacing:.1em; white-space:nowrap; }
+  .roll-pop{ position:absolute; left:50%; top:6px; transform:translateX(-50%); z-index:9;
+    pointer-events:none; display:flex; background:var(--paper); border:1.5px solid var(--ink);
+    font-size:.54rem; letter-spacing:.08em; white-space:nowrap; max-width:96%; }
   .roll-pop .die{ display:flex; align-items:center; padding:3px 6px; background:var(--ink);
-    color:var(--paper); font-size:.8rem; font-weight:700; }
-  .roll-pop .txt{ display:flex; align-items:center; padding:3px 8px; }
+    color:var(--paper); font-size:.78rem; font-weight:700; flex:none; }
+  .roll-pop .txt{ display:flex; align-items:center; padding:3px 7px; overflow:hidden; }
 
-  .kill-banner{ position:absolute; left:50%; top:24%; transform:translateX(-50%); z-index:9;
+  .kill-banner{ position:absolute; left:50%; top:22%; transform:translateX(-50%); z-index:9;
     pointer-events:none; padding:4px 16px; background:var(--ink); color:var(--paper);
-    font-weight:700; font-size:.72rem; letter-spacing:.2em; white-space:nowrap;
+    font-weight:700; font-size:.7rem; letter-spacing:.2em; white-space:nowrap;
     animation:killpop 1.15s cubic-bezier(.2,.8,.3,1) forwards; }
   @keyframes killpop{ 0%{ opacity:0; } 10%{ opacity:1; } 82%{ opacity:1; } 100%{ opacity:0; } }
 
   .phase-veil{ position:absolute; inset:0; z-index:12; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:13px; text-align:center; padding:20px;
+    align-items:center; justify-content:center; gap:12px; text-align:center; padding:18px;
     background:var(--ink); color:var(--paper); }
-  .phase-veil h3{ font-size:1.1rem; margin:0; letter-spacing:.3em; }
+  .phase-veil h3{ font-size:1rem; margin:0; letter-spacing:.3em; }
   .phase-veil .who{ display:inline-block; padding:3px 14px; background:var(--paper); color:var(--ink);
     font-weight:700; letter-spacing:.24em; font-size:.7rem; }
-  .phase-veil p{ margin:0; font-size:.6rem; letter-spacing:.08em; opacity:.75; font-family:var(--font-body); }
-  .legend{ display:grid; grid-template-columns:repeat(2,auto); gap:4px 14px; justify-content:center;
-    font-size:.5rem; letter-spacing:.06em; opacity:.85; }
-  .legend b{ display:inline-block; min-width:26px; }
+  .phase-veil p{ margin:0; font-size:.58rem; letter-spacing:.06em; opacity:.75; font-family:var(--font-body); }
+  .legend{ display:grid; grid-template-columns:repeat(2,auto); gap:3px 14px; justify-content:center;
+    font-size:.48rem; letter-spacing:.04em; opacity:.85; }
+  .legend b{ display:inline-block; min-width:30px; }
 
-  /* ---------- bottom deck ---------- */
   .deck{ display:flex; gap:5px; padding:5px; background:var(--ink); flex:none; align-items:stretch; }
   .cluster{ flex:1; min-width:0; padding:5px 7px; display:flex; flex-direction:column; gap:3px; }
-  .cl-top{ display:flex; align-items:center; gap:7px; }
-  .cl-port{ width:26px; height:30px; flex:none; border:1.5px solid var(--ink); }
+  .cl-top{ display:flex; align-items:center; gap:6px; }
+  .cl-port{ width:28px; height:28px; flex:none; border:1.5px solid var(--ink); image-rendering:pixelated; }
   .cl-id{ flex:1; min-width:0; }
-  .cl-name{ font-family:var(--font-body); font-weight:700; font-size:.74rem; line-height:1.1; }
-  .cl-job{ font-size:.46rem; letter-spacing:.2em; }
-  .cl-lv{ font-size:.5rem; letter-spacing:.14em; font-weight:700; flex:none; }
+  .cl-name{ font-family:var(--font-body); font-weight:700; font-size:.72rem; line-height:1.1; }
+  .cl-job{ font-size:.44rem; letter-spacing:.18em; }
+  .cl-lv{ font-size:.5rem; letter-spacing:.12em; font-weight:700; flex:none; }
   .cl-bar{ display:flex; align-items:center; gap:6px; }
-  .cl-bar .lab{ font-size:.5rem; letter-spacing:.12em; width:38px; flex:none; font-weight:700; }
-  .cl-stats{ display:flex; gap:8px; font-size:.5rem; letter-spacing:.06em; }
-  .cl-stats b{ font-size:.62rem; }
-  .cl-hint{ font-size:.46rem; letter-spacing:.04em; font-family:var(--font-body); line-height:1.3; }
+  .cl-bar .lab{ font-size:.48rem; letter-spacing:.1em; width:38px; flex:none; font-weight:700; }
+  .cl-stats{ display:flex; gap:7px; font-size:.48rem; }
+  .cl-stats b{ font-size:.6rem; }
+  .cl-hint{ font-size:.46rem; font-family:var(--font-body); line-height:1.3; }
 
   .cmd{ width:96px; flex:none; padding:4px; display:flex; flex-direction:column; gap:2px; }
-  .cmd .cmd-h{ display:flex; align-items:center; justify-content:space-between; font-size:.48rem;
-    letter-spacing:.18em; font-weight:700; margin-bottom:1px; }
-
+  .cmd .cmd-h{ display:flex; align-items:center; justify-content:space-between; font-size:.46rem;
+    letter-spacing:.16em; font-weight:700; }
   .turnbox{ width:52px; flex:none; padding:4px 3px; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:2px; }
-  .turnbox .big-num{ font-size:1.4rem; }
+    align-items:center; justify-content:center; gap:1px; }
   .turnbox .micro{ font-size:.42rem; }
   .turnbox .hairline{ width:70%; height:1px; background:var(--ink); opacity:.5; margin:2px 0 1px; }
-  .turnbox .hold{ font-size:.68rem; font-weight:700; letter-spacing:.08em; }
+  .turnbox .hold{ font-size:.66rem; font-weight:700; letter-spacing:.06em; }
 
-  /* ---------- result ---------- */
-  #screen-result{ align-items:center; justify-content:center; gap:14px; padding:26px 20px;
+  #screen-result{ align-items:center; justify-content:center; gap:13px; padding:24px 18px;
     text-align:center; background:var(--ink); color:var(--paper); }
   .result-title{ background:var(--paper); color:var(--ink); padding:9px 20px; font-weight:700;
-    font-size:1.15rem; letter-spacing:.22em; }
+    font-size:1.1rem; letter-spacing:.2em; }
   .tally{ display:flex; align-items:center; gap:16px; }
-  .tally .t-col{ text-align:center; }
-  .tally .t-n{ font-size:1.9rem; font-weight:700; line-height:1; }
-  .tally .t-sep{ font-size:.6rem; opacity:.6; letter-spacing:.2em; }
-  .result-sub{ font-size:.58rem; letter-spacing:.08em; line-height:2.1; font-family:var(--font-body); }
+  .tally .t-n{ font-size:1.8rem; font-weight:700; line-height:1; }
+  .tally .t-sep{ font-size:.55rem; opacity:.6; letter-spacing:.18em; }
+  .result-sub{ font-size:.56rem; line-height:2; font-family:var(--font-body); }
 
   @media (orientation:landscape) and (max-height:560px){
-    #screen-battle{ display:grid;
-      grid-template-columns:minmax(0,1fr) 232px;
-      grid-template-rows:auto minmax(0,1fr);
-      grid-template-areas:"rail rail" "board deck" "board deck"; }
-    .rail{ grid-area:rail; }
-    .board-wrap{ grid-area:board; max-height:none; }
+    #screen-battle{ display:grid; grid-template-columns:minmax(0,1fr) 230px;
+      grid-template-rows:auto minmax(0,1fr); grid-template-areas:"rail rail" "board deck"; }
+    .rail{ grid-area:rail; } .board-wrap{ grid-area:board; }
     .deck{ grid-area:deck; flex-direction:column; }
     .cmd{ width:auto; } .turnbox{ width:auto; flex-direction:row; gap:8px; }
-    #screen-title{ gap:10px; padding:14px; }
-    #screen-title h1{ font-size:1.5rem; }
-    .title-plate{ max-width:520px; }
-    .title-plate .row{ font-size:.58rem; line-height:1.5; }
-    .title-plate .row + .row{ margin-top:4px; padding-top:4px; }
-    .seal{ width:78px; height:78px; }
+    #screen-title{ gap:9px; padding:12px; } #screen-title h1{ font-size:1.4rem; }
+    .seal{ width:70px; height:70px; }
+    .title-plate{ max-width:520px; } .title-plate .row{ font-size:.55rem; line-height:1.5; }
+    .title-plate .row + .row{ margin-top:3px; padding-top:3px; }
     .up-body{ max-width:620px; margin:0 auto; }
-    .roster-card .rc-art{ height:30px; }
   }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- TITLE -->
   <div id="screen-title" class="screen">
-    <svg class="seal" viewBox="0 0 100 100" aria-hidden="true" id="titleMark"></svg>
+    <canvas class="seal" id="titleMark" width="60" height="60"></canvas>
     <div>
       <h1>ALTITUDE</h1>
       <div class="sub">TACTICAL SKIRMISH · 2P · 1 DEVICE</div>
     </div>
     <div class="title-plate">
-      <div class="row"><span class="n">01</span><span>スマホ1台を渡し合う<b>手動タクティクス</b>。全3ステージのランで先に2勝</span></div>
-      <div class="row"><span class="n">02</span><span>コマンドは<b>MOVE / ATK / SKILL / WAIT</b>。1体ずつ動かして相手に渡す</span></div>
-      <div class="row"><span class="n">03</span><span>高さ差<b>1段ごとに+10%</b>（低いと-5%）。<b>側面+25% / 背後+50%</b></span></div>
-      <div class="row"><span class="n">04</span><span>狙う敵に隣接する味方1人ごとに<b>連携+10%</b>。挟むほど痛い</span></div>
-      <div class="row"><span class="n">05</span><span><b>▲</b>は敵の射程。踏めば次のフェーズに殴られる</span></div>
-      <div class="row"><span class="n">06</span><span>ラウンド終了時、中央の<b>拠点</b>に立つ数だけスコア加算</span></div>
-      <div class="row"><span class="n">07</span><span>段差は<b>跳躍力</b>まで。特技は<b>MP</b>消費、6の出目で<b>会心</b></span></div>
+      <div class="row"><span class="n">01</span><span>スマホ1台を渡し合う<b>手動タクティクス</b>。全3ステージで先に2勝</span></div>
+      <div class="row"><span class="n">02</span><span>地形で<b>移動コスト</b>と<b>回避</b>が変わる。森は重く、堅い</span></div>
+      <div class="row"><span class="n">03</span><span>高さ1段ごとに<b>+10%</b>（低いと-5%）。<b>側面+25% / 背後+50%</b></span></div>
+      <div class="row"><span class="n">04</span><span>敵に隣接する味方1人ごとに<b>連携+10%</b>。挟むほど痛い</span></div>
+      <div class="row"><span class="n">05</span><span><b>▲</b>は敵の射程。ラウンド終了時<b>砦</b>に立つ数だけスコア加算</span></div>
     </div>
     <button class="btn" id="titleStartBtn">Start Run</button>
   </div>
 
-  <!-- HANDOFF -->
   <div id="screen-handoff" class="screen hidden">
     <div class="micro" id="handoffEyebrow">PASS THE DEVICE</div>
-    <svg class="seal" id="handoffSeal" viewBox="0 0 100 100" aria-hidden="true"></svg>
+    <canvas class="seal" id="handoffSeal" width="60" height="60"></canvas>
     <h2 id="handoffTitle">PLAYER 1</h2>
     <p id="handoffSub">相手に見られないように受け取ってください</p>
     <button class="btn" id="handoffBtn">Confirm</button>
   </div>
 
-  <!-- UPGRADE -->
   <div id="screen-upgrade" class="screen hidden">
     <div class="rail">
-      <span class="glyph"></span>
-      <span class="name" id="upgradeTurnLabel">P1 / OUTFIT</span>
-      <span class="fill"></span>
-      <span class="grid" id="upgradeStage">STAGE 1/3</span>
-      <span class="glyph"></span>
+      <span class="glyph"></span><span class="name" id="upgradeTurnLabel">P1 / OUTFIT</span>
+      <span class="fill"></span><span class="grid" id="upgradeStage">STAGE 1/3</span><span class="glyph"></span>
     </div>
     <div class="up-body">
       <div class="micro">COMPANY</div>
@@ -291,36 +233,28 @@
     </div>
   </div>
 
-  <!-- BATTLE -->
   <div id="screen-battle" class="screen hidden">
     <div class="rail">
       <span class="glyph"></span>
       <span class="name" id="actName">A01 / PALE CITADEL</span>
       <span class="fill"></span>
-      <span class="grid" id="gridLabel">GRID 08×08</span>
-      <button class="cam-btn" id="rotLBtn" aria-label="左に回転">&#8634;</button>
-      <button class="cam-btn" id="rotRBtn" aria-label="右に回転">&#8635;</button>
+      <span class="grid" id="gridLabel">GRID 12×14</span>
       <button class="cam-btn" id="zoomOutBtn" aria-label="ズームアウト">&minus;</button>
       <button class="cam-btn" id="zoomInBtn" aria-label="ズームイン">+</button>
       <button class="cam-btn" id="camHomeBtn" aria-label="全体表示">&#10530;</button>
-      <button class="cam-btn" id="threatBtn" aria-label="敵の射程表示">&#9650;</button>
+      <button class="cam-btn" id="threatBtn" aria-label="敵の射程">&#9650;</button>
     </div>
     <div class="board-wrap" id="boardWrap">
-      <div class="board-stage" id="boardStage">
-        <svg class="board-svg" id="boardSvg" preserveAspectRatio="xMidYMid slice">
-          <defs id="boardDefs"></defs>
-          <g id="sceneLayer"></g>
-        </svg>
-      </div>
+      <canvas id="boardCanvas"></canvas>
       <div class="phase-veil hidden" id="phaseVeil">
         <div class="micro" id="veilEyebrow">ROUND 1 / 3</div>
         <div class="who" id="veilTitle">PLAYER 1</div>
         <h3>PHASE</h3>
         <p id="veilSub">スマホを渡してから始めてください</p>
         <div class="legend">
-          <span><b>&#9650;</b> 敵の射程</span><span><b>&#9671;</b> 拠点 スコア</span>
-          <span><b>+10%</b> 高さ1段</span><span><b>+10%</b> 連携1人</span>
-          <span><b>+25%</b> 側面</span><span><b>+50%</b> 背後</span>
+          <span><b>&#9650;</b> 敵の射程</span><span><b>&#9635;</b> 砦 スコア</span>
+          <span><b>森</b> 回避+25%</span><span><b>丘</b> 高所+10%</span>
+          <span><b>+10%</b> 連携1人</span><span><b>+50%</b> 背後</span>
         </div>
         <button class="btn" id="veilStartBtn">Begin Phase</button>
       </div>
@@ -329,7 +263,7 @@
       <div class="cluster mod clip" id="unitCard">
         <span class="screws"><i></i><i></i><i></i><i></i></span>
         <div class="cl-top">
-          <svg class="cl-port" id="ucPortrait" viewBox="0 0 30 34"></svg>
+          <canvas class="cl-port" id="ucPortrait" width="16" height="16"></canvas>
           <span class="cl-id">
             <span class="cl-name" id="ucName">NO UNIT</span>
             <span class="cl-job" id="ucJob">SELECT ONE</span>
@@ -359,60 +293,59 @@
     </div>
   </div>
 
-  <!-- RESULT -->
   <div id="screen-result" class="screen hidden">
     <div class="micro" id="resultEyebrow">STAGE RESULT</div>
     <div class="result-title" id="resultTitle">P1 CAPTURED</div>
     <div class="tally">
-      <div class="t-col"><div class="micro">P1</div><div class="t-n" id="tallyP1">0</div></div>
-      <div class="t-col"><div class="t-sep">STAGES</div></div>
-      <div class="t-col"><div class="micro">P2</div><div class="t-n" id="tallyP2">0</div></div>
+      <div><div class="micro">P1</div><div class="t-n" id="tallyP1">0</div></div>
+      <div class="t-sep">STAGES</div>
+      <div><div class="micro">P2</div><div class="t-n" id="tallyP2">0</div></div>
     </div>
     <div class="result-sub" id="resultSub"></div>
     <button class="btn" id="resultBtn">Next</button>
   </div>
 </div>
+
 <script>
 (function(){
   'use strict';
   var $ = function(id){ return document.getElementById(id); };
-  var NS = 'http://www.w3.org/2000/svg';
-  function el(tag, attrs){
-    var n = document.createElementNS(NS, tag);
-    if(attrs) for(var k in attrs) n.setAttribute(k, attrs[k]);
-    return n;
-  }
+  var PAPER = '#FAFAF7', INK = '#30343A';
 
   // ================= config =================
-  var JOBS = {
-    knight:{ name:'重騎士', job:'KNIGHT', hp:30, mp:6, atk:6, range:1, move:3, jump:2,
-      skill:{ name:'薙ぎ払い', tag:'CLEAVE', cost:4, desc:'隣接する敵すべてに攻撃', kind:'cleave' } },
-    mage:{ name:'魔術師', job:'MAGE', hp:18, mp:10, atk:9, range:3, move:3, jump:1,
-      skill:{ name:'業火', tag:'BLAST', cost:5, desc:'着弾点とその隣接マスを焼く', kind:'blast', rng:3 } },
-    archer:{ name:'狙撃手', job:'ARCHER', hp:22, mp:8, atk:6, range:4, move:3, jump:1,
-      skill:{ name:'頭上狙い', tag:'SNIPE', cost:4, desc:'高所無視・射程+1で必ず会心', kind:'snipe', rng:5 } },
-    scout:{ name:'斥候', job:'SCOUT', hp:20, mp:8, atk:6, range:1, move:5, jump:3,
-      skill:{ name:'影走り', tag:'DASH', cost:3, desc:'攻撃後にもう一度動ける', kind:'dash' } }
-  };
-  var JOB_KEYS = ['knight','mage','archer','scout'];
-
-  var GRID = 8, TW = 32, TH = 16, EH = 12;   // exact 2:1 dimetric
+  var GW = 12, GH = 14, TILE = 16;          // a Fire Emblem-shaped board: square, top-down
   var STAGES = 3, WINS_NEEDED = 2, MAX_ROUNDS = 3;
-  var HIGH_PER_LEVEL = 0.10, LOW_PER_LEVEL = 0.05;   // +10% per level above, -5% per level below
-  var COMBO_PER_ALLY = 0.10;                          // each extra ally beside the target
-  var FLANK_SIDE = 0.25, FLANK_BACK = 0.50, COUNTER_RATE = 0.65;
-  var KEEP_POINT = 10;                                // a held keep is worth this much of the stage score
-  var SCAR_HP = 5, MIN_HP = 8;
-  var DIE = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+  var HIGH_PER_LEVEL = 0.10, LOW_PER_LEVEL = 0.05;
+  var COMBO_PER_ALLY = 0.10, FLANK_SIDE = 0.25, FLANK_BACK = 0.50, COUNTER_RATE = 0.65;
+  var SCAR_HP = 5, MIN_HP = 8, KEEP_POINT = 10;
   var ACTS = ['PALE CITADEL','BROKEN SPAN','ASH TERRACE'];
 
-  var TILE_FX = {
-    chest:{ mark:'宝', tone:'gold', apply:function(u){ u.atk += 2; return { text:'宝箱 ATK+2', cls:'info' }; } },
-    spring:{ mark:'泉', tone:'heal', apply:function(u){
-      var g = Math.min(8, u.maxHp - u.hp); u.hp += g;
-      return { text:'+' + g, cls:'heal' }; } },
-    trap:{ mark:'罠', tone:'blood', apply:function(u){ u.hp -= 6; return { text:'-6', cls:'hurt' }; } }
+  // Terrain carries the tactics here: what it costs to enter, how much cover it
+  // gives, and how high it stands.
+  var TERRAIN = {
+    plain:{ name:'平地', cost:1, avoid:0,   h:0, pass:true },
+    road:{  name:'街道', cost:1, avoid:0,   h:0, pass:true },
+    grass:{ name:'草地', cost:1, avoid:.05, h:0, pass:true },
+    forest:{name:'森',   cost:2, avoid:.25, h:0, pass:true },
+    hill:{  name:'丘',   cost:2, avoid:.15, h:1, pass:true },
+    peak:{  name:'岩山', cost:3, avoid:.30, h:2, pass:true },
+    fort:{  name:'砦',   cost:1, avoid:.20, h:1, pass:true, keep:true, heal:4 },
+    ruin:{  name:'廃屋', cost:2, avoid:.20, h:0, pass:true },
+    water:{ name:'水路', cost:9, avoid:0,   h:0, pass:false },
+    wall:{  name:'岩壁', cost:9, avoid:0,   h:2, pass:false }
   };
+
+  var JOBS = {
+    knight:{ name:'重騎士', job:'KNIGHT', hp:30, mp:6, atk:6, range:1, move:4, jump:2,
+      skill:{ name:'薙ぎ払い', tag:'CLEAVE', cost:4, kind:'cleave', desc:'隣接する敵すべてに攻撃' } },
+    mage:{ name:'魔術師', job:'MAGE', hp:18, mp:10, atk:9, range:3, move:4, jump:1,
+      skill:{ name:'業火', tag:'BLAST', cost:5, kind:'blast', rng:4, desc:'着弾点とその隣接マスを焼く' } },
+    archer:{ name:'狙撃手', job:'ARCHER', hp:22, mp:8, atk:6, range:4, move:4, jump:1,
+      skill:{ name:'頭上狙い', tag:'SNIPE', cost:4, kind:'snipe', rng:6, desc:'地形・高所を無視して必ず会心' } },
+    scout:{ name:'斥候', job:'SCOUT', hp:20, mp:8, atk:6, range:1, move:6, jump:3,
+      skill:{ name:'影走り', tag:'DASH', cost:3, kind:'dash', desc:'攻撃後にもう一度動ける' } }
+  };
+  var JOB_KEYS = ['knight','mage','archer','scout'];
 
   var UPGRADES = [
     { icon:'heart', title:'不屈の鍛錬', desc:'全員 最大HP +6', apply:function(p){ p.bonusHp += 6; } },
@@ -420,10 +353,11 @@
     { icon:'boot', title:'軽装行軍', desc:'全員 移動 +1', apply:function(p){ p.bonusMove += 1; } },
     { icon:'die', title:'幸運の賽', desc:'ダイスの出目 +1', apply:function(p){ p.dice += 1; } },
     { icon:'spark', title:'蓄気', desc:'全員 最大MP +4', apply:function(p){ p.bonusMp += 4; } },
-    { icon:'peak', title:'高所の心得', desc:'高所ダメージ +25%', apply:function(p){ p.high += 0.25; } },
-    { icon:'dagger', title:'背後の作法', desc:'側面・背後ダメージ +20%', apply:function(p){ p.flank += 0.20; } },
+    { icon:'peak', title:'高所の心得', desc:'高所ダメージ +50%増し', apply:function(p){ p.high += 0.5; } },
+    { icon:'dagger', title:'背後の作法', desc:'側面・背後 +20%', apply:function(p){ p.flank += 0.20; } },
     { icon:'boot', title:'岩場の足場', desc:'全員 跳躍力 +1', apply:function(p){ p.bonusJump += 1; } },
     { icon:'shield', title:'受けの型', desc:'被ダメージ -12%', apply:function(p){ p.guard += 0.12; } },
+    { icon:'forest', title:'密林の歩法', desc:'森と丘の移動コスト -1', apply:function(p){ p.woodsman = true; } },
     { icon:'heart', title:'野戦病院', desc:'仲間全員の傷をひとつ癒す',
       cond:function(p){ return JOB_KEYS.some(function(c){ return p.scars[c]; }); },
       apply:function(p){
@@ -435,643 +369,577 @@
     { icon:'sword', title:'新兵を雇う', desc:'離脱した仲間を万全の体で復帰',
       cond:function(p){ return p.squad.length < JOB_KEYS.length; },
       apply:function(p){
-        var missing = JOB_KEYS.filter(function(c){ return p.squad.indexOf(c) === -1; });
-        if(!missing.length) return;
-        var pick = missing[Math.floor(Math.random()*missing.length)];
+        var miss = JOB_KEYS.filter(function(c){ return p.squad.indexOf(c) === -1; });
+        if(!miss.length) return;
+        var pick = miss[Math.floor(Math.random()*miss.length)];
         p.scars[pick] = 0; p.squad.push(pick);
       } }
   ];
 
-  var P1_START = [ {x:1,y:7}, {x:3,y:7}, {x:5,y:7}, {x:7,y:6} ];
-  var P2_START = [ {x:6,y:0}, {x:4,y:0}, {x:2,y:0}, {x:0,y:1} ];
+  // deployed short of the edges: a bigger board should mean more room to
+  // manoeuvre, not more turns spent walking
+  var P1_START = [ {x:2,y:10}, {x:4,y:11}, {x:7,y:11}, {x:9,y:10} ];
+  var P2_START = [ {x:9,y:3},  {x:7,y:2},  {x:4,y:2},  {x:2,y:3}  ];
 
   var uid = 1, G = null, B = null;
-
   function newPlayer(){
     return { squad:JOB_KEYS.slice(), scars:{}, levels:{}, bonusHp:0, bonusMp:0, bonusAtk:0,
-             bonusMove:0, bonusJump:0, dice:0, high:0, flank:0, guard:0, wins:0, margin:0 };
+             bonusMove:0, bonusJump:0, dice:0, high:0, flank:0, guard:0, woodsman:false,
+             wins:0, margin:0 };
   }
   function maxHpFor(p, job){ return JOBS[job].hp + p.bonusHp - SCAR_HP * (p.scars[job] || 0); }
-
   var SCREENS = ['title','handoff','upgrade','battle','result'];
   function show(n){ SCREENS.forEach(function(s){ $('screen-'+s).classList.toggle('hidden', s !== n); }); }
 
-  // ================= isometric + camera =================
-  // The board is stored in fixed coordinates; the camera may rotate the view in
-  // 90° steps, which only changes how a tile is projected and depth-sorted.
-  var ROT = 0;
-  function view(x, y){
-    switch(ROT & 3){
-      case 1: return { x:y, y:GRID-1-x };
-      case 2: return { x:GRID-1-x, y:GRID-1-y };
-      case 3: return { x:GRID-1-y, y:x };
-      default: return { x:x, y:y };
+  // ================= pixel art =================
+  // Sprites are written as 16x16 pixel maps so they are actually drawn on the
+  // pixel grid rather than being vector shapes that happen to look blocky.
+  //   '#' outline   'o' body fill   '*' detail   ':' dither   '.' transparent
+  var SPR = {
+    knight:[
+      '................',
+      '......####......',
+      '.....#oooo#.....',
+      '....#oo##oo#....',
+      '....#o#**#o#....',
+      '....#oo##oo#....',
+      '.....#o**o#.....',
+      '...###oooo###...',
+      '..#o#oo**oo#o#..',
+      '..#o#oooooo#o#..',
+      '..#o##oooo##o#..',
+      '..#*#.#oo#.#*#..',
+      '..###.#oo#.###..',
+      '......#oo#......',
+      '.....##..##.....',
+      '................'
+    ],
+    mage:[
+      '................',
+      '.......##.......',
+      '......#oo#......',
+      '.....#oooo#.....',
+      '....#oooooo#....',
+      '...############.',
+      '.....#oooo#..#o#',
+      '....#o****o#.#o#',
+      '....#oo**oo#.#*#',
+      '...#oooooooo#o#.',
+      '...#oo****oo#o#.',
+      '..#oooooooooo#..',
+      '..#oo##..##oo#..',
+      '..#o#......#o#..',
+      '..###......###..',
+      '................'
+    ],
+    archer:[
+      '................',
+      '.....####.......',
+      '....#oooo#..##..',
+      '...#oo##oo#.#*#.',
+      '...#o****o#.#.#.',
+      '...#oo**oo#*#.#.',
+      '....#oooo#.*..#.',
+      '...###oo###*..#.',
+      '..#oo#oo#oo#..#.',
+      '..#oo#oo#oo#.#*.',
+      '..#o##oo##o#.#..',
+      '..##..#oo#.##...',
+      '......#oo#......',
+      '.....##..##.....',
+      '................',
+      '................'
+    ],
+    scout:[
+      '................',
+      '................',
+      '.....######.....',
+      '....#oooooo#....',
+      '....#*#oo#*#....',
+      '....#oooooo#....',
+      '..##.#o**o#.....',
+      '.#o##oooooo##...',
+      '.#oo#oooooo#o#..',
+      '.#oo#oooooo#o#..',
+      '.#o##oo##oo##*#.',
+      '.##..#oo#oo#.##.',
+      '.....#oo#oo#....',
+      '.....##..##.....',
+      '................',
+      '................'
+    ]
+  };
+
+  var ICONS = {
+    heart:['..##.##.','.#*#*#*#','#*oooo*#','#oooooo#','.#oooo#.','..#oo#..','...##...','........'],
+    sword:['...##...','...##...','..#**#..','..#**#..','.######.','...##...','...##...','...#....'],
+    boot:['..##....','..#o#...','..#o#...','..#oo##.','..#oooo#','.#ooooo#','.#######','........'],
+    die:  ['########','#o####o#','##o##o##','###oo###','##o##o##','#o####o#','########','........'],
+    peak: ['........','...##...','..#oo#..','..#oo#..','.#o##o#.','#oo##oo#','########','........'],
+    dagger:['...#....','...##...','..#*#...','..#*#...','.###....','..##....','..#.....','........'],
+    shield:['########','#oooooo#','#o####o#','#o#**#o#','#oo##oo#','.#oooo#.','..#oo#..','...##...'],
+    spark:['....##..','...##...','..##....','.#####..','...##...','..##....','.##.....','........'],
+    forest:['...##...','..####..','.##oo##.','####oo##','..#oo#..','..#oo#..','.######.','........']
+  };
+
+  var cvs = null, ctx = null;
+  function px(x, y, w, h, col){ ctx.fillStyle = col; ctx.fillRect(x, y, w||1, h||1); }
+  function dither(x, y, w, h, level){
+    // 1 = 12%, 2 = 25%, 3 = 50%, 4 = 75%
+    ctx.fillStyle = INK;
+    for(var j = 0; j < h; j++){
+      for(var i = 0; i < w; i++){
+        var a = (i & 1), b = (j & 1), c = ((i >> 1) & 1) ^ ((j >> 1) & 1);
+        var on = level >= 4 ? !(a && b)
+               : level === 3 ? (a === b)
+               : level === 2 ? (a === b && c)
+               : (a === b && !c && !(i & 2));
+        if(on) ctx.fillRect(x + i, y + j, 1, 1);
+      }
     }
   }
-  function iso(x, y, e){
-    var v = view(x, y);
-    return { cx:(v.x - v.y) * (TW/2), cy:(v.x + v.y) * (TH/2) - e * EH };
-  }
-  function depth(x, y){ var v = view(x, y); return v.x + v.y; }
-  function diamond(cx, cy, k){
-    var w = TW/2 * (k||1), h = TH/2 * (k||1);
-    return cx+','+(cy-h)+' '+(cx+w)+','+cy+' '+cx+','+(cy+h)+' '+(cx-w)+','+cy;
-  }
-
-  var MAX_ELEV = 2, MIN_ZOOM = 0.8, MAX_ZOOM = 4;
-  var BOARD = (function(){
-    var pad = 14;
-    var x1 = (GRID-1)*TW/2 + TW/2;
-    var y0 = -(MAX_ELEV*EH) - TH/2 - 5;           // headroom for standing figures
-    var y1 = (GRID-1)*TH + TH/2 + 6;
-    return { cx:0, cy:(y0+y1)/2, w:x1*2 + pad*2, h:(y1-y0) + pad*2 };
-  })();
-  var CAM = { cx:BOARD.cx, cy:BOARD.cy, zoom:1 };
-
-  var stage = null, svg = null, scene = null;
-
-  function sizeBoardBox(){
-    var wrap = $('boardWrap');
-    var w = wrap.parentNode.clientWidth || window.innerWidth;
-    // a touch taller than the board's own ratio, so a moderate zoom has room
-    wrap.style.setProperty('--boardMax', Math.round(w * BOARD.h / BOARD.w * 1.25) + 'px');
+  // Two sides, one ink: the near side is a stippled body inside a hard outline,
+  // the far side a solid silhouette. Neither can be mistaken for the ground.
+  function drawSprite(map, ox, oy, invert, target){
+    var c = target || ctx;
+    for(var j = 0; j < map.length; j++){
+      var row = map[j];
+      for(var i = 0; i < row.length; i++){
+        var ch = row[i], col = null;
+        if(ch === '#') col = INK;
+        else if(ch === 'o'){
+          if(invert) col = INK;
+          else col = ((i & 1) === 0 && (j & 1) === 0) ? INK : PAPER;
+        }
+        else if(ch === '*') col = invert ? PAPER : INK;
+        if(!col) continue;
+        c.fillStyle = col;
+        c.fillRect(ox + i, oy + j, 1, 1);
+      }
+    }
   }
 
-  function applyCam(){
-    var box = stage.getBoundingClientRect();
-    var ratio = (box.width && box.height) ? box.height / box.width : 1;
-    var baseW = Math.max(BOARD.w, BOARD.h / (ratio || 1));
-    var w = baseW / CAM.zoom, h = w * ratio;
-    CAM.cx = w >= BOARD.w ? BOARD.cx
-      : Math.max(BOARD.cx - BOARD.w/2 + w/2, Math.min(BOARD.cx + BOARD.w/2 - w/2, CAM.cx));
-    CAM.cy = h >= BOARD.h ? BOARD.cy
-      : Math.max(BOARD.cy - BOARD.h/2 + h/2, Math.min(BOARD.cy + BOARD.h/2 - h/2, CAM.cy));
-    svg.setAttribute('viewBox', (CAM.cx - w/2) + ' ' + (CAM.cy - h/2) + ' ' + w + ' ' + h);
-  }
-  // the zoom at which the board exactly fills the frame's short axis, so a
-  // phase never opens on a letterboxed board
-  function fillZoom(){
-    var box = stage.getBoundingClientRect();
-    var ratio = (box.width && box.height) ? box.height / box.width : 1;
-    var baseW = Math.max(BOARD.w, BOARD.h / (ratio || 1));
-    return Math.max(1, (baseW * ratio) / BOARD.h);
-  }
-  var camTween = null;
-  function camTo(x, y, snap){
-    var t = tileAt(x,y);
-    var c = iso(x, y, t ? t.e : 0);
-    if(snap){ CAM.cx = c.cx; CAM.cy = c.cy; applyCam(); return; }
-    camGlide(c.cx, c.cy);
-  }
-  function camGlide(tx, ty){
-    if(camTween) cancelAnimationFrame(camTween);
-    var sx = CAM.cx, sy = CAM.cy, t0 = performance.now(), dur = 220;
-    (function step(now){
-      var k = Math.min(1, (now - t0) / dur);
-      var e = 1 - Math.pow(1 - k, 3);
-      CAM.cx = sx + (tx - sx) * e; CAM.cy = sy + (ty - sy) * e;
-      applyCam();
-      if(k < 1) camTween = requestAnimationFrame(step); else camTween = null;
-    })(performance.now());
-  }
-  function camReveal(x, y){
-    var vb = svg.viewBox.baseVal;
-    var t = tileAt(x,y);
-    var c = iso(x, y, t ? t.e : 0);
-    var px = vb.width * 0.24, py = vb.height * 0.24;
-    if(c.cx < vb.x + px || c.cx > vb.x + vb.width - px ||
-       c.cy < vb.y + py || c.cy > vb.y + vb.height - py) camTo(x, y);
-  }
-  function toStagePx(cx, cy){
-    var ctm = svg.getScreenCTM();
-    if(!ctm) return { left:0, top:0 };
-    var p = svg.createSVGPoint(); p.x = cx; p.y = cy;
-    var s = p.matrixTransform(ctm);
-    var r = stage.getBoundingClientRect();
-    return { left:s.x - r.left, top:s.y - r.top };
-  }
+  // ---- terrain, drawn per tile at 16x16.
+  // Ground stays mostly white: tone is reserved for things that matter, so the
+  // board never turns into static.
+  function drawTile(t, ox, oy){
+    var k = t.kind, r = t.seed;
+    px(ox, oy, TILE, TILE, PAPER);
 
-
-  // ================= one-ink palette =================
-  // Two colours only. Every tone is a dither pattern, never a grey.
-  var PAPER = '#FAFAF7', INK = '#30343A';
-  var DITHER = [
-    { id:'d12', dots:[[0,0],[2,2]] },
-    { id:'d25', dots:[[0,0],[2,2],[2,0],[0,2]] },
-    { id:'d50', dots:[[0,0],[1,1],[2,2],[3,3],[2,0],[3,1],[0,2],[1,3]] },
-    { id:'d75', dots:[[0,0],[1,0],[2,0],[0,1],[1,1],[3,1],[0,2],[2,2],[3,2],[1,3],[2,3],[3,3]] }
-  ];
-  function buildDefs(){
-    var defs = $('boardDefs');
-    defs.innerHTML = '';
-    DITHER.forEach(function(d){
-      var p = el('pattern', { id:d.id, width:4, height:4, patternUnits:'userSpaceOnUse' });
-      p.appendChild(el('rect', { width:4, height:4, fill:PAPER }));
-      d.dots.forEach(function(c){
-        p.appendChild(el('rect', { x:c[0], y:c[1], width:1, height:1, fill:INK }));
+    if(k === 'water'){
+      dither(ox, oy, TILE, TILE, 3);
+      px(ox+2, oy+4, 5, 1, PAPER); px(ox+9, oy+7, 5, 1, PAPER); px(ox+4, oy+11, 5, 1, PAPER);
+    } else if(k === 'wall'){
+      dither(ox, oy, TILE, TILE, 4);
+      for(var wy = 1; wy < 16; wy += 5){
+        px(ox, oy+wy, TILE, 1, PAPER);
+        px(ox + ((wy/5|0) & 1 ? 4 : 11), oy+wy, 1, 4, PAPER);
+      }
+    } else if(k === 'forest'){
+      [[4,12,4],[11,10,3]].forEach(function(tr){
+        var cx = ox+tr[0], cy = oy+tr[1], rr = tr[2];
+        px(cx, cy-1, 2, 3, INK);
+        for(var yy = 0; yy < rr+2; yy++){
+          var wd = Math.max(2, (rr + 1 - Math.abs(yy - (rr+1)/2)) * 2);
+          px(cx + 1 - (wd>>1), cy - rr - 2 + yy, wd, 1, INK);
+        }
       });
-      defs.appendChild(p);
-    });
-    var hz = el('pattern', { id:'hatch', width:4, height:4, patternUnits:'userSpaceOnUse' });
-    hz.appendChild(el('rect', { width:4, height:4, fill:PAPER }));
-    hz.appendChild(el('path', { d:'M0 4 L4 0 M-1 1 L1 -1 M3 5 L5 3', stroke:INK, 'stroke-width':1 }));
-    defs.appendChild(hz);
+    } else if(k === 'hill'){
+      px(ox+2, oy+11, 12, 1, INK); px(ox+4, oy+8, 8, 1, INK); px(ox+6, oy+5, 4, 1, INK);
+      px(ox+2, oy+12, 1, 2, INK); px(ox+13, oy+12, 1, 2, INK);
+    } else if(k === 'peak'){
+      for(var py = 0; py < 11; py++){
+        var w = Math.round(py * 1.3) + 2;
+        px(ox + 8 - (w>>1), oy + 14 - py, w, 1, py > 7 ? PAPER : INK);
+      }
+      px(ox+3, oy+14, 10, 1, INK);
+      px(ox+7, oy+5, 3, 1, INK); px(ox+6, oy+6, 5, 1, INK);
+    } else if(k === 'fort'){
+      px(ox+2, oy+5, 12, 10, INK);
+      px(ox+4, oy+7, 8, 8, PAPER);
+      for(var bx = 2; bx < 14; bx += 4) px(ox+bx, oy+2, 3, 4, INK);
+      px(ox+6, oy+10, 4, 5, INK);
+      px(ox+7, oy+12, 2, 2, PAPER);
+    } else if(k === 'ruin'){
+      px(ox+2, oy+7, 5, 8, INK); px(ox+3, oy+9, 3, 6, PAPER);
+      px(ox+9, oy+10, 5, 5, INK); px(ox+10, oy+12, 3, 3, PAPER);
+      px(ox+7, oy+13, 2, 2, INK);
+    } else if(k === 'road'){
+      px(ox+2, oy+3, 2, 1, INK); px(ox+9, oy+6, 2, 1, INK);
+      px(ox+5, oy+11, 2, 1, INK); px(ox+12, oy+13, 2, 1, INK);
+    } else if(k === 'grass'){
+      var gx = 3 + ((r*97)|0) % 5;
+      px(ox+gx, oy+9, 1, 3, INK); px(ox+gx-1, oy+10, 1, 2, INK); px(ox+gx+2, oy+10, 1, 2, INK);
+      px(ox+11, oy+5, 1, 2, INK);
+    } else {
+      if(r > .8) px(ox+5, oy+7, 2, 1, INK);
+      else if(r < .12) px(ox+10, oy+11, 1, 1, INK);
+    }
+    // a dotted seam, enough to count squares without ruling the board
+    for(var d = 0; d < TILE; d += 3){
+      px(ox+d, oy, 1, 1, INK); px(ox, oy+d, 1, 1, INK);
+    }
   }
-  // a stable per-tile seed, so the plate detailing is the same every render
+
+  // ================= map =================
   function hash(x, y){
     var h = (x*374761393 + y*668265263) ^ 0x5bf03635;
     h = (h ^ (h >> 13)) * 1274126177;
     return ((h ^ (h >> 16)) >>> 0) / 4294967296;
   }
-  var COL = 'ABCDEFGH';
+  function tileAt(x, y){ return (x<0||y<0||x>=GW||y>=GH) ? null : B.map[y*GW+x]; }
+  function terr(t){ return TERRAIN[t.kind]; }
 
-  // ================= terrain =================
-  function tileNode(t){
-    var g = el('g', {});
-    var c = iso(t.x, t.y, t.e), h = t.e * EH;
-    var lit = ((t.x + t.y) % 2) === 0;
+  // Mirrored through the centre, so the two armies face the same ground.
+  function buildMap(stageNo){
+    var m = [];
+    for(var y = 0; y < GH; y++) for(var x = 0; x < GW; x++)
+      m.push({ x:x, y:y, kind:'plain', fx:null, seed:hash(x*3+1, y*5+2) });
+    var at = function(x,y){ return (x<0||y<0||x>=GW||y>=GH) ? null : m[y*GW+x]; };
+    var set = function(x, y, kind){
+      var a = at(x,y), b = at(GW-1-x, GH-1-y);
+      if(a) a.kind = kind;
+      if(b) b.kind = kind;
+    };
+    var isStart = function(x,y){
+      return P1_START.concat(P2_START).some(function(s){ return s.x===x && s.y===y; });
+    };
 
-    if(h > 0){
-      var b = iso(t.x, t.y, 0);
-      // left face catches the light, right face turns away: dither, never grey
-      g.appendChild(el('polygon', { points:
-        (c.cx-TW/2)+','+c.cy + ' ' + c.cx+','+(c.cy+TH/2) + ' ' +
-        b.cx+','+(b.cy+TH/2) + ' ' + (b.cx-TW/2)+','+b.cy,
-        fill:'url(#d12)', stroke:INK, 'stroke-width':1 }));
-      g.appendChild(el('polygon', { points:
-        c.cx+','+(c.cy+TH/2) + ' ' + (c.cx+TW/2)+','+c.cy + ' ' +
-        (b.cx+TW/2)+','+b.cy + ' ' + b.cx+','+(b.cy+TH/2),
-        fill:'url(#d25)', stroke:INK, 'stroke-width':1 }));
-      for(var s = EH; s < h - 1; s += EH){
-        g.appendChild(el('path', { d:'M' + (c.cx-TW/2) + ' ' + (c.cy+s) + ' L' + c.cx + ' ' + (c.cy+TH/2+s) +
-          ' L' + (c.cx+TW/2) + ' ' + (c.cy+s), fill:'none', stroke:INK, 'stroke-width':1 }));
-      }
-      // access-panel seam on the lit face
-      if(hash(t.x*2, t.y*3) > .55){
-        g.appendChild(el('rect', { x:c.cx - TW/2 + 4, y:c.cy + 5, width:6, height:h - 8,
-          fill:'none', stroke:INK, 'stroke-width':1 }));
+    // cover in clusters, mirrored: a few readable stands rather than confetti
+    for(var i = 0; i < 5; i++){
+      var cxr = Math.floor(Math.random()*GW), cyr = Math.floor(Math.random()*(GH/2 - 1)) + 1;
+      var kind = i < 3 ? 'forest' : 'hill';
+      var span = 1 + Math.floor(Math.random()*2);
+      for(var dy = 0; dy <= span; dy++) for(var dx = 0; dx <= span; dx++){
+        if(Math.random() < .35) continue;
+        var x = cxr + dx, y = cyr + dy;
+        if(isStart(x,y)) continue;
+        set(x, y, kind);
       }
     }
+    for(var gi = 0; gi < 8; gi++){
+      var gx2 = Math.floor(Math.random()*GW), gy2 = Math.floor(Math.random()*(GH/2));
+      if(!isStart(gx2,gy2) && at(gx2,gy2).kind === 'plain') set(gx2, gy2, 'grass');
+    }
+    // the road down the spine, so there is always a fast lane
+    for(var ry = 0; ry < GH; ry++) if(at(5,ry).kind === 'plain' || at(5,ry).kind === 'grass') set(5, ry, 'road');
 
-    g.appendChild(el('polygon', { points:diamond(c.cx, c.cy), fill:PAPER,
-      stroke:INK, 'stroke-width':1 }));
-
-    // The citadel is a slab floating in a chasm: where the board simply ends,
-    // show its thickness and let the stone weep down into the black.
-    var vme = view(t.x, t.y);
-    [[1,0],[0,1],[-1,0],[0,-1]].forEach(function(d){
-      var nx = t.x + d[0], ny = t.y + d[1];
-      if(nx >= 0 && nx < GRID && ny >= 0 && ny < GRID) return;
-      var vn = view(nx, ny);
-      var right = (vn.x === vme.x + 1 && vn.y === vme.y);
-      var left = (vn.y === vme.y + 1 && vn.x === vme.x);
-      if(!right && !left) return;
-      var b = { cx:c.cx, cy:c.cy + h };
-      var depthPx = 15;
-      if(left){
-        g.appendChild(el('polygon', { points:
-          (b.cx-TW/2)+','+b.cy + ' ' + b.cx+','+(b.cy+TH/2) + ' ' +
-          b.cx+','+(b.cy+TH/2+depthPx) + ' ' + (b.cx-TW/2)+','+(b.cy+depthPx),
-          fill:'url(#d12)', stroke:INK, 'stroke-width':1 }));
-      } else {
-        g.appendChild(el('polygon', { points:
-          b.cx+','+(b.cy+TH/2) + ' ' + (b.cx+TW/2)+','+b.cy + ' ' +
-          (b.cx+TW/2)+','+(b.cy+depthPx) + ' ' + b.cx+','+(b.cy+TH/2+depthPx),
-          fill:'url(#d50)', stroke:INK, 'stroke-width':1 }));
-      }
-      for(var k = 0; k < 6; k++){
-        var f = (k + .5) / 6;
-        var dx = left ? (-TW/2 + f*TW/2) : (f*TW/2);
-        var dy = left ? (f*TH/2) : (TH/2 - f*TH/2);
-        var len = 3 + hash(t.x*13 + k, t.y*17 + d[0]) * 12;
-        g.appendChild(el('rect', { x:b.cx + dx, y:b.cy + dy + depthPx - 1,
-          width:1.4, height:len, fill:INK }));
-      }
+    // the keep: a fort block in the middle, worth standing on
+    var cx = (GW/2)|0, cy = (GH/2)|0;
+    set(cx-1, cy-1, 'fort'); set(cx, cy-1, 'fort');
+    [[cx-2,cy-1],[cx+1,cy-1],[cx-1,cy-2],[cx,cy-2]].forEach(function(p){
+      if(at(p[0],p[1]) && at(p[0],p[1]).kind !== 'fort') set(p[0], p[1], 'hill');
     });
 
-    var r = hash(t.x, t.y);
-    // screw heads at the plate corners
-    if(r > .34){
-      [[-TW/2 + 4, 0], [TW/2 - 4, 0]].forEach(function(o){
-        g.appendChild(el('rect', { x:c.cx + o[0] - 1, y:c.cy + o[1] - 1, width:2, height:2, fill:INK }));
-      });
-    }
-    // calibration ticks and slot vents, sparse enough to stay a floor
-    if(r > .78){
-      for(var i = 0; i < 4; i++){
-        g.appendChild(el('rect', { x:c.cx - 7 + i*3.4, y:c.cy - 4, width:1.4, height:3, fill:INK }));
+    // a river with two crossings, to shape the approach
+    if(stageNo >= 2){
+      var wy = 4;
+      for(var wx = 0; wx < GW; wx++){
+        if(wx === 2 || wx === 5 || wx === 9) continue;
+        set(wx, wy, 'water');
       }
     }
-    // a few plates carry their grid reference, like a real instrument face
-    if(t.keep){
-      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .86), fill:'none',
-        stroke:INK, 'stroke-width':1.4, 'stroke-dasharray':'4 2.5' }));
-      g.appendChild(el('rect', { x:c.cx - 2, y:c.cy - 2, width:4, height:4, fill:INK }));
-    }
-    if(t.label){
-      var tx = el('text', { x:c.cx, y:c.cy + 4.6, class:'tile-tag' });
-      tx.textContent = COL[t.x] + (t.y + 1);
-      g.appendChild(tx);
-    }
-    return g;
+    // rock walls and ruins for cover
+    set(0, 6, 'wall'); set(1, 6, 'wall'); set(GW-2, 5, 'peak');
+    set(3, 8, 'ruin'); set(8, 3, 'ruin');
+    if(stageNo >= 3){ set(2, 3, 'peak'); set(9, 9, 'wall'); }
+
+    // supplies and hazards, mirrored so neither side gets the better half
+    var free = m.filter(function(t){
+      return terr(t).pass && !t.fx && !isStart(t.x,t.y) && t.kind !== 'fort';
+    });
+    for(var s = free.length-1; s > 0; s--){ var j = Math.floor(Math.random()*(s+1)); var tmp=free[s]; free[s]=free[j]; free[j]=tmp; }
+    var place = function(fx){
+      while(free.length){
+        var t = free.shift(), mir = at(GW-1-t.x, GH-1-t.y);
+        if(!mir || mir === t || mir.fx || !terr(mir).pass) continue;
+        t.fx = fx; mir.fx = fx; return;
+      }
+    };
+    place('chest'); place('chest'); place('trap'); place('trap');
+
+    P1_START.concat(P2_START).forEach(function(p){
+      var t = at(p.x, p.y);
+      if(t && !terr(t).pass) t.kind = 'plain';
+      if(t) t.fx = null;
+    });
+    return m;
   }
 
-  function propNode(t){
-    var c = iso(t.x, t.y, t.e);
-    var g = el('g', {});
-    if(t.fx === 'chest'){
-      // supply crate as a squared access module
-      g.appendChild(el('path', { d:'M' + (c.cx-8) + ' ' + (c.cy-1) + ' l8 -4 l8 4 l-8 4 z',
-        fill:PAPER, stroke:INK, 'stroke-width':1 }));
-      g.appendChild(el('path', { d:'M' + (c.cx-8) + ' ' + (c.cy-1) + ' l0 -5 l8 -4 l0 5 z',
-        fill:PAPER, stroke:INK, 'stroke-width':1 }));
-      g.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy-5) + ' l8 -4 l0 5 l-8 4 z',
-        fill:'url(#d50)', stroke:INK, 'stroke-width':1 }));
-      g.appendChild(el('rect', { x:c.cx-5.6, y:c.cy-7.4, width:3, height:3, fill:INK }));
-    } else if(t.fx === 'spring'){
-      // the dry fountain, rebuilt as a circular grille
-      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy, rx:TW*.34, ry:TH*.34,
-        fill:PAPER, stroke:INK, 'stroke-width':1 }));
-      for(var ry = -2; ry <= 2; ry++){
-        for(var rx = -3; rx <= 3; rx++){
-          var px = c.cx + rx*3, py = c.cy + ry*2.2;
-          if(Math.pow((px-c.cx)/(TW*.28),2) + Math.pow((py-c.cy)/(TH*.28),2) > 1) continue;
-          g.appendChild(el('rect', { x:px-.8, y:py-.8, width:1.6, height:1.6, fill:INK }));
+  var TILE_FX = {
+    chest:{ apply:function(u){ u.atk += 2; return { text:'ATK+2', cls:'info' }; } },
+    trap:{ apply:function(u){ u.hp -= 6; return { text:'-6', cls:'' }; } }
+  };
+
+  // ================= camera =================
+  var CAM = { x:0, y:0, scale:2 };
+  var MAPW = GW * TILE, MAPH = GH * TILE;
+
+  function fitScale(){
+    var wrap = $('boardWrap');
+    var w = wrap.clientWidth, h = wrap.clientHeight;
+    if(!w || !h) return 2;
+    return Math.max(1, Math.min(6, Math.floor(Math.min(w / MAPW, h / MAPH) * 100) / 100));
+  }
+  function layout(){
+    var wrap = $('boardWrap');
+    var w = wrap.clientWidth, h = wrap.clientHeight;
+    var viewW = Math.min(MAPW, Math.ceil(w / CAM.scale));
+    var viewH = Math.min(MAPH, Math.ceil(h / CAM.scale));
+    cvs.width = viewW; cvs.height = viewH;
+    cvs.style.width = Math.round(viewW * CAM.scale) + 'px';
+    cvs.style.height = Math.round(viewH * CAM.scale) + 'px';
+    CAM.x = Math.max(0, Math.min(MAPW - viewW, CAM.x));
+    CAM.y = Math.max(0, Math.min(MAPH - viewH, CAM.y));
+    ctx.imageSmoothingEnabled = false;
+  }
+  function camCenterOn(gx, gy){
+    CAM.x = gx * TILE + TILE/2 - cvs.width/2;
+    CAM.y = gy * TILE + TILE/2 - cvs.height/2;
+    CAM.x = Math.max(0, Math.min(MAPW - cvs.width, CAM.x));
+    CAM.y = Math.max(0, Math.min(MAPH - cvs.height, CAM.y));
+  }
+  function camReveal(gx, gy){
+    var pad = 2 * TILE;
+    var px0 = gx * TILE, py0 = gy * TILE;
+    var moved = false;
+    if(px0 < CAM.x + pad){ CAM.x = px0 - pad; moved = true; }
+    if(px0 + TILE > CAM.x + cvs.width - pad){ CAM.x = px0 + TILE - cvs.width + pad; moved = true; }
+    if(py0 < CAM.y + pad){ CAM.y = py0 - pad; moved = true; }
+    if(py0 + TILE > CAM.y + cvs.height - pad){ CAM.y = py0 + TILE - cvs.height + pad; moved = true; }
+    if(moved){
+      CAM.x = Math.max(0, Math.min(MAPW - cvs.width, CAM.x));
+      CAM.y = Math.max(0, Math.min(MAPH - cvs.height, CAM.y));
+    }
+  }
+  function setScale(s){
+    var midX = CAM.x + cvs.width/2, midY = CAM.y + cvs.height/2;
+    CAM.scale = Math.max(1, Math.min(6, s));
+    layout();
+    CAM.x = Math.max(0, Math.min(MAPW - cvs.width, midX - cvs.width/2));
+    CAM.y = Math.max(0, Math.min(MAPH - cvs.height, midY - cvs.height/2));
+  }
+
+  // ================= render =================
+  var frameT = 0;
+  function draw(){
+    frameT++;
+    ctx.fillStyle = INK;
+    ctx.fillRect(0, 0, cvs.width, cvs.height);
+    if(!B) return;
+    ctx.save();
+    ctx.translate(-Math.round(CAM.x), -Math.round(CAM.y));
+
+    var x0 = Math.max(0, Math.floor(CAM.x / TILE)), x1 = Math.min(GW-1, Math.ceil((CAM.x + cvs.width) / TILE));
+    var y0 = Math.max(0, Math.floor(CAM.y / TILE)), y1 = Math.min(GH-1, Math.ceil((CAM.y + cvs.height) / TILE));
+    for(var y = y0; y <= y1; y++){
+      for(var x = x0; x <= x1; x++){
+        var t = tileAt(x, y);
+        drawTile(t, x*TILE, y*TILE);
+        if(t.fx === 'chest'){
+          px(x*TILE+4, y*TILE+7, 8, 6, INK);
+          px(x*TILE+5, y*TILE+9, 6, 3, PAPER);
+          px(x*TILE+7, y*TILE+9, 2, 2, INK);
+        } else if(t.fx === 'trap'){
+          px(x*TILE+3, y*TILE+10, 10, 3, INK);
+          for(var s = 0; s < 4; s++) px(x*TILE+4+s*3, y*TILE+7, 1, 3, INK);
         }
       }
-    } else if(t.fx === 'trap'){
-      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .74), fill:'url(#hatch)',
-        stroke:INK, 'stroke-width':1 }));
-      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .38), fill:INK }));
-    } else if(t.prop === 'tower'){
-      // encoder-like tower: a clean cylinder with a single index notch
-      var top = c.cy - 26;
-      g.appendChild(el('path', { d:'M' + (c.cx-5) + ' ' + (c.cy-3) + ' L' + (c.cx-5) + ' ' + top +
-        ' L' + (c.cx+5) + ' ' + top + ' L' + (c.cx+5) + ' ' + (c.cy-3),
-        fill:PAPER, stroke:INK, 'stroke-width':1 }));
-      g.appendChild(el('path', { d:'M' + (c.cx+1) + ' ' + (c.cy-3) + ' L' + (c.cx+1) + ' ' + top +
-        ' L' + (c.cx+5) + ' ' + top + ' L' + (c.cx+5) + ' ' + (c.cy-3) + ' z',
-        fill:'url(#d25)', stroke:'none' }));
-      g.appendChild(el('ellipse', { cx:c.cx, cy:top, rx:5, ry:2.2, fill:PAPER, stroke:INK, 'stroke-width':1 }));
-      g.appendChild(el('rect', { x:c.cx-.8, y:top-3.4, width:1.6, height:4, fill:INK }));
-      g.appendChild(el('ellipse', { cx:c.cx, cy:c.cy-3, rx:5, ry:2.2, fill:PAPER, stroke:INK, 'stroke-width':1 }));
-      g.appendChild(el('rect', { x:c.cx-5, y:c.cy-13, width:10, height:1.4, fill:INK }));
-    } else if(t.prop === 'plate'){
-      g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .58), fill:'url(#d25)',
-        stroke:INK, 'stroke-width':1 }));
-    } else if(t.prop === 'vent'){
-      for(var v = 0; v < 3; v++){
-        g.appendChild(el('rect', { x:c.cx-6, y:c.cy-3 + v*2.6, width:12, height:1.4, fill:INK }));
+    }
+
+    // overlays sit above the ground and below the figures
+    B.ov.forEach(function(o){
+      var ox = o.x*TILE, oy = o.y*TILE;
+      if(o.k === 'threat'){
+        px(ox+TILE-5, oy+2, 4, 1, INK); px(ox+TILE-4, oy+3, 2, 1, INK); px(ox+TILE-3, oy+4, 1, 1, INK);
+      } else if(o.k === 'move'){
+        // a light stipple plus a frame: the plate underneath must stay readable
+        ctx.fillStyle = INK;
+        for(var my = 3; my < TILE-1; my += 4) for(var mx = 3; mx < TILE-1; mx += 4) ctx.fillRect(ox+mx, oy+my, 1, 1);
+        for(var e = 1; e < TILE-1; e += 2){
+          ctx.fillRect(ox+e, oy+1, 1, 1); ctx.fillRect(ox+e, oy+TILE-2, 1, 1);
+          ctx.fillRect(ox+1, oy+e, 1, 1); ctx.fillRect(ox+TILE-2, oy+e, 1, 1);
+        }
+      } else if(o.k === 'target'){
+        var on = (frameT % 44) < 26;
+        ctx.fillStyle = INK;
+        var g = on ? 0 : 1;
+        px(ox+1+g, oy+1+g, 5, 1, INK); px(ox+1+g, oy+1+g, 1, 5, INK);
+        px(ox+TILE-6-g, oy+1+g, 5, 1, INK); px(ox+TILE-2-g, oy+1+g, 1, 5, INK);
+        px(ox+1+g, oy+TILE-2-g, 5, 1, INK); px(ox+1+g, oy+TILE-6-g, 1, 5, INK);
+        px(ox+TILE-6-g, oy+TILE-2-g, 5, 1, INK); px(ox+TILE-2-g, oy+TILE-6-g, 1, 5, INK);
+      }
+    });
+
+    if(B.path.length > 1){
+      for(var p = 1; p < B.path.length; p++){
+        var a = B.path[p];
+        px(a.x*TILE + 7, a.y*TILE + 7, 2, 2, INK);
       }
     }
-    return g;
-  }
 
-  // ================= figures =================
-  // One ink, so the sides are separated by inversion: P1 reads as a white plate
-  // with ink linework, P2 as a solid ink silhouette with white linework.
-  function figureArt(job, side){
-    var root = el('g', {});
-    var body = side === 1 ? PAPER : INK;
-    var line = side === 1 ? INK : PAPER;
-
-    // base plate sits flat on the tile and never scales with the figure
-    root.appendChild(el('polygon', { points:diamond(0, 0, .84), fill:PAPER, stroke:'none' }));
-    root.appendChild(el('polygon', { points:diamond(0, 0, .72), fill:INK, stroke:'none' }));
-    if(side === 2) root.appendChild(el('polygon', { points:diamond(0, 0, .52), fill:'none',
-      stroke:PAPER, 'stroke-width':1 }));
-
-    var g = el('g', { transform:'scale(1.22)' });
-    root.appendChild(g);
-    function add(tag, a){ a.stroke = a.stroke === undefined ? line : a.stroke;
-      if(a.fill === undefined) a.fill = body;
-      a['stroke-width'] = a['stroke-width'] || 1.4;
-      a['stroke-linejoin'] = 'round';
-      g.appendChild(el(tag, a)); return g; }
-
-    if(job === 'knight'){
-      add('path', { d:'M-4.4 -1 l1 -6.4 h6.8 l1 6.4 z' });
-      add('path', { d:'M-6.6 -7 q0 -9.4 6.6 -9.4 q6.6 0 6.6 9.4 z' });
-      add('path', { d:'M-4.6 -16.6 q0 -5 4.6 -5 q4.6 0 4.6 5 q0 2.6 -4.6 2.6 q-4.6 0 -4.6 -2.6 z' });
-      add('rect', { x:-4.2, y:-18.6, width:6.6, height:2, fill:line, stroke:'none', class:'face' });
-      add('path', { d:'M0 -21.6 l0 -4.4 l2.6 1.6 l-2.6 1.6', fill:line, stroke:'none' });
-      add('path', { d:'M6 -14.4 q5.4 0 5.4 5.4 q0 5.4 -5.4 5.4 z' });   // shield
-      add('path', { d:'M-8.4 -13.2 l-2.2 0 l0 11.4 l1.1 1.8 l1.1 -1.8 z' });  // blade
-      add('rect', { x:-11.4, y:-14.2, width:5, height:1.6 });
-    } else if(job === 'mage'){
-      add('path', { d:'M-7.6 -1 q1 -13.4 7.6 -13.4 q6.6 0 7.6 13.4 z' });
-      add('path', { d:'M-2.6 -1 l.8 -9.4 l1.6 0 l-.6 9.4 z', fill:line, stroke:'none' });
-      add('circle', { cx:0, cy:-16.4, r:3.8 });
-      add('rect', { x:-2.4, y:-17.4, width:4.8, height:1.6, fill:line, stroke:'none', class:'face' });
-      add('path', { d:'M-6.8 -18.4 q6.8 -3.4 13.6 0 q-6.8 2.4 -13.6 0 z' });
-      add('path', { d:'M-4.4 -19.4 q4.4 -12.6 8.8 -1 q-4.4 2.4 -8.8 1 z' });
-      add('path', { d:'M9.4 -20 l0 19' });
-      add('circle', { cx:9.4, cy:-21.8, r:2.8 });
-      add('rect', { x:8.6, y:-22.6, width:1.6, height:1.6, fill:line, stroke:'none' });
-    } else if(job === 'archer'){
-      add('path', { d:'M-3.8 -1 l1 -7 h5.6 l1 7 z' });
-      add('path', { d:'M-5.8 -7.6 q0 -8.8 5.8 -8.8 q5.8 0 5.8 8.8 z' });
-      add('path', { d:'M-6.4 -15 q6.4 -4.4 12.8 0 l-1.6 3.8 q-4.8 -2.4 -9.6 0 z' });
-      add('circle', { cx:0, cy:-19.4, r:3.6 });
-      add('path', { d:'M-4.6 -19.8 q0 -5.8 4.6 -5.8 q4.6 0 4.6 5.8 q-2.4 -2.4 -4.6 -2.4 q-2.2 0 -4.6 2.4 z' });
-      add('rect', { x:-2.4, y:-20.4, width:4.8, height:1.6, fill:line, stroke:'none', class:'face' });
-      add('path', { d:'M10 -23 q5.2 8.6 0 17.2', fill:'none' });
-      add('path', { d:'M10 -23 L10 -5.8', fill:'none' });
-    } else {
-      add('path', { d:'M-3.4 -1 l.8 -6.6 h4.8 l.8 6.6 z' });
-      add('path', { d:'M-2.6 -14.6 q-8 4.6 -8.8 13.6 q4.6 -3.4 8.8 -4.6 z' });
-      add('path', { d:'M-5 -7.6 q0 -8 5 -8 q5 0 5 8 z' });
-      add('path', { d:'M-5.2 -12.8 q5.2 -2.4 10.4 0 l0 2 q-5.2 -2 -10.4 0 z' });
-      add('circle', { cx:0, cy:-18.6, r:3.4 });
-      add('path', { d:'M-4.2 -19.4 q0 -5 4.2 -5 q4.2 0 4.2 5 z' });
-      add('rect', { x:-3.6, y:-19.6, width:7.2, height:1.8, fill:line, stroke:'none', class:'face' });
-      add('path', { d:'M8.2 -12.6 l1.6 0 l0 7.2 l-.8 1.4 l-.8 -1.4 z' });
-    }
-    return root;
-  }
-
-  function jobIcon(job, side, size){
-    var s = el('svg', { viewBox:'-17 -34 34 38', width:size, height:size });
-    s.appendChild(figureArt(job, side || 1));
-    return s;
-  }
-  // ================= scene graph =================
-  // One depth-sorted layer so a figure standing behind a block is hidden by it,
-  // the way a real isometric scene resolves. Terrain nodes are built once per
-  // stage; figures persist so their movement can be tweened.
-  var terrainNodes = [], overlayNodes = [], figureNodes = {};
-
-  function sortKey(x, y, rank){ return depth(x, y) * 10 + rank; }
-
-  // A raised tile in front genuinely hides what stands behind it. Rather than
-  // let a unit disappear, draw it again as a ghost on top — visible, tappable,
-  // and obviously "behind something".
-  function coveredBy(x, y, dy){
-    var t0 = tileAt(x, y);
-    var c = iso(x, y, t0 ? t0.e : 0);
-    var px = c.cx, py = c.cy - dy, d0 = depth(x, y);
-    for(var i = 0; i < B.tiles.length; i++){
-      var t = B.tiles[i];
-      if(t.e === 0 || depth(t.x, t.y) <= d0) continue;
-      var c2 = iso(t.x, t.y, t.e);
-      var ddx = Math.abs(px - c2.cx);
-      if(ddx/(TW/2) + Math.abs(py - c2.cy)/(TH/2) <= 1) return true;
-      if(ddx < TW/2 - 0.01){
-        var edge = c2.cy + TH/2 - ddx * TH / TW;
-        if(py >= edge && py <= edge + t.e * EH) return true;
+    // the selected plate gets a marching frame
+    if(B.sel){
+      var sx = B.sel.x*TILE, sy = B.sel.y*TILE, ph = (frameT >> 3) % 2;
+      ctx.fillStyle = INK;
+      for(var d = 0; d < TILE; d += 2){
+        if(((d>>1) + ph) & 1) continue;
+        ctx.fillRect(sx + d, sy, 2, 1); ctx.fillRect(sx + d, sy + TILE - 1, 2, 1);
+        ctx.fillRect(sx, sy + d, 1, 2); ctx.fillRect(sx + TILE - 1, sy + d, 1, 2);
       }
     }
-    return false;
-  }
 
-  function compose(){
-    var items = terrainNodes.concat(overlayNodes);
-    var ghosts = [];
-    B.units.forEach(function(u){
-      if(u.hp <= 0) return;
-      var n = figureNodes[u.uid];
-      if(!n) return;
-      items.push({ k:sortKey(u.x, u.y, 3), n:n });
-      if(coveredBy(u.x, u.y, 11)) ghosts.push(u);
-    });
-    items.sort(function(a, b){ return a.k - b.k; });
-    var frag = document.createDocumentFragment();
-    items.forEach(function(it){ frag.appendChild(it.n); });
-    ghosts.forEach(function(u){
-      var t = tileAt(u.x, u.y);
-      var c = iso(u.x, u.y, t ? t.e : 0);
-      var g = el('g', { class:'fig ghost', 'data-uid':u.uid,
-        transform:'translate(' + c.cx + ',' + c.cy + ')' });
-      g.appendChild(el('polygon', { points:diamond(0, 0, .86), fill:PAPER,
-        stroke:INK, 'stroke-width':1, 'stroke-dasharray':'3 2' }));
-      var art = figureArt(u.job, u.side);
-      art.setAttribute('opacity', '.55');
-      g.appendChild(art);
-      frag.appendChild(g);
-    });
-    scene.innerHTML = '';
-    scene.appendChild(frag);
-  }
-
-  function buildTerrain(){
-    terrainNodes = [];
-    var glow = el('g', {});
-    glow.appendChild(el('ellipse', { cx:BOARD.cx, cy:BOARD.cy + 14, rx:BOARD.w*.62, ry:BOARD.h*.52,
-      fill:'url(#stageGlow)' }));
-    terrainNodes.push({ k:-1e9, n:glow });
-    B.tiles.forEach(function(t){
-      terrainNodes.push({ k:sortKey(t.x, t.y, 0), n:tileNode(t) });
-      if(t.fx || t.prop) terrainNodes.push({ k:sortKey(t.x, t.y, 1), n:propNode(t) });
-    });
-  }
-
-  function buildFigures(){
-    figureNodes = {};
-    B.units.forEach(function(u){
-      var g = el('g', { class:'fig', 'data-uid':u.uid });
-      var inner = el('g', { class:'fig-in' });
-      inner.appendChild(figureArt(u.job, u.side));
-      g.appendChild(inner);
-      var bar = el('g', { class:'fig-hp' });
-      bar.appendChild(el('rect', { x:-7, y:-31.6, width:14, height:3, fill:PAPER, stroke:INK, 'stroke-width':1 }));
-      bar.appendChild(el('rect', { class:'hpfill', x:-6, y:-30.9, width:12, height:1.6, fill:INK }));
-      g.appendChild(bar);
-      figureNodes[u.uid] = g;
-      placeFigure(u, true);
-    });
-  }
-
-  function placeFigure(u, instant){
-    var g = figureNodes[u.uid];
-    if(!g) return;
-    var t = tileAt(u.x, u.y);
-    var c = iso(u.x, u.y, t ? t.e : 0);
-    g.setAttribute('transform', 'translate(' + c.cx + ',' + c.cy + ')');
-    var vf = (u.face - ROT + 8) % 4;              // facing, expressed in view space
-    var inner = g.querySelector('.fig-in');
-    inner.setAttribute('transform', (vf === 1 || vf === 2) ? 'scale(-1,1)' : '');
-    var away = (vf === 2 || vf === 3);
-    Array.prototype.forEach.call(g.querySelectorAll('.face'), function(f){
-      f.setAttribute('opacity', away ? 0 : (f.getAttribute('data-op') || 1));
-    });
-    refreshFigure(u);
-  }
-
-  function refreshFigure(u){
-    var g = figureNodes[u.uid];
-    if(!g) return;
-    var pct = Math.max(0, u.hp / u.maxHp);
-    var fill = g.querySelector('.hpfill');
-    fill.setAttribute('width', 12 * pct);
-    g.querySelector('.fig-hp').setAttribute('opacity', pct >= 1 && B.sel !== u ? 0 : 1);
-    g.setAttribute('opacity', (u.done && u.side === B.phase) ? .45 : 1);
-    g.classList.toggle('sel', B.sel === u);
-  }
-
-  function setOverlays(list){
-    overlayNodes = list.map(function(o){
-      var t = tileAt(o.x, o.y);
-      var c = iso(o.x, o.y, t ? t.e : 0);
-      var g = el('g', { 'data-ov':o.cls, 'data-x':o.x, 'data-y':o.y });
-      if(o.cls === 'threat'){
-        // a notch at the tile's far corner: readable under a figure, quiet in bulk
-        g.appendChild(el('path', { d:'M' + c.cx + ' ' + (c.cy - TH/2) + ' l6 3 l-6 3 l-6 -3 z',
-          fill:INK }));
-      } else if(o.cls === 'move'){
-        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .84), fill:'none',
-          stroke:INK, 'stroke-width':1, 'stroke-dasharray':'3 2' }));
-        g.appendChild(el('rect', { x:c.cx - 1.6, y:c.cy - 1.6, width:3.2, height:3.2, fill:INK }));
-      } else if(o.cls === 'target'){
-        g.appendChild(el('polygon', { points:diamond(c.cx, c.cy, .84), fill:'url(#hatch)',
-          stroke:INK, 'stroke-width':1.4 }));
-        g.appendChild(el('polygon', { class:'pulse', points:diamond(c.cx, c.cy, .42),
-          fill:INK, stroke:'none' }));
-      } else if(o.cls === 'sel'){
-        // four corner brackets, the way an instrument marks its active channel
-        var w = TW/2, hh = TH/2, k = 5;
-        [[-w,0,1,0,0,-1],[0,-hh,1,0,0,1],[w,0,-1,0,0,1],[0,hh,-1,0,0,-1]].forEach(function(m){
-          g.appendChild(el('path', { d:'M' + (c.cx + m[0] + m[2]*k*2) + ' ' + (c.cy + m[1] + m[3]*k) +
-            ' L' + (c.cx + m[0]) + ' ' + (c.cy + m[1]) +
-            ' L' + (c.cx + m[0] + m[4]*k*2) + ' ' + (c.cy + m[1] + m[5]*k),
-            fill:'none', stroke:INK, 'stroke-width':2 }));
-        });
+    // figures, sorted so lower rows overlap the ones behind them
+    B.units.slice().sort(function(a, b){ return a.py - b.py; }).forEach(function(u){
+      if(u.hp <= 0 && !u.dying) return;
+      var bob = (u.side === B.phase && !u.done && !B.busy && ((frameT >> 4) % 2)) ? -1 : 0;
+      if(u.hurt > 0){ u.hurt--; if(u.hurt % 2) return; }
+      var ox = Math.round(u.px), oy = Math.round(u.py) + bob;
+      // clear the plate under the figure, or its outline is lost in the terrain
+      px(ox + 1, oy + 1, TILE - 2, TILE - 2, PAPER);
+      ctx.fillStyle = INK;
+      ctx.fillRect(ox + 3, oy + 13, 10, 3);          // base plate, reads as weight
+      ctx.fillRect(ox + 4, oy + 14, 8, 1);
+      drawSprite(SPR[u.job], ox, oy - 3, u.side === 2);
+      var pct = Math.max(0, u.hp / u.maxHp);
+      if(pct < 1 || B.sel === u){
+        px(ox + 2, oy + 15, 12, 3, INK);
+        px(ox + 3, oy + 16, Math.round(10 * pct), 1, PAPER);
       }
-      return { k:sortKey(o.x, o.y, o.cls === 'threat' ? 1.5 : 2), n:g };
+      if(u.done && u.side === B.phase){ dither(ox + 2, oy, 12, 16, 2); }
     });
+    ctx.restore();
   }
 
-  // ================= board =================
-  function tileAt(x, y){ return (x<0||y<0||x>=GRID||y>=GRID) ? null : B.tiles[y*GRID+x]; }
-
-  // Mirrored through the centre so neither army starts with better ground.
-  function buildBoard(stageNo){
-    var tiles = [];
-    for(var y=0;y<GRID;y++) for(var x=0;x<GRID;x++)
-      tiles.push({ x:x, y:y, e:0, fx:null, prop:null, moss:hash(x*3+1, y*5+2) > .62 });
-    var at = function(x,y){ return tiles[y*GRID+x]; };
-    var mir = function(t){ return at(GRID-1-t.x, GRID-1-t.y); };
-    var isStart = function(t){
-      return P1_START.concat(P2_START).some(function(s){ return s.x===t.x && s.y===t.y; });
-    };
-
-    var m = GRID/2;
-    [[m-1,m-1],[m,m-1],[m-1,m],[m,m]].forEach(function(p){
-      var t = at(p[0],p[1]); t.e = 2; t.keep = true;
-    });
-    at(m-1,m).fx = 'spring'; at(m,m-1).fx = 'spring';
-    [[m-2,m-1],[m-2,m],[m+1,m-1],[m+1,m],[m-1,m-2],[m,m-2],[m-1,m+1],[m,m+1]]
-      .forEach(function(p){ var t = at(p[0],p[1]); if(t) t.e = 1; });
-    at(m-2,m-1).prop = 'tower'; at(m+1,m).prop = 'tower';   // mirrored, and off the centre column
-
-    var pool = tiles.filter(function(t){
-      // x === y sits on the screen's centre column, where a mirrored pair would
-      // stack into one another
-      return t.e === 0 && !t.fx && !t.prop && !isStart(t) && mir(t) !== t &&
-             !isStart(mir(t)) && mir(t).e === 0 && t.x !== t.y;
-    });
-    for(var i=pool.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var s=pool[i]; pool[i]=pool[j]; pool[j]=s; }
-    var take = function(fn){
-      while(pool.length){
-        var t = pool.shift(), mm = mir(t), k = pool.indexOf(mm);
-        if(k === -1) continue;
-        pool.splice(k,1); fn(t); fn(mm); return;
-      }
-    };
-    take(function(t){ t.e = 2; t.prop = 'tower'; });
-    if(stageNo >= 2) take(function(t){ t.e = 1; });
-    take(function(t){ t.fx = 'chest'; });
-    take(function(t){ t.fx = 'chest'; });
-    take(function(t){ t.fx = 'trap'; });
-    take(function(t){ t.fx = 'trap'; });
-    take(function(t){ t.prop = 'vent'; });
-    take(function(t){ t.prop = 'plate'; });
-    take(function(t){ t.prop = 'plate'; });
-    // a few plates carry their grid reference
-    var labelled = tiles.filter(function(t){ return !t.fx && !t.prop; });
-    for(var k = 0; k < labelled.length; k++){
-      if(hash(labelled[k].x * 11, labelled[k].y * 7) > .80) labelled[k].label = true;
-    }
-    return tiles;
-  }
-
-  function makeUnits(pn, starts){
-    var p = G.players[pn];
-    return p.squad.map(function(job, i){
-      var d = JOBS[job];
-      var hp = maxHpFor(p, job);
-      var lv = 1 + (p.levels[job] || 0);
-      return { uid:uid++, side:pn, job:job, name:d.name, hp:hp, maxHp:hp,
-        mp:d.mp + p.bonusMp, maxMp:d.mp + p.bonusMp, lv:lv,
-        atk:d.atk + p.bonusAtk + (lv - 1) * 2, range:d.range, move:d.move + p.bonusMove,
-        jump:d.jump + p.bonusJump, x:starts[i].x, y:starts[i].y,
-        face:(pn === 1 ? 0 : 2), done:false, acted:false, extraMove:false };
-    });
-  }
+  function loop(){ draw(); requestAnimationFrame(loop); }
 
   // ================= rules =================
   function manh(a, b){ return Math.abs(a.x-b.x) + Math.abs(a.y-b.y); }
   function roll(){ return 1 + Math.floor(Math.random()*6); }
   function unitAt(x, y){
-    for(var i=0;i<B.units.length;i++){ var u = B.units[i]; if(u.hp>0 && u.x===x && u.y===y) return u; }
+    for(var i=0;i<B.units.length;i++){ var u=B.units[i]; if(u.hp>0 && u.x===x && u.y===y) return u; }
     return null;
   }
   var DIRS = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}];   // N E S W
 
-  // A unit walks tile by tile and may only step within its jump, so a plateau
-  // has to be entered from its steps rather than scaled from any side.
+  function moveCost(u, t){
+    var c = terr(t).cost;
+    var p = G.players[u.side];
+    if(p.woodsman && (t.kind === 'forest' || t.kind === 'hill')) c = Math.max(1, c - 1);
+    return c;
+  }
+
+  // Dijkstra over terrain cost, with the jump limit gating climbs — the SRPG
+  // primer's cell/cost model, which is what makes terrain matter at all.
   function reachable(u){
-    var start = tileAt(u.x, u.y);
-    var seen = {}, out = [], q = [{ x:u.x, y:u.y, c:0, e:start.e }];
-    seen[u.x + ',' + u.y] = 0;
+    var best = {}, out = [], q = [{ x:u.x, y:u.y, c:0 }];
+    best[u.x + ',' + u.y] = 0;
     while(q.length){
+      q.sort(function(a,b){ return a.c - b.c; });
       var cur = q.shift();
-      if(cur.c >= u.move) continue;
+      var here = tileAt(cur.x, cur.y);
       for(var d = 0; d < 4; d++){
         var nx = cur.x + DIRS[d].x, ny = cur.y + DIRS[d].y;
         var t = tileAt(nx, ny);
-        if(!t) continue;
-        if(Math.abs(t.e - cur.e) > u.jump) continue;
+        if(!t || !terr(t).pass) continue;
+        if(Math.abs(terr(t).h - terr(here).h) > u.jump) continue;
         var occ = unitAt(nx, ny);
-        if(occ && occ.side !== u.side) continue;         // enemies block the way
-        var key = nx + ',' + ny, cost = cur.c + 1;
-        if(seen[key] !== undefined && seen[key] <= cost) continue;
-        seen[key] = cost;
-        q.push({ x:nx, y:ny, c:cost, e:t.e });
-        if(!occ) out.push({ x:nx, y:ny });
+        if(occ && occ.side !== u.side) continue;
+        var cost = cur.c + moveCost(u, t);
+        if(cost > u.move) continue;
+        var key = nx + ',' + ny;
+        if(best[key] !== undefined && best[key] <= cost) continue;
+        best[key] = cost;
+        q.push({ x:nx, y:ny, c:cost });
+        if(!occ && !out.some(function(o){ return o.x===nx && o.y===ny; })) out.push({ x:nx, y:ny });
       }
     }
-    return out.filter(function(o){ return !(o.x === u.x && o.y === u.y); });
+    return out;
+  }
+  function pathTo(u, tx, ty){
+    var prev = {}, best = {}, q = [{ x:u.x, y:u.y, c:0 }];
+    best[u.x + ',' + u.y] = 0;
+    while(q.length){
+      q.sort(function(a,b){ return a.c - b.c; });
+      var cur = q.shift();
+      var here = tileAt(cur.x, cur.y);
+      for(var d = 0; d < 4; d++){
+        var nx = cur.x + DIRS[d].x, ny = cur.y + DIRS[d].y;
+        var t = tileAt(nx, ny);
+        if(!t || !terr(t).pass) continue;
+        if(Math.abs(terr(t).h - terr(here).h) > u.jump) continue;
+        var occ = unitAt(nx, ny);
+        if(occ && occ.side !== u.side) continue;
+        var cost = cur.c + moveCost(u, t);
+        if(cost > u.move) continue;
+        var key = nx + ',' + ny;
+        if(best[key] !== undefined && best[key] <= cost) continue;
+        best[key] = cost; prev[key] = { x:cur.x, y:cur.y };
+        q.push({ x:nx, y:ny, c:cost });
+      }
+    }
+    var path = [], k = tx + ',' + ty;
+    if(best[k] === undefined) return [{ x:u.x, y:u.y }, { x:tx, y:ty }];
+    while(k !== u.x + ',' + u.y){
+      var pr = k.split(',');
+      path.unshift({ x:+pr[0], y:+pr[1] });
+      var pn = prev[k]; if(!pn) break;
+      k = pn.x + ',' + pn.y;
+    }
+    path.unshift({ x:u.x, y:u.y });
+    return path;
   }
 
   function targetsFor(u, range){
     var r = range || u.range;
     return B.units.filter(function(o){ return o.hp > 0 && o.side !== u.side && manh(o, u) <= r; });
   }
+  function canSkill(u){ return u.mp >= JOBS[u.job].skill.cost; }
+  function skillTargets(u){
+    var sk = JOBS[u.job].skill;
+    if(!canSkill(u)) return [];
+    if(sk.kind === 'cleave') return targetsFor(u, 1);
+    if(sk.kind === 'dash') return targetsFor(u, u.range);
+    return targetsFor(u, sk.rng);
+  }
+  function threatTiles(side){
+    var seen = {}, out = [];
+    B.units.forEach(function(e){
+      if(e.hp <= 0 || e.side === side) return;
+      var spots = reachable(e).concat([{ x:e.x, y:e.y }]);
+      var rng = Math.max(e.range, JOBS[e.job].skill.rng || 0);
+      spots.forEach(function(sp){
+        for(var dy = -rng; dy <= rng; dy++) for(var dx = -rng; dx <= rng; dx++){
+          if(Math.abs(dx) + Math.abs(dy) > rng) continue;
+          var tx = sp.x+dx, ty = sp.y+dy;
+          if(!tileAt(tx, ty)) continue;
+          var k = tx + ',' + ty;
+          if(seen[k]) continue;
+          seen[k] = 1; out.push({ x:tx, y:ty });
+        }
+      });
+    });
+    return out;
+  }
 
-  // Which side of the defender the blow lands on: front, flank or back.
   function flankOf(att, def){
-    var dx = att.x - def.x, dy = att.y - def.y;
-    var f = DIRS[def.face];
-    var dot = dx * f.x + dy * f.y;
-    var cross = Math.abs(dx * f.y - dy * f.x);
+    var dx = att.x - def.x, dy = att.y - def.y, f = DIRS[def.face];
+    var dot = dx*f.x + dy*f.y, cross = Math.abs(dx*f.y - dy*f.x);
     if(dot > 0 && dot >= cross) return { mult:0, label:'' };
     if(dot < 0 && -dot >= cross) return { mult:FLANK_BACK, label:'背後' };
     return { mult:FLANK_SIDE, label:'側面' };
   }
   function faceToward(u, tx, ty){
     var dx = tx - u.x, dy = ty - u.y;
-    if(dx === 0 && dy === 0) return;
+    if(!dx && !dy) return;
     u.face = Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0);
   }
   function autoFace(u){
     var foes = B.units.filter(function(o){ return o.hp > 0 && o.side !== u.side; });
     if(!foes.length) return;
-    var near = foes.reduce(function(a, b){ return manh(b, u) < manh(a, u) ? b : a; });
+    var near = foes.reduce(function(a,b){ return manh(b,u) < manh(a,u) ? b : a; });
     faceToward(u, near.x, near.y);
   }
-
-  // How many other friendlies are already pressing this target: attacking a unit
-  // that is surrounded pays, which is what makes pincers worth setting up.
   function comboAllies(att, def){
     return B.units.filter(function(o){
       return o.hp > 0 && o !== att && o.side === att.side && manh(o, def) <= 1;
@@ -1082,53 +950,48 @@
     opt = opt || {};
     var p = G.players[att.side], dp = G.players[def.side];
     var at = tileAt(att.x, att.y), dt = tileAt(def.x, def.y);
-    var lvDiff = (at && dt && !opt.ignoreHigh) ? (at.e - dt.e) : 0;
+    var lvDiff = opt.ignoreTerrain ? 0 : (terr(at).h - terr(dt).h);
+    var cover = opt.ignoreTerrain ? 0 : terr(dt).avoid;
     var fl = opt.noFlank ? { mult:0, label:'' } : flankOf(att, def);
     var allies = opt.noFlank ? 0 : comboAllies(att, def);
-    var die = roll();
-    var eff = Math.min(6, die + p.dice);
+    var eff = Math.min(6, roll() + p.dice);
     var crit = opt.forceCrit || eff >= 6;
     var mult = 1;
-    if(lvDiff > 0) mult += lvDiff * (HIGH_PER_LEVEL + p.high * 0.3);
+    if(lvDiff > 0) mult += lvDiff * HIGH_PER_LEVEL * (1 + p.high);
     else if(lvDiff < 0) mult += lvDiff * LOW_PER_LEVEL;
     if(fl.mult) mult += fl.mult + p.flank;
     if(allies) mult += allies * COMBO_PER_ALLY;
     if(crit) mult *= 1.5;
     if(opt.counter) mult *= COUNTER_RATE;
     if(opt.scale) mult *= opt.scale;
-    mult *= (1 - dp.guard);
+    mult *= (1 - cover) * (1 - dp.guard);
     var dmg = Math.max(1, Math.round((att.atk + eff) * mult));
     def.hp -= dmg;
     B.dmg[att.side] += dmg;
 
     var tags = [];
     if(opt.counter) tags.push('反撃');
-    if(lvDiff > 0) tags.push('高所+' + Math.round(lvDiff * HIGH_PER_LEVEL * 100) + '%');
-    else if(lvDiff < 0) tags.push('低所' + Math.round(lvDiff * LOW_PER_LEVEL * 100) + '%');
+    if(lvDiff > 0) tags.push('高所+' + Math.round(lvDiff*HIGH_PER_LEVEL*100) + '%');
+    else if(lvDiff < 0) tags.push('低所' + Math.round(lvDiff*LOW_PER_LEVEL*100) + '%');
+    if(cover) tags.push(terr(dt).name + '-' + Math.round(cover*100) + '%');
     if(fl.label) tags.push(fl.label);
-    if(allies) tags.push('連携×' + (allies + 1));
+    if(allies) tags.push('連携×' + (allies+1));
     if(crit) tags.push('会心');
     showRoll(eff, att.atk, tags);
-    hitFigure(def, crit);
-    popText(def, '-' + dmg, crit ? 'crit' : 'hurt');
-    refreshFigure(def);
+    def.hurt = 10;
+    popText(def, '-' + dmg, crit ? 'crit' : '');
     if(crit){ shake(); hitStop(90); } else if(dmg >= 14) hitStop(55);
     return dmg;
   }
 
   function killIfDead(u, killer){
     if(u.hp > 0) return false;
-    u.hp = 0;
+    u.hp = 0; u.dying = 12;
     if(killer && killer.hp > 0 && killer.side !== u.side){
       var kp = G.players[killer.side];
       kp.levels[killer.job] = (kp.levels[killer.job] || 0) + 1;
       killer.lv += 1; killer.atk += 2;
       popText(killer, 'LV ' + killer.lv, 'info');
-    }
-    var g = figureNodes[u.uid];
-    if(g){
-      g.classList.add('dying');
-      setTimeout(function(){ if(g.parentNode) g.parentNode.removeChild(g); }, 420);
     }
     var p = G.players[u.side];
     p.scars[u.job] = (p.scars[u.job] || 0) + 1;
@@ -1136,8 +999,8 @@
       var i = p.squad.indexOf(u.job);
       if(i !== -1) p.squad.splice(i, 1);
     }
-    killBanner(u);
-    shake();
+    killBanner(u); shake();
+    setTimeout(function(){ u.dying = 0; }, 400);
     return true;
   }
 
@@ -1146,188 +1009,108 @@
     var w = $('boardWrap');
     w.classList.remove('shake'); void w.offsetWidth; w.classList.add('shake');
   }
-  // hit-stop: a beat of stillness sells the blow far better than a long animation
   function hitStop(ms){
-    var st = stage;
-    st.style.animationPlayState = 'paused';
-    setTimeout(function(){ st.style.animationPlayState = ''; }, ms || 70);
+    B.busyHold = true;
+    setTimeout(function(){ B.busyHold = false; }, ms || 70);
   }
-  function hitFigure(u, crit){
-    var g = figureNodes[u.uid];
-    if(!g) return;
-    g.classList.remove('hit','crithit'); void g.getBBox;
-    g.classList.add(crit ? 'crithit' : 'hit');
-    setTimeout(function(){ g.classList.remove('hit','crithit'); }, 420);
+  function screenPos(gx, gy){
+    var r = cvs.getBoundingClientRect(), w = $('boardWrap').getBoundingClientRect();
+    return { left:r.left - w.left + (gx*TILE + TILE/2 - CAM.x) * CAM.scale,
+             top: r.top - w.top + (gy*TILE - CAM.y) * CAM.scale };
   }
   function popText(u, text, cls){
-    var t = tileAt(u.x, u.y);
-    var c = iso(u.x, u.y, t ? t.e : 0);
-    var p = toStagePx(c.cx, c.cy - 20);
+    var p = screenPos(u.x, u.y);
     var d = document.createElement('div');
     d.className = 'dmg-pop ' + (cls || '');
     d.textContent = text;
     d.style.left = p.left + 'px'; d.style.top = p.top + 'px';
-    stage.appendChild(d);
-    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1000);
+    $('boardWrap').appendChild(d);
+    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 850);
   }
   function showRoll(eff, atk, tags){
-    var old = stage.querySelector('.roll-pop');
+    var old = $('boardWrap').querySelector('.roll-pop');
     if(old) old.remove();
     var d = document.createElement('div');
     d.className = 'roll-pop';
     d.innerHTML = '<span class="die">' + eff + '</span><span class="txt">ATK ' + atk + '+' + eff +
       (tags.length ? '　' + tags.join(' · ') : '') + '</span>';
-    stage.appendChild(d);
+    $('boardWrap').appendChild(d);
     setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1500);
   }
   function killBanner(u){
     var d = document.createElement('div');
     d.className = 'kill-banner';
     d.textContent = 'P' + u.side + ' ' + JOBS[u.job].job + ' DOWN';
-    stage.appendChild(d);
-    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1550);
+    $('boardWrap').appendChild(d);
+    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 1200);
   }
 
-  // Movement is tweened rather than transitioned so re-sorting the scene graph
-  // mid-walk cannot cancel it.
-  function walkTo(u, path, done){
-    var i = 0;
+  function walk(u, path, done){
+    var i = 1;
+    B.path = path.slice();
     function step(){
-      if(i >= path.length){ done && done(); return; }
-      var from = { x:u.x, y:u.y };
-      var to = path[i++];
+      if(i >= path.length){ B.path = []; done && done(); return; }
+      var from = { x:u.x, y:u.y }, to = path[i++];
       faceToward(u, to.x, to.y);
-      var ft = tileAt(from.x, from.y), tt = tileAt(to.x, to.y);
-      var a = iso(from.x, from.y, ft.e), b = iso(to.x, to.y, tt.e);
-      var g = figureNodes[u.uid];
-      var t0 = performance.now(), dur = tt.e !== ft.e ? 130 : 105;
       u.x = to.x; u.y = to.y;
-      placeFigure(u, true);
-      compose();
-      g = figureNodes[u.uid];
-      function frame(now){
+      var ax = from.x*TILE, ay = from.y*TILE, bx = to.x*TILE, by = to.y*TILE;
+      var t0 = performance.now(), dur = 95;
+      (function frame(now){
         var k = Math.min(1, (now - t0) / dur);
-        var e = 1 - Math.pow(1 - k, 3);            // quick out, settles smoothly
-        var hop = Math.sin(k * Math.PI) * (tt.e !== ft.e ? 4.5 : 2);
-        g.setAttribute('transform', 'translate(' + (a.cx + (b.cx-a.cx)*e) + ',' +
-          (a.cy + (b.cy-a.cy)*e - hop) + ')');
+        var e = 1 - Math.pow(1 - k, 3);
+        u.px = ax + (bx-ax)*e; u.py = ay + (by-ay)*e;
+        camReveal(u.x, u.y);
         if(k < 1) requestAnimationFrame(frame);
-        else { g.setAttribute('transform', 'translate(' + b.cx + ',' + b.cy + ')'); step(); }
-      }
-      requestAnimationFrame(frame);
+        else { u.px = bx; u.py = by; step(); }
+      })(performance.now());
     }
     step();
   }
-
-  function pathTo(u, tx, ty){
-    var start = tileAt(u.x, u.y);
-    var prev = {}, seen = {}, q = [{ x:u.x, y:u.y, e:start.e }];
-    seen[u.x + ',' + u.y] = true;
-    while(q.length){
-      var cur = q.shift();
-      if(cur.x === tx && cur.y === ty) break;
-      for(var d = 0; d < 4; d++){
-        var nx = cur.x + DIRS[d].x, ny = cur.y + DIRS[d].y;
-        var t = tileAt(nx, ny);
-        if(!t || seen[nx + ',' + ny]) continue;
-        if(Math.abs(t.e - cur.e) > u.jump) continue;
-        var occ = unitAt(nx, ny);
-        if(occ && occ.side !== u.side) continue;
-        seen[nx + ',' + ny] = true;
-        prev[nx + ',' + ny] = { x:cur.x, y:cur.y };
-        q.push({ x:nx, y:ny, e:t.e });
-      }
-    }
-    var path = [], k = tx + ',' + ty;
-    if(!seen[k]) return [{ x:tx, y:ty }];
-    while(k !== u.x + ',' + u.y){
-      var parts = k.split(',');
-      path.unshift({ x:+parts[0], y:+parts[1] });
-      var pnode = prev[k];
-      if(!pnode) break;
-      k = pnode.x + ',' + pnode.y;
-    }
-    return path;
+  function lunge(att, def, then){
+    faceToward(att, def.x, def.y);
+    var ax = att.x*TILE, ay = att.y*TILE;
+    var dx = (def.x - att.x), dy = (def.y - att.y);
+    var len = Math.hypot(dx, dy) || 1;
+    var reach = Math.min(6, len * 3);
+    var t0 = performance.now(), dur = 220;
+    (function frame(now){
+      var k = Math.min(1, (now - t0) / dur);
+      var p = k < .3 ? 1 - Math.pow(1 - k/.3, 3) : k < .48 ? 1 : 1 - Math.pow((k-.48)/.52, 2);
+      att.px = ax + dx/len*reach*p; att.py = ay + dy/len*reach*p;
+      if(k < 1) requestAnimationFrame(frame);
+      else { att.px = ax; att.py = ay; }
+    })(performance.now());
+    setTimeout(then, 130);
   }
 
   // ================= command flow =================
-  // mode: 'idle' | 'menu' | 'move' | 'attack' | 'skill'
   function setMode(m){
     B.mode = m;
-    var u = B.sel;
-    var ovs = [];
+    var u = B.sel, ov = [];
     if(u){
-      ovs.push({ x:u.x, y:u.y, cls:'sel' });
       if(m === 'move'){
-        if(B.showThreat){
-          threatTiles(u.side).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'threat' }); });
-        }
-        reachable(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'move' }); });
+        if(B.showThreat) threatTiles(u.side).forEach(function(t){ ov.push({ x:t.x, y:t.y, k:'threat' }); });
+        reachable(u).forEach(function(t){ ov.push({ x:t.x, y:t.y, k:'move' }); });
       }
-      if(m === 'attack') targetsFor(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'target' }); });
-      if(m === 'skill') skillTargets(u).forEach(function(t){ ovs.push({ x:t.x, y:t.y, cls:'target' }); });
+      if(m === 'attack') targetsFor(u).forEach(function(t){ ov.push({ x:t.x, y:t.y, k:'target' }); });
+      if(m === 'skill') skillTargets(u).forEach(function(t){ ov.push({ x:t.x, y:t.y, k:'target' }); });
     }
-    setOverlays(ovs);
-    compose();
+    B.ov = ov;
     updateHud();
   }
-
-  function canSkill(u){
-    var sk = JOBS[u.job].skill;
-    return u.mp >= sk.cost;
-  }
-  // The other side is a person, not a script, so their intent cannot be shown —
-  // but their reach can. Marking every tile they could strike next phase turns a
-  // move from a guess into a decision.
-  function threatTiles(side){
-    var seen = {}, out = [];
-    B.units.forEach(function(e){
-      if(e.hp <= 0 || e.side === side) return;
-      var spots = reachable(e).concat([{ x:e.x, y:e.y }]);
-      var rng = Math.max(e.range, JOBS[e.job].skill.rng || 0);
-      spots.forEach(function(sp){
-        for(var dy = -rng; dy <= rng; dy++){
-          for(var dx = -rng; dx <= rng; dx++){
-            if(Math.abs(dx) + Math.abs(dy) > rng) continue;
-            var tx = sp.x + dx, ty = sp.y + dy;
-            if(!tileAt(tx, ty)) continue;
-            var k = tx + ',' + ty;
-            if(seen[k]) continue;
-            seen[k] = 1; out.push({ x:tx, y:ty });
-          }
-        }
-      });
-    });
-    return out;
-  }
-
-  function skillTargets(u){
-    var sk = JOBS[u.job].skill;
-    if(!canSkill(u)) return [];
-    if(sk.kind === 'cleave') return targetsFor(u, 1);
-    if(sk.kind === 'dash') return targetsFor(u, u.range);
-    return targetsFor(u, sk.rng);
-  }
-
   function selectUnit(u){
-    B.sel = u;
-    B.moved = u.moved || false;
-    B.origin = { x:u.x, y:u.y };
+    B.sel = u; B.inspect = null;
     camReveal(u.x, u.y);
-    B.units.forEach(function(o){ if(o.hp > 0) refreshFigure(o); });
     setMode('menu');
   }
-
-  function clearSel(){
-    B.sel = null; B.moved = false;
-    B.units.forEach(function(o){ if(o.hp > 0) refreshFigure(o); });
-    setMode('idle');
-  }
-
+  function clearSel(){ B.sel = null; setMode('idle'); }
   function endUnit(u){
-    u.done = true;
-    autoFace(u);
-    placeFigure(u, true);
+    u.done = true; autoFace(u);
+    var t = tileAt(u.x, u.y);
+    if(terr(t).heal && u.hp > 0){
+      var g = Math.min(terr(t).heal, u.maxHp - u.hp);
+      if(g > 0){ u.hp += g; popText(u, '+' + g, 'info'); }
+    }
     clearSel();
     var next = B.units.filter(function(o){ return o.side === B.phase && o.hp > 0 && !o.done; })[0];
     if(next) camReveal(next.x, next.y);
@@ -1339,109 +1122,69 @@
     var u = unitAt(x, y);
     if(B.mode === 'move' && B.sel){
       if(x === B.sel.x && y === B.sel.y){ setMode('menu'); return true; }
-      var ok = reachable(B.sel).some(function(t){ return t.x === x && t.y === y; });
-      if(!ok) return pickOther(u);
-      doMove(B.sel, x, y);
-      return true;
+      if(!reachable(B.sel).some(function(t){ return t.x===x && t.y===y; })) return pickOther(u);
+      doMove(B.sel, x, y); return true;
     }
     if((B.mode === 'attack' || B.mode === 'skill') && B.sel){
       var list = B.mode === 'attack' ? targetsFor(B.sel) : skillTargets(B.sel);
-      var hit = list.filter(function(o){ return o.x === x && o.y === y; })[0];
+      var hit = list.filter(function(o){ return o.x===x && o.y===y; })[0];
       if(!hit) return pickOther(u);
-      if(B.mode === 'attack') doAttack(B.sel, hit);
-      else doSkill(B.sel, hit);
+      if(B.mode === 'attack') doAttack(B.sel, hit); else doSkill(B.sel, hit);
       return true;
     }
     return pickOther(u);
   }
-  // Only a real state change counts as handling the tap; simply looking at a
-  // unit must not block the tile underneath from getting its turn to respond.
   function pickOther(u){
     if(u && u.side === B.phase && !u.done){ selectUnit(u); return true; }
     return false;
   }
 
   function doMove(u, x, y){
-    B.busy = true; setOverlays([]); compose(); updateHud();
-    var path = pathTo(u, x, y);
-    walkTo(u, path, function(){
+    B.busy = true; B.ov = []; updateHud();
+    walk(u, pathTo(u, x, y), function(){
+      u.moved = true;
       var t = tileAt(u.x, u.y);
-      u.moved = true; B.moved = true;
-      if(t && t.fx){
+      if(t.fx){
         var res = TILE_FX[t.fx].apply(u);
         t.fx = null;
-        buildTerrain();
         popText(u, res.text, res.cls);
-        refreshFigure(u);
         setTimeout(function(){
           if(u.hp <= 0){ killIfDead(u); B.busy = false; clearSel();
-            setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 420); return; }
+            setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 350); return; }
           B.busy = false; setMode('menu');
         }, 420);
         return;
       }
       B.busy = false;
-      setMode(u.acted ? 'idle' : 'menu');
-      if(u.acted) endUnit(u);
+      if(u.acted) endUnit(u); else setMode('menu');
     });
   }
-
-  function lunge(att, def, then){
-    var g = figureNodes[att.uid];
-    var at = tileAt(att.x, att.y), dt = tileAt(def.x, def.y);
-    var a = iso(att.x, att.y, at.e), b = iso(def.x, def.y, dt.e);
-    var dx = (b.cx - a.cx), dy = (b.cy - a.cy);
-    var len = Math.hypot(dx, dy) || 1;
-    var reach = Math.min(7, len * .34);
-    faceToward(att, def.x, def.y);
-    placeFigure(att, true);
-    var t0 = performance.now(), dur = 230, hold = 60;
-    function frame(now){
-      var k = Math.min(1, (now - t0) / dur);
-      // snap out, hang for a beat at full reach, then ease back with weight
-      var p = k < .3 ? 1 - Math.pow(1 - k/.3, 3)
-            : k < .48 ? 1
-            : 1 - Math.pow((k - .48) / .52, 2);
-      g.setAttribute('transform', 'translate(' + (a.cx + dx/len*reach*p) + ',' + (a.cy + dy/len*reach*p) + ')');
-      if(k < 1) requestAnimationFrame(frame);
-      else { g.setAttribute('transform', 'translate(' + a.cx + ',' + a.cy + ')'); }
-    }
-    requestAnimationFrame(frame);
-    setTimeout(then, dur * .3 + hold);   // the blow lands at the top of the lunge
+  function finishAction(u){
+    B.busy = false;
+    if(u.hp <= 0){ clearSel(); setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 200); return; }
+    if(u.extraMove && !u.usedExtra){ u.usedExtra = true; u.moved = false; setMode('menu'); return; }
+    endUnit(u);
   }
-
   function doAttack(att, def){
-    B.busy = true; setOverlays([]); compose(); updateHud();
+    B.busy = true; B.ov = []; updateHud();
     att.acted = true;
     lunge(att, def, function(){
       strike(att, def);
       setTimeout(function(){
         var died = killIfDead(def, att);
-        var canCounter = !died && def.hp > 0 && manh(att, def) <= def.range && att.hp > 0;
-        if(canCounter){
+        if(!died && def.hp > 0 && manh(att, def) <= def.range && att.hp > 0){
           setTimeout(function(){
             lunge(def, att, function(){
               strike(def, att, { counter:true });
-              setTimeout(function(){
-                killIfDead(att, def);
-                finishAction(att);
-              }, 260);
+              setTimeout(function(){ killIfDead(att, def); finishAction(att); }, 260);
             });
           }, 150);
         } else setTimeout(function(){ finishAction(att); }, 230);
       }, 240);
     });
   }
-
-  function finishAction(u){
-    B.busy = false;
-    if(u.hp <= 0){ clearSel(); setTimeout(function(){ if(!checkEnd()) checkPhaseDone(); }, 260); return; }
-    if(u.extraMove && !u.usedExtra){ u.usedExtra = true; u.moved = false; B.moved = false; setMode('menu'); return; }
-    endUnit(u);
-  }
-
   function doSkill(u, target){
-    B.busy = true; setOverlays([]); compose(); updateHud();
+    B.busy = true; B.ov = []; updateHud();
     u.acted = true;
     var sk = JOBS[u.job].skill;
     u.mp = Math.max(0, u.mp - sk.cost);
@@ -1452,34 +1195,31 @@
         foes.forEach(function(f, i){
           setTimeout(function(){
             if(f.hp <= 0) return;
-            faceToward(u, f.x, f.y); placeFigure(u, true);
+            faceToward(u, f.x, f.y);
             strike(u, f, { scale:.8, noFlank:true });
-            setTimeout(function(){ killIfDead(f, u); }, 260);
-          }, i * 190);
+            setTimeout(function(){ killIfDead(f, u); }, 240);
+          }, i * 180);
         });
-        setTimeout(function(){ finishAction(u); }, foes.length * 190 + 500);
+        setTimeout(function(){ finishAction(u); }, foes.length * 180 + 460);
       });
     } else if(sk.kind === 'blast'){
-      var area = B.units.filter(function(o){
-        return o.hp > 0 && o.side !== u.side && manh(o, target) <= 1;
-      });
-      faceToward(u, target.x, target.y); placeFigure(u, true);
-      blastFx(target);
+      var area = B.units.filter(function(o){ return o.hp > 0 && o.side !== u.side && manh(o, target) <= 1; });
+      faceToward(u, target.x, target.y);
+      shake();
       setTimeout(function(){
         area.forEach(function(f){
           if(f.hp <= 0) return;
-          strike(u, f, { scale:f === target ? .95 : .6, noFlank:true, ignoreHigh:true });
+          strike(u, f, { scale:f === target ? .95 : .6, noFlank:true, ignoreTerrain:true });
           killIfDead(f, u);
         });
         setTimeout(function(){ finishAction(u); }, 420);
-      }, 420);
+      }, 260);
     } else if(sk.kind === 'snipe'){
-      faceToward(u, target.x, target.y); placeFigure(u, true);
-      arrowFx(u, target);
+      faceToward(u, target.x, target.y);
       setTimeout(function(){
-        strike(u, target, { ignoreHigh:true, forceCrit:true, scale:.85 });
+        strike(u, target, { ignoreTerrain:true, forceCrit:true, scale:.85 });
         setTimeout(function(){ killIfDead(target, u); finishAction(u); }, 340);
-      }, 300);
+      }, 220);
     } else {
       u.extraMove = true;
       lunge(u, target, function(){
@@ -1487,31 +1227,6 @@
         setTimeout(function(){ killIfDead(target, u); finishAction(u); }, 340);
       });
     }
-  }
-
-  function blastFx(target){
-    var t = tileAt(target.x, target.y);
-    var c = iso(target.x, target.y, t.e);
-    var g = el('g', { class:'blast' });
-    for(var i = 0; i < 3; i++){
-      g.appendChild(el('circle', { cx:c.cx, cy:c.cy - 6, r:4 + i*5,
-        fill:'none', stroke:INK, 'stroke-width':2 - i*.4 }));
-    }
-    scene.appendChild(g);
-    setTimeout(function(){ if(g.parentNode) g.parentNode.removeChild(g); }, 620);
-    shake();
-  }
-  function arrowFx(u, target){
-    var a = iso(u.x, u.y, tileAt(u.x,u.y).e), b = iso(target.x, target.y, tileAt(target.x,target.y).e);
-    var l = el('line', { class:'arrow', x1:a.cx, y1:a.cy - 16, x2:b.cx, y2:b.cy - 14,
-      stroke:INK, 'stroke-width':1.4 });
-    scene.appendChild(l);
-    setTimeout(function(){ if(l.parentNode) l.parentNode.removeChild(l); }, 420);
-  }
-
-  function inspect(u){
-    B.inspect = u;
-    updateHud();
   }
 
   // ================= HUD =================
@@ -1525,18 +1240,30 @@
     for(var j = 0; j < cells; j++) host.children[j].classList.toggle('f', j < lit);
   }
   function pad2(n){ return (n < 10 ? '0' : '') + n; }
+  function spriteInto(canvas, job, side){
+    var c = canvas.getContext('2d');
+    c.imageSmoothingEnabled = false;
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    drawSprite(SPR[job], 0, 0, side === 2, c);
+  }
+  function iconInto(canvas, name){
+    var c = canvas.getContext('2d'), m = ICONS[name] || ICONS.sword;
+    c.imageSmoothingEnabled = false;
+    c.clearRect(0, 0, canvas.width, canvas.height);
+    drawSprite(m, 0, 0, false, c);
+  }
 
   function updateHud(){
     $('actName').textContent = 'A0' + G.stage + ' / ' + ACTS[Math.min(ACTS.length-1, G.stage-1)];
-    $('gridLabel').textContent = 'GRID ' + pad2(GRID) + '\u00d7' + pad2(GRID);
+    $('gridLabel').textContent = 'GRID ' + pad2(GW) + '×' + pad2(GH);
     $('turnNum').textContent = pad2(B.turn);
     $('holdNum').textContent = B.hold[1] + ':' + B.hold[2];
 
     var u = B.sel || B.inspect;
     if(u && u.hp > 0){
-      var d = JOBS[u.job];
+      var d = JOBS[u.job], t = tileAt(u.x, u.y);
       $('ucName').textContent = u.name;
-      $('ucJob').textContent = d.job + ' \u00b7 P' + u.side + (u.side === B.phase ? '' : ' \u00b7 ENEMY');
+      $('ucJob').textContent = d.job + ' · P' + u.side + ' · ' + terr(t).name;
       $('ucLv').textContent = 'LV ' + pad2(u.lv);
       $('ucHpN').textContent = pad2(Math.max(0, u.hp));
       $('ucMpN').textContent = pad2(Math.max(0, u.mp));
@@ -1544,14 +1271,9 @@
       segBar($('ucMp'), u.mp, u.maxMp);
       $('ucNums').innerHTML =
         '<span>ATK <b>' + u.atk + '</b></span><span>RNG <b>' + u.range + '</b></span>' +
-        '<span>MOV <b>' + u.move + '</b></span><span>JMP <b>' + u.jump + '</b></span>';
+        '<span>MOV <b>' + u.move + '</b></span><span>回避 <b>' + Math.round(terr(t).avoid*100) + '%</b></span>';
       var port = $('ucPortrait');
-      if(port.dataset.k !== u.job + u.side){
-        port.dataset.k = u.job + u.side;
-        port.innerHTML = '';
-        port.setAttribute('viewBox', '-17 -34 34 38');
-        port.appendChild(figureArt(u.job, u.side));
-      }
+      if(port.dataset.k !== u.job + u.side){ port.dataset.k = u.job + u.side; spriteInto(port, u.job, u.side); }
       $('ucHint').textContent = B.sel === u
         ? (B.mode === 'move' ? '移動先をタップ' : B.mode === 'attack' ? '敵をタップして攻撃'
           : B.mode === 'skill' ? d.skill.name + ' の対象をタップ' : 'コマンドを選ぶ')
@@ -1563,24 +1285,22 @@
       $('ucHpN').textContent = '00'; $('ucMpN').textContent = '00';
       segBar($('ucHp'), 0, 1); segBar($('ucMp'), 0, 1);
       $('ucNums').innerHTML = '';
-      $('ucPortrait').innerHTML = ''; $('ucPortrait').dataset.k = '';
+      $('ucPortrait').dataset.k = '';
+      $('ucPortrait').getContext('2d').clearRect(0,0,16,16);
       var remain = B.units.filter(function(o){ return o.side===B.phase && o.hp>0 && !o.done; }).length;
       $('ucHint').textContent = '自軍をタップ（のこり ' + remain + '）';
     }
 
-    // the command module is labelled by how many of this side still have a turn
     var mine = B.units.filter(function(o){ return o.side === B.phase; });
-    var left = mine.filter(function(o){ return o.hp > 0 && !o.done; }).length;
-    $('cmdLabel').textContent = 'CMD ' + pad2(left);
+    $('cmdLabel').textContent = 'CMD ' + pad2(mine.filter(function(o){ return o.hp>0 && !o.done; }).length);
     var lamps = $('cmdLamps');
     if(lamps.childElementCount !== mine.length){
       lamps.innerHTML = '';
       mine.forEach(function(){ lamps.appendChild(document.createElement('i')); });
     }
     mine.forEach(function(o, i){
-      var lamp = lamps.children[i];
-      lamp.classList.toggle('dead', o.hp <= 0);
-      lamp.classList.toggle('on', o.hp > 0 && !o.done);
+      lamps.children[i].classList.toggle('dead', o.hp <= 0);
+      lamps.children[i].classList.toggle('on', o.hp > 0 && !o.done);
     });
 
     var s = B.sel, live = s && s.hp > 0 && !B.busy && !B.veil;
@@ -1591,176 +1311,77 @@
     $('cmdSkill').lastChild.textContent = s ? ('3 ' + JOBS[s.job].skill.tag) : '3 SKILL';
   }
   function setCmd(id, enabled, on){
-    var b = $(id);
-    b.disabled = !enabled;
-    b.classList.toggle('on', !!on);
+    var b = $(id); b.disabled = !enabled; b.classList.toggle('on', !!on);
   }
 
   // ================= input =================
-  var TAP_SLOP = 11;
-  var ptrs = {}, drag = null, pinch = null, movedGesture = false;
-
-  function unitsPerPx(){
-    var vb = svg.viewBox.baseVal, box = stage.getBoundingClientRect();
-    return box.width ? vb.width / box.width : 1;
-  }
-  function boardPoint(cx, cy){
-    var ctm = svg.getScreenCTM();
-    if(!ctm) return null;
-    var p = svg.createSVGPoint(); p.x = cx; p.y = cy;
-    return p.matrixTransform(ctm.inverse());
-  }
-  function tileFromPoint(px, py){
-    var hit = null, best = -Infinity;
-    B.tiles.forEach(function(t){
-      var c = iso(t.x, t.y, t.e), h = t.e * EH;
-      var dx = Math.abs(px - c.cx);
-      var inside = dx/(TW/2) + Math.abs(py - c.cy)/(TH/2) <= 1;
-      // the side faces taper to nothing at the tile's left and right corners, so
-      // the span there must be excluded or it swallows the neighbour's centre
-      if(!inside && h > 0 && dx < TW/2 - 0.01){
-        var edge = c.cy + TH/2 - dx * TH / TW;
-        inside = py >= edge && py <= edge + h;
-      }
-      if(!inside) return;
-      var k = depth(t.x, t.y);
-      if(k >= best){ best = k; hit = t; }
-    });
-    return hit;
-  }
-  function overlayFromPoint(px, py){
-    for(var i = overlayNodes.length - 1; i >= 0; i--){
-      var n = overlayNodes[i].n;
-      var cls = n.getAttribute('data-ov');
-      if(cls === 'sel') continue;
-      var x = +n.getAttribute('data-x'), y = +n.getAttribute('data-y');
-      var t = tileAt(x, y);
-      if(!t) continue;
-      var c = iso(x, y, t.e);
-      if(Math.abs(px - c.cx)/(TW/2) + Math.abs(py - c.cy)/(TH/2) <= 1) return t;
-    }
-    return null;
-  }
-  // Hit-testing works in board coordinates rather than through the DOM: a
-  // figure's own shadow, its HP bar, or a neighbouring tile's ambient shadow
-  // would otherwise intercept the tap depending on paint order.
-  var BODY = { x0:-13, x1:15, y0:-33, y1:4 };
-  function figureFromPoint(px, py){
-    var picking = (B.mode === 'idle' || B.mode === 'menu');
-    var hit = null, best = -Infinity;
-    B.units.forEach(function(u){
-      if(u.hp <= 0) return;
-      var t = tileAt(u.x, u.y);
-      var c = iso(u.x, u.y, t ? t.e : 0);
-      var lx = px - c.cx, ly = py - c.cy;
-      if(lx < BODY.x0 || lx > BODY.x1 || ly < BODY.y0 || ly > BODY.y1) return;
-      var k = depth(u.x, u.y);
-      if(coveredBy(u.x, u.y, 11)) k += 100;   // ghosts are painted over everything
-      // bodies overlap in an isometric view, so break ties toward what the tap
-      // is most likely meant for: one of yours while picking, an enemy while aiming
-      if(picking ? (u.side === B.phase && !u.done) : (u.side !== B.phase)) k += 40;
-      if(k >= best){ best = k; hit = u; }
-    });
-    return hit;
-  }
-
-  function resolveTap(ev){
-    if(!B) return;
-    var loc = boardPoint(ev.clientX, ev.clientY);
-    if(!loc) return;
-    var ov = overlayFromPoint(loc.x, loc.y);
-    if(ov && onTap(ov.x, ov.y)) return;
-
-    var fu = figureFromPoint(loc.x, loc.y);
-    var t = tileFromPoint(loc.x, loc.y);
-    // whichever the player actually sees at that point: a figure wins unless a
-    // tile drawn in front of it covers the spot
-    var figFirst = fu && (!t || depth(fu.x, fu.y) >= depth(t.x, t.y) || coveredBy(fu.x, fu.y, 11));
-    if(figFirst && onTap(fu.x, fu.y)) return;
-    if(t && onTap(t.x, t.y)) return;
-    if(!figFirst && fu && onTap(fu.x, fu.y)) return;
-
-    // a near miss on one of your own still counts, the way a finger deserves —
-    // and it must be tried before settling for merely showing an info card
-    if(B.mode === 'idle' || B.mode === 'menu'){
-      var near = null, nd = 20;
-      B.units.forEach(function(u){
-        if(u.hp <= 0 || u.side !== B.phase || u.done) return;
-        var tt = tileAt(u.x, u.y), c = iso(u.x, u.y, tt ? tt.e : 0);
-        var d = Math.hypot(loc.x - c.cx, loc.y - (c.cy - 14));
-        if(d < nd){ nd = d; near = u; }
-      });
-      if(near && onTap(near.x, near.y)) return;
-    }
-    var occupant = t ? unitAt(t.x, t.y) : null;
-    if(occupant) inspect(occupant);
-    else if(fu) inspect(fu);
-  }
-  function resetGesture(){ ptrs = {}; drag = null; pinch = null; movedGesture = false; }
+  var TAP_SLOP = 10, ptrs = {}, drag = null, pinch = null, movedGesture = false;
   function ptrArr(){ return Object.keys(ptrs).map(function(k){ return ptrs[k]; }); }
-
+  function cellAt(clientX, clientY){
+    var r = cvs.getBoundingClientRect();
+    var gx = Math.floor(((clientX - r.left) / CAM.scale + CAM.x) / TILE);
+    var gy = Math.floor(((clientY - r.top) / CAM.scale + CAM.y) / TILE);
+    return tileAt(gx, gy) ? { x:gx, y:gy } : null;
+  }
   function bindInput(){
-    stage.addEventListener('pointerdown', function(ev){
+    var wrap = $('boardWrap');
+    wrap.addEventListener('pointerdown', function(ev){
+      // never swallow a control that lives over the board, or the capture below
+      // stops the browser from ever delivering its click
+      if(!B || B.veil || (ev.target.closest && ev.target.closest('button'))) return;
       ptrs[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
       var l = ptrArr();
-      if(l.length === 1){ movedGesture = false; drag = { x:ev.clientX, y:ev.clientY, cx:CAM.cx, cy:CAM.cy }; }
+      if(l.length === 1){ movedGesture = false; drag = { x:ev.clientX, y:ev.clientY, cx:CAM.x, cy:CAM.y }; }
       else if(l.length === 2){ drag = null; movedGesture = true;
-        pinch = { d:Math.hypot(l[0].x-l[1].x, l[0].y-l[1].y), z:CAM.zoom }; }
-      try{ stage.setPointerCapture(ev.pointerId); }catch(e){}
+        pinch = { d:Math.hypot(l[0].x-l[1].x, l[0].y-l[1].y), s:CAM.scale }; }
+      try{ wrap.setPointerCapture(ev.pointerId); }catch(e){}
     });
-    stage.addEventListener('pointermove', function(ev){
+    wrap.addEventListener('pointermove', function(ev){
       if(!ptrs[ev.pointerId]) return;
       ptrs[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
       var l = ptrArr();
       if(pinch && l.length >= 2){
         var d = Math.hypot(l[0].x-l[1].x, l[0].y-l[1].y);
-        if(pinch.d > 0){ CAM.zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinch.z * (d/pinch.d))); applyCam(); }
+        if(pinch.d > 0) setScale(pinch.s * (d / pinch.d));
         return;
       }
       if(!drag) return;
       var dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
       if(!movedGesture && Math.hypot(dx, dy) < TAP_SLOP) return;
       movedGesture = true;
-      var k = unitsPerPx();
-      CAM.cx = drag.cx - dx*k; CAM.cy = drag.cy - dy*k;
-      applyCam();
+      CAM.x = Math.max(0, Math.min(MAPW - cvs.width, drag.cx - dx / CAM.scale));
+      CAM.y = Math.max(0, Math.min(MAPH - cvs.height, drag.cy - dy / CAM.scale));
     });
     function up(ev){
       var had = !!ptrs[ev.pointerId];
       delete ptrs[ev.pointerId];
       var tap = had && drag && !movedGesture;
       drag = null; pinch = null;
-      if(!ptrArr().length && tap) resolveTap(ev);
+      if(!ptrArr().length && tap && B && !B.veil){
+        var c = cellAt(ev.clientX, ev.clientY);
+        if(c && !onTap(c.x, c.y)){
+          var occ = unitAt(c.x, c.y);
+          if(occ){ B.inspect = occ; updateHud(); }
+        }
+      }
     }
-    stage.addEventListener('pointerup', up);
-    stage.addEventListener('pointercancel', function(ev){ delete ptrs[ev.pointerId]; drag = null; pinch = null; });
+    wrap.addEventListener('pointerup', up);
+    wrap.addEventListener('pointercancel', function(ev){ delete ptrs[ev.pointerId]; drag = null; pinch = null; });
 
-    $('zoomInBtn').onclick = function(){ CAM.zoom = Math.min(MAX_ZOOM, CAM.zoom*1.35); applyCam(); };
-    $('zoomOutBtn').onclick = function(){ CAM.zoom = Math.max(MIN_ZOOM, CAM.zoom/1.35); applyCam(); };
-    $('camHomeBtn').onclick = function(){ CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy; applyCam(); };
+    $('zoomInBtn').onclick = function(){ setScale(CAM.scale + .5); };
+    $('zoomOutBtn').onclick = function(){ setScale(CAM.scale - .5); };
+    $('camHomeBtn').onclick = function(){ CAM.scale = fitScale(); layout(); CAM.x = 0; CAM.y = 0; };
     $('threatBtn').onclick = function(){
       B.showThreat = !B.showThreat;
       $('threatBtn').classList.toggle('off', !B.showThreat);
       setMode(B.mode);
     };
-    $('rotLBtn').onclick = function(){ rotate(-1); };
-    $('rotRBtn').onclick = function(){ rotate(1); };
-    window.addEventListener('resize', function(){ sizeBoardBox(); applyCam(); });
+    window.addEventListener('resize', function(){ layout(); });
 
     $('cmdMove').onclick = function(){ if(B.sel && !B.sel.moved) setMode(B.mode === 'move' ? 'menu' : 'move'); };
     $('cmdAttack').onclick = function(){ if(B.sel) setMode(B.mode === 'attack' ? 'menu' : 'attack'); };
     $('cmdSkill').onclick = function(){ if(B.sel) setMode(B.mode === 'skill' ? 'menu' : 'skill'); };
     $('cmdWait').onclick = function(){ if(B.sel && !B.busy) endUnit(B.sel); };
-  }
-
-  function rotate(dir){
-    if(!B) return;
-    ROT = (ROT + dir + 4) % 4;
-    buildTerrain();
-    B.units.forEach(function(u){ if(u.hp > 0) placeFigure(u, true); });
-    setMode(B.mode || 'idle');
-    var focus = B.sel || B.units.filter(function(u){ return u.side === B.phase && u.hp > 0; })[0];
-    if(focus) camTo(focus.x, focus.y); else applyCam();
   }
 
   // ================= stage / phase / run =================
@@ -1770,67 +1391,64 @@
   }
   function aliveCount(s){ return B.units.filter(function(u){ return u.side===s && u.hp>0; }).length; }
 
+  function makeUnits(pn, starts){
+    var p = G.players[pn];
+    return p.squad.map(function(job, i){
+      var d = JOBS[job], hp = maxHpFor(p, job), lv = 1 + (p.levels[job] || 0);
+      var st = starts[i];
+      return { uid:uid++, side:pn, job:job, name:d.name, hp:hp, maxHp:hp,
+        mp:d.mp + p.bonusMp, maxMp:d.mp + p.bonusMp, lv:lv,
+        atk:d.atk + p.bonusAtk + (lv-1)*2, range:d.range, move:d.move + p.bonusMove,
+        jump:d.jump + p.bonusJump, x:st.x, y:st.y, px:st.x*TILE, py:st.y*TILE,
+        face:(pn === 1 ? 0 : 2), done:false, moved:false, acted:false,
+        extraMove:false, usedExtra:false, hurt:0, dying:0 };
+    });
+  }
+
   function startStage(){
-    B = { tiles:buildBoard(G.stage), units:[], round:1, turn:1, phase:1, sel:null, inspect:null,
-          mode:'idle', moved:false, busy:false, veil:false, origin:null,
+    B = { map:buildMap(G.stage), units:[], round:1, turn:1, phase:1, sel:null, inspect:null,
+          mode:'idle', busy:false, veil:false, ov:[], path:[],
           dmg:{1:0,2:0}, hold:{1:0,2:0}, showThreat:true };
     B.units = makeUnits(1, P1_START).concat(makeUnits(2, P2_START));
     show('battle');
-    ROT = 0;
-    sizeBoardBox();
-    buildDefs();
-    buildTerrain();
-    buildFigures();
-    CAM.zoom = 1; CAM.cx = BOARD.cx; CAM.cy = BOARD.cy;
-    applyCam();
+    CAM.scale = fitScale(); layout(); CAM.x = 0; CAM.y = 0;
     setMode('idle');
     openVeil();
   }
-
   function openVeil(){
-    B.veil = true; resetGesture();
-    B.units.forEach(function(u){ if(u.hp > 0) placeFigure(u, true); });
+    B.veil = true; ptrs = {}; drag = null; pinch = null;
     var own = B.units.filter(function(u){ return u.side === B.phase && u.hp > 0; });
     if(own.length){
-      var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
-      own.forEach(function(u){
-        var t = tileAt(u.x, u.y), c = iso(u.x, u.y, t ? t.e : 0);
-        x0 = Math.min(x0, c.cx - TW); x1 = Math.max(x1, c.cx + TW);
-        y0 = Math.min(y0, c.cy - 34); y1 = Math.max(y1, c.cy + TH);
-      });
-      // pull the framing a little toward the middle so the approach shows too
-      var mid = iso((GRID-1)/2, (GRID-1)/2, 1);
-      var cx = (x0+x1)/2, cy = (y0+y1)/2;
-      cx += (mid.cx - cx) * .25; cy += (mid.cy - cy) * .25;
-      // fill the frame rather than fit every unit: the camera follows the flow
-      // from here, and the side strip already shows the whole force
-      // close enough that plates are comfortable to hit, wide enough that the
-      // shape of the fight still reads; the overview key covers the rest
-      CAM.zoom = 1.35;
-      CAM.cx = cx; CAM.cy = cy; applyCam();
+      var mx = Math.round(own.reduce(function(a,u){ return a+u.x; },0)/own.length);
+      var my = Math.round(own.reduce(function(a,u){ return a+u.y; },0)/own.length);
+      camCenterOn(mx, my);
     }
     $('veilEyebrow').textContent = 'ROUND ' + B.round + ' / ' + MAX_ROUNDS;
     $('veilTitle').textContent = 'PLAYER ' + B.phase;
-    $('veilSub').textContent = 'スマホを渡してから始めてください';
     $('phaseVeil').classList.remove('hidden');
     updateHud();
   }
-
   function beginPhase(){
     B.veil = false;
     $('phaseVeil').classList.add('hidden');
     B.units.forEach(function(u){
       if(u.side !== B.phase) return;
       u.done = false; u.moved = false; u.acted = false; u.extraMove = false; u.usedExtra = false;
-      u.mp = Math.min(u.maxMp, u.mp + 2);      // a little comes back each phase
+      u.mp = Math.min(u.maxMp, u.mp + 2);
     });
     B.inspect = null;
     clearSel();
   }
-
+  function scoreKeep(){
+    B.units.forEach(function(u){
+      if(u.hp <= 0) return;
+      var t = tileAt(u.x, u.y);
+      if(t && terr(t).keep){ B.hold[u.side] += 1; popText(u, 'HOLD +1', 'info'); }
+    });
+    updateHud();
+  }
   function checkPhaseDone(){
-    var left = B.units.filter(function(u){ return u.side===B.phase && u.hp>0 && !u.done; });
-    if(left.length) return;
+    if(B.units.filter(function(u){ return u.side===B.phase && u.hp>0 && !u.done; }).length) return;
     B.turn += 1;
     if(B.phase === 1){ B.phase = 2; openVeil(); return; }
     scoreKeep();
@@ -1838,30 +1456,14 @@
     if(B.round > MAX_ROUNDS){ finishStage('rounds'); return; }
     openVeil();
   }
-
-  // Holding the keep at the close of a round is worth as much as a body: it gives
-  // both sides a reason to come forward instead of trading from range.
-  function scoreKeep(){
-    B.units.forEach(function(u){
-      if(u.hp <= 0) return;
-      var t = tileAt(u.x, u.y);
-      if(t && t.keep){
-        B.hold[u.side] += 1;
-        popText(u, 'HOLD +1', 'info');
-      }
-    });
-    updateHud();
-  }
-
   function checkEnd(){
-    var a1 = aliveCount(1), a2 = aliveCount(2);
-    if(a1 && a2) return false;
+    if(aliveCount(1) && aliveCount(2)) return false;
     finishStage('wipe');
     return true;
   }
 
   function finishStage(reason){
-    var h1 = teamHp(1) + B.hold[1] * KEEP_POINT, h2 = teamHp(2) + B.hold[2] * KEEP_POINT;
+    var h1 = teamHp(1) + B.hold[1]*KEEP_POINT, h2 = teamHp(2) + B.hold[2]*KEEP_POINT;
     var winner = 0, tie = '';
     if(h1 !== h2) winner = h1 > h2 ? 1 : 2;
     else if(aliveCount(1) !== aliveCount(2)){ winner = aliveCount(1) > aliveCount(2) ? 1 : 2; tie = '生存数'; }
@@ -1872,27 +1474,26 @@
     var w1 = G.players[1].wins, w2 = G.players[2].wins;
     var s1 = G.players[1].squad.length, s2 = G.players[2].squad.length;
     var over = w1 >= WINS_NEEDED || w2 >= WINS_NEEDED || G.stage >= STAGES || !s1 || !s2;
-
     $('tallyP1').textContent = w1; $('tallyP2').textContent = w2;
-    var title = $('resultTitle');
+
     if(over){
       var wiped = !s1 || !s2;
       var champ = wiped ? ((!s1 && !s2) ? 0 : (s1 ? 1 : 2))
         : (w1 !== w2 ? (w1 > w2 ? 1 : 2)
         : (G.players[1].margin === G.players[2].margin ? 0 : (G.players[1].margin > G.players[2].margin ? 1 : 2)));
       $('resultEyebrow').textContent = 'RUN COMPLETE';
-      title.textContent = champ === 0 ? 'DRAW' : 'P' + champ + ' WINS THE RUN';
+      $('resultTitle').textContent = champ === 0 ? 'DRAW' : 'P' + champ + ' WINS THE RUN';
       $('resultSub').innerHTML = (wiped ? '部隊が全滅しました<br>' : '') +
-        (w1 === w2 && !wiped ? 'HP差による決着<br>' : '') +
+        (w1 === w2 && !wiped ? 'スコア差による決着<br>' : '') +
         '残存 P1 ' + s1 + '人 / P2 ' + s2 + '人';
       $('resultBtn').textContent = 'Title';
       $('resultBtn').onclick = function(){ show('title'); };
     } else {
       $('resultEyebrow').textContent = 'STAGE ' + G.stage + ' / ' + STAGES;
-      title.textContent = winner === 0 ? 'STAGE DRAW' : 'P' + winner + ' CAPTURED';
+      $('resultTitle').textContent = winner === 0 ? 'STAGE DRAW' : 'P' + winner + ' CAPTURED';
       $('resultSub').innerHTML = (reason === 'wipe' ? '全滅' : 'ラウンド終了') +
-        (tie ? '（' + tie + 'で判定）' : '') + '<br>スコア P1:' + h1 + ' / P2:' + h2 +
-        '（拠点 ' + B.hold[1] + ':' + B.hold[2] + '）' +
+        (tie ? '（' + tie + 'で判定）' : '') +
+        '<br>スコア P1:' + h1 + ' / P2:' + h2 + '（砦 ' + B.hold[1] + ':' + B.hold[2] + '）' +
         '<br>倒れた仲間は傷を負って次ステージへ';
       $('resultBtn').textContent = 'Next Stage';
       $('resultBtn').onclick = function(){
@@ -1904,42 +1505,28 @@
   }
 
   // ================= handoff / upgrade =================
-  // A plate, not a crest: squared frame, index notch, screw heads, big numeral.
-  function sealArt(pn){
-    var inv = pn === 2;
-    var bg = inv ? INK : PAPER, fg = inv ? PAPER : INK;
-    var o = '<rect x="6" y="6" width="88" height="88" fill="' + bg + '" stroke="' + fg + '" stroke-width="2"/>' +
-      '<rect x="13" y="13" width="74" height="74" fill="none" stroke="' + fg + '" stroke-width="1"/>' +
-      '<rect x="44" y="6" width="12" height="7" fill="' + fg + '"/>';
-    [[20,20],[80,20],[20,80],[80,80]].forEach(function(p){
-      o += '<rect x="' + (p[0]-2) + '" y="' + (p[1]-2) + '" width="4" height="4" fill="' + fg + '"/>';
-    });
-    for(var i = 0; i < 9; i++){
-      o += '<rect x="' + (24 + i*6.4) + '" y="80" width="1.6" height="' + (i % 3 ? 4 : 7) + '" fill="' + fg + '"/>';
-    }
-    o += '<text x="50" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" ' +
-      'font-size="40" font-weight="700" fill="' + fg + '">' + pn + '</text>';
-    return o;
+  function sealInto(canvas, pn){
+    var c = canvas.getContext('2d'), W = canvas.width;
+    c.imageSmoothingEnabled = false;
+    var bg = pn === 2 ? INK : PAPER, fg = pn === 2 ? PAPER : INK;
+    c.fillStyle = bg; c.fillRect(0, 0, W, W);
+    c.fillStyle = fg;
+    c.fillRect(0,0,W,2); c.fillRect(0,W-2,W,2); c.fillRect(0,0,2,W); c.fillRect(W-2,0,2,W);
+    c.fillRect(4,4,W-8,1); c.fillRect(4,W-5,W-8,1); c.fillRect(4,4,1,W-8); c.fillRect(W-5,4,1,W-8);
+    c.fillRect(W/2-4,0,8,4);
+    [[8,8],[W-11,8],[8,W-11],[W-11,W-11]].forEach(function(p){ c.fillRect(p[0],p[1],3,3); });
+    for(var i = 0; i < 9; i++) c.fillRect(12 + i*4, W-10, 1, (i%3) ? 3 : 5);
+    c.font = 'bold 26px JetBrains Mono, monospace';
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(String(pn), W/2, W/2 - 2);
   }
   function goHandoff(pn, cb){
-    $('handoffEyebrow').textContent = 'STAGE ' + G.stage + ' \u00b7 PASS THE DEVICE';
+    $('handoffEyebrow').textContent = 'STAGE ' + G.stage + ' · PASS THE DEVICE';
     $('handoffTitle').textContent = 'PLAYER ' + pn;
-    $('handoffSub').textContent = '相手に選択を見られないように受け取ってください';
-    $('handoffSeal').innerHTML = sealArt(pn);
+    sealInto($('handoffSeal'), pn);
     $('handoffBtn').onclick = function(){ cb(); };
     show('handoff');
   }
-
-  var UP_ICONS = {
-    heart:'<path d="M15 25 C5 18 5 9 10 8 C13 7.4 15 10 15 10 C15 10 17 7.4 20 8 C25 9 25 18 15 25 Z" fill="none" stroke="#30343A" stroke-width="2"/>',
-    sword:'<path d="M15 3 L18 8 L18 21 L15 25 L12 21 L12 8 Z" fill="none" stroke="#30343A" stroke-width="2"/><rect x="9" y="19" width="12" height="2.4" fill="#30343A"/>',
-    boot:'<path d="M9 5 L15 5 L16 16 L23 19 L23 25 L9 25 Z" fill="none" stroke="#30343A" stroke-width="2"/><rect x="9" y="21" width="14" height="4" fill="#30343A"/>',
-    die:'<rect x="5" y="5" width="20" height="20" fill="none" stroke="#30343A" stroke-width="2"/><rect x="10" y="10" width="3" height="3" fill="#30343A"/><rect x="17" y="17" width="3" height="3" fill="#30343A"/><rect x="13.5" y="13.5" width="3" height="3" fill="#30343A"/>',
-    peak:'<path d="M3 24 L12 7 L18 16 L21 11 L27 24 Z" fill="none" stroke="#30343A" stroke-width="2"/>',
-    dagger:'<path d="M15 3 L18 9 L18 18 L15 21 L12 18 L12 9 Z" fill="none" stroke="#30343A" stroke-width="2"/><rect x="10" y="19" width="10" height="2.4" fill="#30343A"/>',
-    shield:'<path d="M15 4 L25 8 L25 17 Q25 25 15 28 Q5 25 5 17 L5 8 Z" fill="none" stroke="#30343A" stroke-width="2"/><path d="M15 9 L20 11 L20 17 Q20 21 15 23 Z" fill="#30343A"/>',
-    spark:'<path d="M16 3 L9 16 L14 16 L12 27 L21 13 L16 13 Z" fill="#30343A"/>'
-  };
 
   function startUpgrade(pn){
     var p = G.players[pn];
@@ -1951,14 +1538,14 @@
     JOB_KEYS.forEach(function(job){
       var d = JOBS[job], alive = p.squad.indexOf(job) !== -1, scars = p.scars[job] || 0;
       var card = document.createElement('div');
-      card.className = 'roster-card plate' + (alive ? '' : ' gone');
-      var art = document.createElement('div');
-      art.className = 'rc-art';
-      art.appendChild(jobIcon(job, pn, 40));
-      card.appendChild(art);
-      var name = document.createElement('div');
-      name.className = 'u-name'; name.textContent = d.name;
-      card.appendChild(name);
+      card.className = 'roster-card mod' + (alive ? '' : ' gone');
+      var cn = document.createElement('canvas');
+      cn.width = 16; cn.height = 16;
+      card.appendChild(cn);
+      spriteInto(cn, job, pn);
+      var nm = document.createElement('div');
+      nm.className = 'u-name'; nm.textContent = d.name;
+      card.appendChild(nm);
       var st = document.createElement('div');
       st.className = 'u-stats';
       st.innerHTML = alive
@@ -1967,23 +1554,26 @@
       card.appendChild(st);
       if(scars){
         var sc = document.createElement('div');
-        sc.className = 'scar'; sc.textContent = '傷 ' + '✚'.repeat(scars);
+        sc.className = 'scar'; sc.textContent = '傷' + scars;
         card.appendChild(sc);
       }
       rr.appendChild(card);
     });
 
     var pool = UPGRADES.filter(function(u){ return !u.cond || u.cond(p); });
-    for(var i=pool.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=pool[i]; pool[i]=pool[j]; pool[j]=t; }
-    var offer = pool.slice(0, 3);
+    for(var i = pool.length-1; i > 0; i--){ var j = Math.floor(Math.random()*(i+1)); var t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
     var list = $('upgradeList');
     list.innerHTML = '';
-    offer.forEach(function(def){
+    pool.slice(0, 3).forEach(function(def){
       var b = document.createElement('button');
-      b.className = 'upgrade-card plate';
-      b.innerHTML = '<svg class="uc-icon" viewBox="0 0 30 30">' + (UP_ICONS[def.icon]||'') + '</svg>' +
-        '<span><span class="u-title">' + def.title + '</span>' +
-        '<span class="u-desc">' + def.desc + '</span></span>';
+      b.className = 'upgrade-card mod';
+      var cn = document.createElement('canvas');
+      cn.width = 8; cn.height = 8;
+      b.appendChild(cn);
+      iconInto(cn, def.icon);
+      var sp = document.createElement('span');
+      sp.innerHTML = '<span class="u-title">' + def.title + '</span><span class="u-desc">' + def.desc + '</span>';
+      b.appendChild(sp);
       b.onclick = function(){
         def.apply(p);
         if(pn === 1) goHandoff(2, function(){ startUpgrade(2); });
@@ -2000,15 +1590,15 @@
     uid = 1;
     goHandoff(1, function(){ startUpgrade(1); });
   }
-
-  stage = $('boardStage'); svg = $('boardSvg'); scene = $('sceneLayer');
+  cvs = $('boardCanvas'); ctx = cvs.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
   bindInput();
-  $('titleMark').innerHTML = sealArt(1);
+  sealInto($('titleMark'), 1);
   $('titleStartBtn').onclick = startRun;
   $('veilStartBtn').onclick = beginPhase;
   show('title');
+  loop();
 
-  // debug hook for the automated playthrough test
   window.__dbg = function(){
     if(!B) return null;
     return { busy:B.busy, veil:B.veil, mode:B.mode, phase:B.phase, round:B.round, stage:G.stage,
@@ -2017,24 +1607,13 @@
         return { uid:u.uid, s:u.side, job:u.job, x:u.x, y:u.y, hp:u.hp, done:u.done }; }) };
   };
   window.__cmd = function(id){ var b = $(id); if(b && !b.disabled) b.click(); return !!(b && !b.disabled); };
-  window.__pt = function(x, y){
-    var t = tileAt(x, y), c = iso(x, y, t ? t.e : 0);
-    var p = toStagePx(c.cx, c.cy);
-    var r = stage.getBoundingClientRect();
-    return { x:r.left + p.left, y:r.top + p.top };
+  window.__pt = function(gx, gy){
+    var r = cvs.getBoundingClientRect();
+    return { x:r.left + (gx*TILE + TILE/2 - CAM.x) * CAM.scale,
+             y:r.top + (gy*TILE + TILE/2 - CAM.y) * CAM.scale };
   };
-  window.__tap = function(x, y){ return onTap(x, y); };
-  window.__hit = function(cx, cy){
-    var loc = boardPoint(cx, cy);
-    return loc ? tileFromPoint(loc.x, loc.y) : null;
-  };
-  window.__ptUnit = function(x, y){
-    var t = tileAt(x, y), c = iso(x, y, t ? t.e : 0);
-    var p = toStagePx(c.cx, c.cy - 11);
-    var r = stage.getBoundingClientRect();
-    return { x:r.left + p.left, y:r.top + p.top };
-  };
-  window.__reveal = function(x, y){ camReveal(x, y); };
+  window.__ptUnit = window.__pt;
+  window.__reveal = function(gx, gy){ camReveal(gx, gy); };
   window.__moves = function(){ return B.sel ? reachable(B.sel) : []; };
   window.__targets = function(){
     if(!B.sel) return [];
